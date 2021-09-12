@@ -1,1 +1,34 @@
-
+version: "3.8"
+services:
+  db:
+    container_name: postgresql
+    image: postgres:13.4
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: django_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  backend:
+    container_name: django
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    tty: true
+  frontend:
+    container_name: nuxt
+    build: ./frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    tty: true
+volumes:
+  postgres_data:
