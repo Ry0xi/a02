@@ -16,5 +16,8 @@ RUN apt-get update -y && \
     npm install -g nuxt && \
     npm install
 
+# permission denied エラーを回避するため
+RUN mkdir node_modules/.cache && chmod -R 777 node_modules/.cache
+
 EXPOSE 3000
 ENV HOST 0.0.0.0
