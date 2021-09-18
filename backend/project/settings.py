@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-3p^_bsp-dx&^kwl($ekulon)vm3ety_tw8d=o&aess6r+v*xc3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# 後にseettings.pyを分割して管理
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
