@@ -1,50 +1,28 @@
 <template>
   <v-app>
     <v-main>
-      <v-container>
+      <v-container class="main-container">
         <Nuxt />
       </v-container>
     </v-main>
 
-    <v-bottom-navigation
-      app
-      color="secondary"
-    >
-      <v-btn v-for="menu in menus" :key="menu.title" :to="menu.to">
-        <span>{{ menu.title }}</span>
-        <v-icon>{{ menu.icon }}</v-icon>
-      </v-btn>
-    </v-bottom-navigation>
+    <GlobalNavBottom />
   </v-app>
 </template>
 
 <script>
 export default {
-  data () {
-    return {
-      menus: [
-        {
-          icon: 'mdi-home',
-          title: 'ホーム',
-          to: '/'
-        },
-        {
-          icon: 'mdi-format-list-bulleted',
-          title: 'タスク',
-          to: '/tasks'
-        },
-        {
-          icon: 'mdi-calendar-month',
-          title: 'カレンダー',
-          to: '/calendar'
-        },
-        {
-          icon: 'mdi-cog',
-          title: '設定',
-          to: '/settings'
-        }
-      ],
-    }
-  }
+  
 }
 </script>
+
+<style scoped>
+.main-container {
+  background-color: #fff;
+  background-image: url("/img/bg.png");
+  background-size: contain;
+  background-position: top left;
+  background-repeat: repeat-x;
+  min-height: 100%;
+}
+</style>
