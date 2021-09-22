@@ -10,15 +10,15 @@
       />
       <div v-show="isActive === 1">
         <v-form ref="SignInForm">
-          <User-Form-Email v-model="user.email" noValidation />
-          <User-Form-Password v-model="user.password" noValidation />
+          <UserFormEmail v-model="user.email" noValidation />
+          <UserFormPassword v-model="user.password" noValidation />
         </v-form>
       </div>
       <div v-show="isActive === 2">
         <v-form ref="SignUpForm">
-          <User-Form-Name v-model="user.name" />
-          <User-Form-Email v-model="user.email" />
-          <User-Form-Password v-model="user.password" />
+          <UserFormName v-model="user.name" />
+          <UserFormEmail v-model="user.email" />
+          <UserFormPassword v-model="user.password" />
         </v-form>
       </div>
 
