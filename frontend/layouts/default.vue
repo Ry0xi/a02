@@ -28,6 +28,7 @@ export default {
     this.setListener()
   },
   methods: {
+    // ページによってタイトルを変える
     setListener() {
       this.$nuxt.$on('updateHeader', this.setHeader)
     },
@@ -41,9 +42,8 @@ export default {
 <style scoped>
 .app-container {
   background-color: #fff;
-  background-image: url("/img/bg.png");
-  background-size: contain;
-  background-position: top left;
-  background-repeat: repeat-x;
+  background-image: url("/img/bg-sp.png");
+  background-size: cover;
+  background-position: top center;
 }
 </style>
