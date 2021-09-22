@@ -15,7 +15,7 @@ class Category(models.Model):
     category_id = models.AutoField #id
     category_name = models.CharField(max_length=30, null=False) #name
     color_code = models.CharField(max_length=7, null=False) #color code (ex. #FF0060)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE) #user id (fk)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
 
 
 class Task(models.Model):
@@ -29,8 +29,8 @@ class Task(models.Model):
     display_times = models.IntegerField(default=1, null=False) #Number of times displayed
     consecutive_times = models.IntegerField(default=0, null=False) #Number of consecutive achievements
     is_update = models.BooleanField(default=True, null=False) #update flag (on/off)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE) #user id (fk)
-    category_id = models.ForeignKey(Category, on_delete=models.SET_NULL) #category id (fk)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
+    category_id = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True) #category id (fk)
 
 
 class history(models.Model):
@@ -39,5 +39,5 @@ class history(models.Model):
     feedback = models.IntegerField(default=1, null=False) #feedback number
     number_of_tasks = models.IntegerField(default=0, null=False) #today's task count
     execution_tasks = models.IntegerField(default=0, null=False) #today's execution task count
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE) #user id (fk)
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE) #task id (fk)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE, null=False) #task id (fk)
