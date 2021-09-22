@@ -33,7 +33,7 @@ class Task(models.Model):
     category_id = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True) #category id (fk)
 
 
-class history(models.Model):
+class History(models.Model):
     history_id = models.AutoField #id
     date = models.DateField(null=False) #completed date
     feedback = models.IntegerField(default=1, null=False) #feedback number
