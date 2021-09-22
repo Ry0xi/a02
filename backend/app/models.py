@@ -30,7 +30,7 @@ class Task(models.Model):
     consecutive_times = models.IntegerField(default=0, null=False) #Number of consecutive achievements
     is_update = models.BooleanField(default=True, null=False) #update flag (on/off)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE) #user id (fk)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE) #category id (fk)
+    category_id = models.ForeignKey(Category, on_delete=models.SET_NULL) #category id (fk)
 
 
 class history(models.Model):
@@ -40,4 +40,4 @@ class history(models.Model):
     number_of_tasks = models.IntegerField(default=0, null=False) #today's task count
     execution_tasks = models.IntegerField(default=0, null=False) #today's execution task count
     user_id = models.ForeignKey(User, on_delete=models.CASCADE) #user id (fk)
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE) #user id (fk)
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE) #task id (fk)
