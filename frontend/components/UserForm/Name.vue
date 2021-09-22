@@ -1,3 +1,7 @@
+<!--
+メールフォーム
+v-model:  入力値
+-->
 <template>
   <div>
     <v-text-field

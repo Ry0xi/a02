@@ -1,3 +1,8 @@
+<!--
+メールフォーム
+v-model:      入力値
+noValidation: バリデーションメッセージを表示しない
+-->
 <template>
   <div>
     <v-text-field

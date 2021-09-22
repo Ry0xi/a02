@@ -1,3 +1,7 @@
+<!--
+ボタン
+@click: イベントの発火
+-->
 <template>
   <div @click="$emit('click', $event)" class="btn">
     <slot></slot>

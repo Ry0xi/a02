@@ -1,3 +1,10 @@
+<!--
+タブの切替ボタン
+v-model:    右タブが押されている時:1 / 左タブが押されている時:2
+rightName:  右のタブの名前
+leftName:   左のタブの名前
+width:      タブの幅
+-->
 <template>
   <div :style="styles" class="tab">
     <div @click="change(1)" class="tab_item" :class="{ active: setTab === 1 }">
@@ -40,6 +47,7 @@ export default {
         return this.$emit('change', value)
       },
     },
+    // css変数の追加
     styles() {
       return {
         '--tab-width': this.width,
@@ -47,6 +55,7 @@ export default {
     },
   },
   methods: {
+    // タブの切替
     change(num) {
       this.setTab = num
     },

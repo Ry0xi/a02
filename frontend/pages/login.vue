@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-card class="px-6 py-12 login-card" outlined>
+      <!-- タブボタン -->
       <Tab
         v-model="isActive"
         leftName="Login"
@@ -8,12 +9,16 @@
         width="200px"
         class="mb-8"
       />
+
+      <!--ログインフォーム  -->
       <div v-show="isActive === 1">
         <v-form ref="SignInForm">
           <UserFormEmail v-model="user.email" noValidation />
           <UserFormPassword v-model="user.password" noValidation />
         </v-form>
       </div>
+
+      <!-- サインアップフォーム -->
       <div v-show="isActive === 2">
         <v-form ref="SignUpForm">
           <UserFormName v-model="user.name" />
@@ -22,8 +27,10 @@
         </v-form>
       </div>
 
+      <!-- エラーメッセージ -->
       <div v-show="message" class="error-message">{{ message }}</div>
 
+      <!-- ボタン -->
       <Btn @click="submit">{{ btnName }}</Btn>
 
       <div class="link-reset-password">パスワードを忘れた方はこちら</div>
@@ -51,11 +58,13 @@ export default {
     },
   },
   watch: {
+    // タブの切替時にバリデーションをリセット
     isActive() {
       this.resetValidate()
     },
   },
   methods: {
+    // バリデーションのリセット
     resetValidate() {
       this.$refs.SignInForm.reset()
       this.$refs.SignUpForm.reset()
