@@ -40,3 +40,13 @@ export default {
   }
 }
 </script>
+
+<style>
+  /* 高さ、背景色のバグを修正 */
+  .v-item-group.v-bottom-navigation .v-btn.v-size--default {
+    height: inherit;
+  }
+  .v-bottom-navigation .theme--light.v-btn.v-btn--has-bg {
+    background-color: inherit !important;
+  }
+</style>
