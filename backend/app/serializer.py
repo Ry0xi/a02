@@ -5,7 +5,7 @@ from .models import User, Task, Category, History
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields =('user_name', 'email_adress', 'token', 'is_notification')
+    fields =('user_name', 'email_address', 'token', 'is_notification')
 
 class TaskSerializer(serializers.ModelSerializer):
   class Meta:
