@@ -1,2 +1,7 @@
 Django==3.2.7
 psycopg2
+django-filter
+djangorestframework
+django-cors-headers
+markdown
+django-rest-framework-jwt
