@@ -1,7 +1,7 @@
 <template>
   <header>
     <v-container>
-      <h1>{{ title }}</h1>
+      <h1 class="common-header-title">{{ title }}</h1>
     </v-container>
   </header>
 </template>
@@ -14,6 +14,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.common-header-title {
+  color: #434343;
+  font-size: 26px;
+}
 </style>
