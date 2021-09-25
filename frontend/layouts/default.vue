@@ -40,9 +40,11 @@ export default {
 </script>
 
 <style scoped>
+.v-application {
+  background-color: var(--v-background-base, #777);
+}
 .app-container {
-  background-color: #fff;
-  background-image: url("/img/bg-sp.png");
+  background-image: url("/img/bg-sp-transparent.png");
   background-size: cover;
   background-position: top center;
 }
