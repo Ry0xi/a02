@@ -1,11 +1,13 @@
 <!--
   shownTasks: 0 -> 全て、1 -> 未完了のタスクのみ、2 -> 完了のみ
+  tasks: {'id': String, 'name': String, 'categories': Array, 'isDone': Boolean}の配列
+  categoryData: 各カテゴリのデータ。[categoryId(String)]: {'name': String, 'color': String}
 -->
 <template>
   <ul class="task-list">
       <li class="task-list-item" v-for="task in tasks" :key="task.id">
         <TaskItem
-          v-if="isShownTask(task)"
+          v-if="shownTasks == 0 || isShownTask(task)"
           :taskName="task.name"
           :categories="task.categories"
           :isDone="task.isDone"
