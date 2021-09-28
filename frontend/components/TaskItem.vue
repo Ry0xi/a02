@@ -29,10 +29,12 @@ export default {
 
 <style lang="scss" scoped>
 .task-item {
-  padding: 16px 16px 8px;
+  padding: 8px 16px;
 
   &-name {
     font-size: 1.25rem;
+    padding: 0;
+    margin: 8px 0;
   }
 }
 </style>
