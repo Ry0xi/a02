@@ -1,5 +1,8 @@
 <template>
-  <v-card class="task-item">
+  <v-card
+    class="task-item"
+    outlined
+  >
     <v-card-title class="task-item-name">{{ taskName }}</v-card-title>
     <TaskCategoryList
       :categoryData="categoryData"
