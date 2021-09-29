@@ -6,7 +6,7 @@
 <template>
   <div class="task-list-group-by-date">
     <div class="tasks-on-the-date" v-for="date in datesInTasks" :key="date">
-      <h3 class="tasks-date text-h3">{{date}}</h3>
+      <h3 class="tasks-date">{{date}}</h3>
       <ul class="task-list">
         <li class="task-list-item" v-for="task in tasksGroupByDate[date]" :key="task.id">
           <TaskItem
@@ -73,6 +73,11 @@ export default {
     margin-top: 24px;
   }
 }
+
+.tasks-date {
+  color: #525252;
+}
+
 .task-list {
   list-style: none;
   padding: 0;
