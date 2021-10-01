@@ -12,6 +12,7 @@
           :categories="task.categories"
           :isDone="task.isDone"
           :categoryData="categoryData"
+          :hideDoneBtn="hideDoneBtn"
         />
       </li>
   </ul>
@@ -29,6 +30,10 @@ export default {
     },
     categoryData: {
       type: Object
+    },
+    hideDoneBtn: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
