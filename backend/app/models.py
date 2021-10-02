@@ -9,6 +9,7 @@ class User(models.Model):
     token = models.CharField(max_length=100,null=False) #token
     task_count = models.IntegerField(default=0, null=False) #today's task count
     is_notification = models.BooleanField(default=True, null=False) #notification flag (on/off)
+    task_limit = models.IntegerField(default=15, null=False) #task display limit
 
 
 class Category(models.Model):
@@ -21,8 +22,8 @@ class Category(models.Model):
 class Task(models.Model):
     # task_id = models.AutoField(primary_key=True) #id
     title = models.CharField(max_length=30, null=False) #task title
-    detail = models.CharField(max_length=1000) #task detail
-    url = models.CharField(max_length=300) #task URL
+    detail = models.CharField(max_length=1000, null=True) #task detail
+    url = models.CharField(max_length=300, null=True) #task URL
     created_at = models.DateTimeField(auto_now=True) #create datetime
     priority = models.IntegerField(default=10, null=False) #priority
     next_display_date = models.DateField(null=False) #next display date

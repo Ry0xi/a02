@@ -12,25 +12,30 @@ from rest_framework import viewsets, filters
 from .models import User, Task, Category, History
 from .serializer import UserSerializer, TaskSerializer, CategorySerializer, HistorySerializer
 
+class UserQueryset():
+  def get_queryset(self):
+      queryset = self.queryset
+      query_set = queryset.filter(user_id=self.request.user.id)
+      return query_set
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet,UserQueryset):
   queryset = User.objects.all()
   serializer_class = UserSerializer
 
 
-class TaskViewSet(viewsets.ModelViewSet):
+class TaskViewSet(viewsets.ModelViewSet,UserQueryset):
   queryset = Task.objects.all()
   serializer_class = TaskSerializer
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(viewsets.ModelViewSet,UserQueryset):
   queryset = Category.objects.all()
   serializer_class = CategorySerializer
   authentication_classes = (TokenAuthentication,)
   permission_classes = (IsAuthenticated,)
 
 
-class HistoryViewSet(viewsets.ModelViewSet):
+class HistoryViewSet(viewsets.ModelViewSet,UserQueryset):
   queryset = History.objects.all()
   serializer_class = HistorySerializer
 
@@ -47,3 +52,10 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
   #ログインしているユーザ情報を返す関数
   def get_object(self):
     return self.request.user
+
+
+class SettingLimitSet(generics.UpdateAPIView,UserQueryset):
+  queryset = User.objects.all()
+  serializer_class = UserSerializer
+  authentication_classes = (TokenAuthentication,)
+  permission_classes = (IsAuthenticated,)
