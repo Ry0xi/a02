@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 
 from .models import User, Task, Category, History
 
@@ -6,8 +7,14 @@ class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = (
-      #'user_id', 
+      #'user_id',
       'user_name', 'email_address', 'token', 'task_count', 'is_notification')
+  #ユーザを作る際に使用するcreateメソッドをオーバーライドする。
+  def create(self,validated_data):
+      user = User.objects.create(**validated_data)
+      #トークンを生成する
+      Token.objects.create(user=user)
+      return user
 
 class TaskSerializer(serializers.ModelSerializer):
   class Meta:
