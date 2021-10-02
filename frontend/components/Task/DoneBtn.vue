@@ -1,6 +1,8 @@
 <template>
   <v-dialog
-    max-width="600"
+    max-width="300"
+    v-model="dialog"
+    @click:outside="closeDialog"
   >
     <!-- 完了ボタン -->
     <template v-slot:activator="{ on, attrs }">
@@ -12,7 +14,6 @@
         right
         v-bind="attrs"
         v-on="on"
-        @click="isBtnSelected = false"
         color="primary"
         class="done-task-btn"
       >
@@ -41,7 +42,8 @@
             large
             retain-focus-on-click
             class="mb-1"
-            @click="isBtnSelected = true"
+            :color="selectedItem == 1 ? 'primary' : '#f5f5f5'"
+            @click="select(1)"
           >満足！</v-btn>
           <v-btn
             block
@@ -50,7 +52,8 @@
             large
             retain-focus-on-click
             class="mb-1"
-            @click="isBtnSelected = true"
+            :color="selectedItem == 2 ? 'primary' : '#f5f5f5'"
+            @click="select(2)"
           >まだまだ</v-btn>
           <v-btn
             block
@@ -58,13 +61,14 @@
             rounded
             large
             retain-focus-on-click
-            @click="isBtnSelected = true"
+            :color="selectedItem == 3 ? 'primary' : '#f5f5f5'"
+            @click="select(3)"
           >全然…</v-btn>
         </div>
         <v-card-actions class="justify-end">
           <v-btn
             text
-            @click="dialog.value = false"
+            @click="closeDialog"
           >
             キャンセル
           </v-btn>
@@ -72,8 +76,8 @@
             color="primary"
             depressed
             rounded
-            :disabled="!isBtnSelected"
-            @click="dialog.value = false"
+            :disabled="selectedItem == null"
+            @click="save"
           >
             完了
           </v-btn>
@@ -87,25 +91,29 @@
 export default {
   data() {
     return {
+      dialog: false,
+      selectedItem: null,
       isBtnSelected: false
     }
+  },
+  methods: {
+    select(item) {
+      this.selectedItem = item
+    },
+    save() {
+      console.log(this.selectedItem)
+      this.closeDialog()
+    },
+    closeDialog() {
+      this.dialog = false
+      this.selectedItem = null
+    },
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .done-task {
-  &-btn {
-    .v-btn {
-      &:active,
-      &:focus {
-        &::before {
-          background-color: transparent;
-        }
-      }
-    }
-  }
-
   &-dialog {
     &-header {
       font-size: 18px;
@@ -116,19 +124,6 @@ export default {
     &-level-of-completeness {
       .v-btn {
         font-size: 17px;
-
-        &:active,
-        &:focus {
-          background-color: transparent;
-
-          &::before {
-            opacity: 0.4;
-          }
-        }
-
-        &::before {
-          background-color: var(--v-primary-base, currentColor);
-        }
       }
     }
   }
