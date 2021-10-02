@@ -27,7 +27,7 @@
           flat
           dark
           color="primary"
-          class="done-task-dialog-header mb-4"
+          class="done-task-dialog-header mb-4 pt-1"
         >
           タスクの完了
         </v-toolbar>
