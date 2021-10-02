@@ -8,6 +8,11 @@
       :categoryData="categoryData"
       :categories="categories"
     />
+    
+    <TaskDoneBtn
+      v-if="!isDone"
+      v-show="!hideDoneBtn"
+    />
   </v-card>
 </template>
 
@@ -25,6 +30,11 @@ export default {
     },
     categoryData: {
       type: Object
+    },
+    // 完了ボタンを非表示にするかどうか
+    hideDoneBtn: {
+      type: Boolean,
+      default: false
     }
   }
 }
