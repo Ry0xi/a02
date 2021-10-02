@@ -42,7 +42,7 @@
             large
             retain-focus-on-click
             class="mb-1"
-            :color="selectedItem == 1 ? 'primary' : '#f5f5f5'"
+            :color="getBtnColor(1)"
             @click="select(1)"
           >満足！</v-btn>
           <v-btn
@@ -52,7 +52,7 @@
             large
             retain-focus-on-click
             class="mb-1"
-            :color="selectedItem == 2 ? 'primary' : '#f5f5f5'"
+            :color="getBtnColor(2)"
             @click="select(2)"
           >まだまだ</v-btn>
           <v-btn
@@ -61,7 +61,7 @@
             rounded
             large
             retain-focus-on-click
-            :color="selectedItem == 3 ? 'primary' : '#f5f5f5'"
+            :color="getBtnColor(3)"
             @click="select(3)"
           >全然…</v-btn>
         </div>
@@ -99,6 +99,9 @@ export default {
   methods: {
     select(item) {
       this.selectedItem = item
+    },
+    getBtnColor(item) {
+      return this.selectedItem == item ? 'primary' : '#f5f5f5'
     },
     save() {
       console.log(this.selectedItem)
