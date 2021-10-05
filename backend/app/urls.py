@@ -7,6 +7,7 @@ router.register('user', UserViewSet)
 router.register('task', TaskViewSet)
 router.register('category', CategoryViewSet)
 router.register('history', HistoryViewSet)
+router.register('setting-limit', etting)
 
 urlpatterns = [
     path('myself/',ManageUserView.as_view( ), name='myself'),

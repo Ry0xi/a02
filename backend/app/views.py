@@ -54,7 +54,7 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
     return self.request.user
 
 
-class SettingLimitSet(generics.UpdateAPIView,UserQueryset):
+class SettingLimitViewSet(generics.UpdateAPIView,UserQueryset):
   queryset = User.objects.all()
   serializer_class = UserSerializer
   authentication_classes = (TokenAuthentication,)
