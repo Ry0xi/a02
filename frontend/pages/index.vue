@@ -25,7 +25,7 @@ export default {
       tasks: [],
       categoryData: [],
       testTasks: [
-        {'id': '1001', 'name': 'タスク１', 'categories': ['0001','0002'], 'isDone': true},
+        {'id': '1001', 'name': 'タスク１', 'date': '2021-02-27', 'detail': '教材Aのp23~36を学んで、問題集p41~44を解く。', 'categories': ['0001','0002'], 'isDone': true},
         {'id': '1002', 'name': 'タスク２未完了', 'categories': ['0001'], 'isDone': false},
         {'id': '1003', 'name': 'タスク３タスク３未完了', 'categories': ['0001','0002'], 'isDone': false},
         {'id': '1004', 'name': 'タスク４タスク４タスク４タスク４', 'categories': ['0001','0002', '0003'], 'isDone': true},
