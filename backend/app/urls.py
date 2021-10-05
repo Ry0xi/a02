@@ -1,13 +1,13 @@
 from rest_framework import routers
 from django.urls import path, include
-from .views import UserViewSet, TaskViewSet, CategoryViewSet, HistoryViewSet, ManageUserView
+from .views import UserViewSet, TaskViewSet, CategoryViewSet, HistoryViewSet, ManageUserView, SettingLimitViewSet
 
 router = routers.DefaultRouter()
 router.register('user', UserViewSet)
 router.register('task', TaskViewSet)
 router.register('category', CategoryViewSet)
 router.register('history', HistoryViewSet)
-router.register('setting-limit', etting)
+router.register('setting-limit', SettingLimitViewSet)
 
 urlpatterns = [
     path('myself/',ManageUserView.as_view( ), name='myself'),
