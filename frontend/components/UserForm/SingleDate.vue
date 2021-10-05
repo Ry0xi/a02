@@ -1,6 +1,7 @@
 <!--
 日付選択フォーム(１つのみ)
 v-model:      日付
+placeholder:  入力フォームに表示するプレイスホルダー
 -->
 <template>
   <v-dialog
@@ -18,6 +19,7 @@ v-model:      日付
         append-icon="mdi-calendar-month"
         v-bind="attrs"
         v-on="on"
+        :placeholder="placeholder"
         class="mt-1"
       ></v-text-field>
     </template>
@@ -54,7 +56,8 @@ export default {
     event: 'input'
   },
   props: {
-    date: Date
+    date: Date,
+    placeholder: String
   },
   data() {
     return {
