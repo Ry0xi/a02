@@ -6,7 +6,6 @@ v-model:      日付
   <v-dialog
     ref="dialog"
     v-model="dialog"
-    :return-value.sync="inputDate"
     persistent
     width="290px"
   >
@@ -40,7 +39,7 @@ v-model:      日付
       <v-btn
         text
         color="primary"
-        @click="$refs.dialog.save(inputDate)"
+        @click="dialog = false"
       >
         OK
       </v-btn>
