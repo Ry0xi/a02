@@ -9,6 +9,8 @@
         <TaskItem
           v-if="shownTasks == 0 || isShownTask(task)"
           :taskName="task.name"
+          :taskDate="task.date"
+          :taskDetail="task.detail"
           :categories="task.categories"
           :isDone="task.isDone"
           :categoryData="categoryData"
