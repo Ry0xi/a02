@@ -58,8 +58,16 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
                     :color="colors[(nCol - 1) + (nRow - 1) * 5]"
                     flat
                     width="100%"
-                    :style="{aspectRatio: 1, border: active ? '3px solid #808080' : 'none'}"
-                  ></v-card>
+                    :style="{aspectRatio: 1, border: active ? '2px solid #707070' : 'none'}"
+                  >
+                    <v-scroll-y-transition>
+                      <v-icon
+                        v-if="active"
+                        dark
+                        class="icon-selected"
+                      >mdi-check</v-icon>
+                    </v-scroll-y-transition>
+                  </v-card>
                 </v-item>
               </v-col>
             </v-row>
@@ -98,7 +106,7 @@ export default {
     return {
       newCategoryName: this.name,
       newCategoryColor: this.color,
-      colors: ['#FF9090', '#9DD9FF', '#FFC4C4', '#C4E2FF', '#FFD6C4', '#B5D5FF', '#FFE3A5', '#C4C4FF', '000000', '#E6C4FF']
+      colors: ['#FFC1C1','#FF9090','#D2BBF7','#8B89B9','#B9E4FF','#8EA9F4','#FFE989','#FFCB83','#A3E69A','#74B27A']
     }
   },
   methods: {
@@ -121,5 +129,10 @@ export default {
     font-weight: bold;
     color: #707070;
   }
+}
+
+.icon-selected {
+  width: 100%;
+  height: 100%;
 }
 </style>
