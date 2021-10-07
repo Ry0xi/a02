@@ -56,7 +56,7 @@ export default {
     event: 'input'
   },
   props: {
-    date: Date,
+    date: String,
     placeholder: String
   },
   data() {
