@@ -26,6 +26,7 @@
           :categories="task.categories"
           :isDone="task.isDone"
           :categoryData="categoryData"
+          @task:deleted="deleteTask($event)"
           @task:updated="updateTask($event)"
         />
       </li>
@@ -63,6 +64,9 @@ export default {
       } else {
         return false
       }
+    },
+    deleteTask: function(taskId) {
+      this.$emit('task:deleted', taskId)
     },
     updateTask: function(updatedData) {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える

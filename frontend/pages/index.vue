@@ -10,6 +10,7 @@
       :shownTasks="activeTab"
       :tasks="testTasks"
       :categoryData="testCategoryData"
+      @task:deleted="deleteTaskData($event)"
       @task:updated="updateTaskData($event)"
     />
   </div>
@@ -54,6 +55,11 @@ export default {
     updateHeader() {
       // タイトルとして使いたい情報を渡す
       this.$nuxt.$emit('updateHeader', this.header.title)
+    },
+    deleteTaskData(taskId) {
+      // 仮
+      console.log('deletedTask:')
+      console.log(this.testTasks.find(task => task.id == taskId))
     },
     updateTaskData(updatedData) {
       const taskId = updatedData.id
