@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data() {
     return {
@@ -42,8 +43,14 @@ export default {
   },
   mounted() {
     this.updateHeader()
+    this.fetchTaskData()
   },
   methods: {
+    fetchTaskData() {
+      // 仮
+      // this.tasksにAPIで取得したタスクデータを保存
+      console.log('fetchTaskData()')
+    },
     updateHeader() {
       // タイトルとして使いたい情報を渡す
       this.$nuxt.$emit('updateHeader', this.header.title)
