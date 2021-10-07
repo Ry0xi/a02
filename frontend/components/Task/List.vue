@@ -19,12 +19,14 @@
         />
         <TaskInfoDialog
           :activator="'#activator'+task.id"
+          :taskId="task.id"
           :taskName="task.name"
           :taskDate="task.date"
           :taskDetail="task.detail"
           :categories="task.categories"
           :isDone="task.isDone"
           :categoryData="categoryData"
+          @task:updated="updateTask($event)"
         />
       </li>
   </ul>
@@ -61,6 +63,10 @@ export default {
       } else {
         return false
       }
+    },
+    updateTask: function(updatedData) {
+      // 親コンポーネントに変更後のタスクオブジェクトを伝える
+      this.$emit('task:updated', updatedData)
     }
   }
 }

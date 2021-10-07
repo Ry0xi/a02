@@ -36,7 +36,7 @@
             <v-btn
               icon
               v-if="!editable"
-              @click="editable = true"
+              @click="enableEditing"
             >
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
@@ -45,7 +45,8 @@
             <v-btn
               v-else
               icon
-              @click="save"
+              @click="updateTask"
+              :disabled="!canChangeData"
             >
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
@@ -66,7 +67,7 @@
               <v-list-item-subtitle v-if="!editable">{{ taskName }}</v-list-item-subtitle>
               <v-text-field
                 v-else
-                v-model="taskName"
+                v-model="editableTaskName"
                 single-line
                 outlined
                 clearable
@@ -82,7 +83,7 @@
               <v-list-item-subtitle v-if="!editable">{{ taskDate }}</v-list-item-subtitle>
               <UserFormSingleDate
                 v-else
-                v-model="taskDate"
+                v-model="editableTaskDate"
                 placeholder="2021-01-01"
               />
             </v-list-item-content>
@@ -93,7 +94,7 @@
               <v-list-item-subtitle v-if="!editable">{{ taskDetail }}</v-list-item-subtitle>
               <v-textarea
                 v-else
-                v-model="taskDetail"
+                v-model="editableTaskDetail"
                 outlined
                 rows="6"
                 auto-grow
@@ -133,6 +134,10 @@ export default {
       type: String,
       required: true
     },
+    taskId: {
+      type: String,
+      required: true
+    },
     taskName: {
       type: String
     },
@@ -155,16 +160,57 @@ export default {
   data() {
     return {
       dialog: false,
-      editable: false
+      editable: false,
+      editableTaskName: this.taskName,
+      editableCategories: this.categories,
+      editableIsDone: this.isDone,
+      editableTaskDate: this.taskDate,
+      editableTaskDetail: this.taskDetail
+    }
+  },
+  computed: {
+    edited: function() {
+      if (
+        this.taskName == this.editableTaskName
+        && this.categories == this.editableCategories
+        && this.isDone == this.editableIsDone
+        && this.taskDate == this.editableTaskDate
+        && this.taskDetail == this.editableTaskDetail
+      ) {
+        return false
+      } else {
+        return true
+      }
+    },
+    canChangeData: function() {
+      if (this.edited && this.editableTaskName && this.editableTaskDate) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   methods: {
-    save() {
-      // 仮
-      console.log(this.taskName)
-      console.log(this.categories)
-      console.log(this.taskDate)
-      console.log(this.taskDetail)
+    enableEditing() {
+      this.editable = true
+      // 入力フォームにデータバインドをする際に、前の変更が反映されないように、ダイアログを開くたびに初期化
+      this.editableTaskName = this.taskName
+      this.editableCategories = this.categories
+      this.editableIsDone = this.isDone
+      this.editableTaskDate = this.taskDate
+      this.editableTaskDetail = this.taskDetail
+    },
+    updateTask() {
+      // 親コンポーネントに変更後のタスクオブジェクトを伝える
+      const updatedTaskData = {
+        'id': this.taskId,
+        'name': this.editableTaskName,
+        'categories': this.editableCategories,
+        'isDone': this.editableIsDone,
+        'date': this.editableTaskDate,
+        'detail': this.editableTaskDetail
+      }
+      this.$emit('task:updated', updatedTaskData)
     }
   }
 }

@@ -10,6 +10,7 @@
       :shownTasks="activeTab"
       :tasks="testTasks"
       :categoryData="testCategoryData"
+      @task:updated="updateTaskData($event)"
     />
   </div>
 </template>
@@ -46,6 +47,18 @@ export default {
     updateHeader() {
       // タイトルとして使いたい情報を渡す
       this.$nuxt.$emit('updateHeader', this.header.title)
+    },
+    updateTaskData(updatedData) {
+      const taskId = updatedData.id
+      const targetTaskIndex = this.testTasks.findIndex((task) => {
+        return task.id == taskId
+      })
+      
+      Object.keys(updatedData).forEach(key => {
+        if (key != 'id') {
+          this.$set(this.testTasks[targetTaskIndex], key, updatedData[key])
+        }
+      })
     }
   }
 }
