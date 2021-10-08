@@ -1,9 +1,12 @@
 <!--
+id:     カテゴリID(既存のものを編集する場合のみ指定)
 name:   カテゴリ名(既存のものを編集する場合のみ指定)
 color:  カテゴリの色(既存のものを編集する場合のみ指定)
 @back:  戻るボタンを押した時に発火するイベント
-@saved: 追加ボタンを押して、データを保存した後に発火するイベント
-        カテゴリデータを返す。{'name': 'タスク名', 'color': '#XXXXXX'}
+@task:created: 追加ボタンを押して、カテゴリを作成した後に発火するイベント
+               新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+@task:updated: 追加ボタンを押して、カテゴリを更新した後に発火するイベント
+               更新されたカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
 -->
 <template>
   <v-card flat>
@@ -93,6 +96,10 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
 <script>
 export default {
   props: {
+    id: {
+      type: String,
+      default: ''
+    }
     name: {
       type: String,
       default: ''
@@ -104,12 +111,16 @@ export default {
   },
   data() {
     return {
+      categoryId: null,
       newCategoryName: null,
       newCategoryColor: null,
       colors: ['#FFC1C1','#FF9090','#D2BBF7','#8B89B9','#B9E4FF','#8EA9F4','#FFE989','#FFCB83','#A3E69A','#74B27A']
     }
   },
   watch: {
+    id: function(newId) {
+      this.categoryId = newId
+    },
     name: function(newName) {
       this.newCategoryName = newName
     },
@@ -119,11 +130,18 @@ export default {
   },
   methods: {
     save() {
+      const idForNewData = this.categoryId == '' ? '' : this.categoryId
       const categoryData = {
-        'name': this.newCategoryName,
-        'color': this.newCategoryColor
+        [this.categoryId]: {
+          'name': this.newCategoryName,
+          'color': this.newCategoryColor
+        }
       }
-      this.$emit('saved', categoryData)
+      if (this.categoryId == '') {
+        this.$emit('task:created', categoryData)
+      } else {
+        this.$emit('task:updated', categoryData)
+      }
       console.log('saved')
     }
   }
