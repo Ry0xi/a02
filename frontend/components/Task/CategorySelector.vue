@@ -85,7 +85,7 @@ export default {
   props: {
     categories: Array,
     categoryData: {
-      type: Array,
+      type: Object,
       required: true
     }
   },
