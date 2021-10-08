@@ -17,7 +17,7 @@
           :categoryData="categoryData"
           :hideDoneBtn="hideDoneBtn"
         />
-        <TaskInfoDialog
+        <TaskInfo
           :activator="'#activator'+task.id"
           :taskId="task.id"
           :taskName="task.name"
