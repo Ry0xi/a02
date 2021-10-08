@@ -3,10 +3,11 @@ id:     カテゴリID(既存のものを編集する場合のみ指定)
 name:   カテゴリ名(既存のものを編集する場合のみ指定)
 color:  カテゴリの色(既存のものを編集する場合のみ指定)
 @back:  戻るボタンを押した時に発火するイベント
-@task:created: 追加ボタンを押して、カテゴリを作成した後に発火するイベント
-               新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
-@task:updated: 追加ボタンを押して、カテゴリを更新した後に発火するイベント
-               更新されたカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+@done:  完了(追加)ボタンを押した時に発火するイベント
+@category:created: 追加ボタンを押して、カテゴリを作成した後に発火するイベント
+                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+@category:updated: 追加ボタンを押して、カテゴリを更新した後に発火するイベント
+                   更新されたカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
 -->
 <template>
   <v-card flat>
@@ -20,7 +21,10 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
       >
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
-      <v-toolbar-title class="category-editor-header-title">カテゴリを追加</v-toolbar-title>
+      <v-toolbar-title class="category-editor-header-title">
+        <span v-if="categoryId">カテゴリを編集</span>
+        <span v-else>カテゴリを追加</span>
+      </v-toolbar-title>
     </v-toolbar>
     <v-list>
       <v-list-item>
@@ -85,9 +89,10 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
         rounded
         height="42"
         color="primary"
-        @click="save"
+        @click="save()"
       >
-        追加
+        <span v-if="categoryId">完了</span>
+        <span v-else>追加</span>
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -99,7 +104,7 @@ export default {
     id: {
       type: String,
       default: ''
-    }
+    },
     name: {
       type: String,
       default: ''
@@ -111,9 +116,9 @@ export default {
   },
   data() {
     return {
-      categoryId: null,
-      newCategoryName: null,
-      newCategoryColor: null,
+      categoryId: this.id,
+      newCategoryName: this.name,
+      newCategoryColor: this.color,
       colors: ['#FFC1C1','#FF9090','#D2BBF7','#8B89B9','#B9E4FF','#8EA9F4','#FFE989','#FFCB83','#A3E69A','#74B27A']
     }
   },
@@ -130,18 +135,27 @@ export default {
   },
   methods: {
     save() {
-      const idForNewData = this.categoryId == '' ? '' : this.categoryId
-      const categoryData = {
-        [this.categoryId]: {
+      // 変化がなかった場合は何もしない
+      if (this.id == this.categoryId && this.name == this.newCategoryName && this.color == this.newCategoryColor) {
+        this.$emit('done')
+        return true
+      }
+
+      // '0005'は仮
+      const idForNewData = this.categoryId ? this.categoryId : ''
+      const newCategoryData = {
+        [idForNewData]: {
           'name': this.newCategoryName,
           'color': this.newCategoryColor
         }
       }
-      if (this.categoryId == '') {
-        this.$emit('task:created', categoryData)
+      if (this.categoryId) {
+        this.$emit('category:updated', newCategoryData)
       } else {
-        this.$emit('task:updated', categoryData)
+        this.$emit('category:created', newCategoryData)
       }
+      
+      this.$emit('done')
       console.log('saved')
     }
   }
