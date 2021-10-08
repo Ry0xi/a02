@@ -99,14 +99,22 @@ export default {
     },
     color: {
       type: String,
-      default: ''
+      default: '#FFC1C1'
     }
   },
   data() {
     return {
-      newCategoryName: this.name,
-      newCategoryColor: this.color,
+      newCategoryName: null,
+      newCategoryColor: null,
       colors: ['#FFC1C1','#FF9090','#D2BBF7','#8B89B9','#B9E4FF','#8EA9F4','#FFE989','#FFCB83','#A3E69A','#74B27A']
+    }
+  },
+  watch: {
+    name: function(newName) {
+      this.newCategoryName = newName
+    },
+    color: function(newColor) {
+      this.newCategoryColor = newColor
     }
   },
   methods: {
