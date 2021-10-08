@@ -7,64 +7,73 @@ categoryData:     全てのカテゴリのデータの配列
 @createNewCategory:  カテゴリの新規作成ボタンを押した時に発火するイベント
 @editCategory:    カテゴリの編集ボタンを押した時に発火するイベント
                   編集するカテゴリのidを渡す
+@change:          タスクに登録されたカテゴリに変更があった際に発火するイベント
+                  変更後のカテゴリの配列を返す
 -->
 <template>
   <v-card flat>
-    <v-toolbar
-      flat
-    >
-      <v-btn
-        icon
-        color="secondary"
-        @click="$emit('back')"
+    <!-- 親コンポーネントのv-dialogにおけるscrollableプロパティに対応するためv-card-titleを使う -->
+    <v-card-title class="pa-0">
+      <v-toolbar
+        flat
+        class="transparent"
       >
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-      <v-toolbar-title class="category-selector-header-title">カテゴリを選択</v-toolbar-title>
-    </v-toolbar>
-    
-    <v-list>
-      <v-list-item-group
-        v-model="newCategories"
-        multiple
-      >
-        <v-list-item
-          v-for="(category, categoryId) in categoryData"
-          :key="categoryId"
-          :value="categoryId"
+        <v-btn
+          icon
+          color="secondary"
+          @click="back()"
         >
-          <template v-slot:default="{ active }">
-            <v-card
-              width="36"
-              max-width="36"
-              height="36"
-              flat
-              :color="category.color"
-              class="mr-2 category-list-color"
-            ></v-card>
-            <v-list-item-content>
-              <v-list-item-title v-text="category.name"></v-list-item-title>
-            </v-list-item-content>
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+        <v-toolbar-title class="category-selector-header-title">カテゴリを選択</v-toolbar-title>
+      </v-toolbar>
+    </v-card-title>
+    
+    <!-- 親コンポーネントのv-dialogにおけるscrollableプロパティに対応するためv-card-textを使う -->
+    <v-card-text>
+      <v-list>
+        <v-list-item-group
+          v-model="newCategories"
+          multiple
+        >
+          <v-list-item
+            v-for="(category, categoryId) in categoryData"
+            :key="categoryId"
+            :value="categoryId"
+          >
+            <template v-slot:default="{ active }">
+              <v-card
+                width="36"
+                max-width="36"
+                height="36"
+                flat
+                :color="category.color"
+                class="mr-2 category-list-color"
+              ></v-card>
+              <v-list-item-content>
+                <v-list-item-title v-text="category.name"></v-list-item-title>
+              </v-list-item-content>
 
-            <v-list-item-action>
-              <v-checkbox
-                :input-value="active"
-                color="primary"
-              ></v-checkbox>
-            </v-list-item-action>
-            <v-list-item-action>
-              <v-btn
-                icon
-                color="#707070"
-                @click.stop="$emit('editCategory', categoryId)"
-              >
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-            </v-list-item-action>
-          </template>
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
+              <v-list-item-action>
+                <v-checkbox
+                  :input-value="active"
+                  color="primary"
+                ></v-checkbox>
+              </v-list-item-action>
+              <v-list-item-action>
+                <v-btn
+                  icon
+                  color="#707070"
+                  @click.stop="$emit('editCategory', categoryId)"
+                >
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+              </v-list-item-action>
+            </template>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-card-text>
 
     <v-card-actions>
       <v-btn
@@ -92,6 +101,25 @@ export default {
   data() {
     return {
       newCategories: this.categories
+    }
+  },
+  watch: {
+    categories: function(newArray) {
+      this.newCategories = newArray
+    }
+  },
+  methods: {
+    back() {
+      this.save()
+      this.$emit('back')
+    },
+    save() {
+      if (JSON.stringify(this.categories) == JSON.stringify(this.newCategories)) {
+        return true
+      } else {
+        // 変更があった場合はイベントを発火。
+        this.$emit('change', this.newCategories)
+      }
     }
   }
 }
