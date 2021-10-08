@@ -1,17 +1,21 @@
 <!--
-activator:      ダイアログを起動させるためのエレメントをセレクタで指定。例):activator="#activator"
-taskId:         表示するタスクのID
-taskName:       表示するタスクのタイトル
-taskDate:       表示するタスクの最新の表示日
-taskDetail:     表示するタスクの内容
-categories:     表示するタスクに設定されたカテゴリの配列
-isDone:         表示するタスクが完了しているかどうか
-categoryData:   カテゴリの情報をもつ配列
-@task:deleted:  タスクの削除ボタンを押した時に発火するイベント
-@task:updated:  タスクの保存ボタンを押した時に発火するイベント
+activator:         ダイアログを起動させるためのエレメントをセレクタで指定。例):activator="#activator"
+taskId:            表示するタスクのID
+taskName:          表示するタスクのタイトル
+taskDate:          表示するタスクの最新の表示日
+taskDetail:        表示するタスクの内容
+categories:        表示するタスクに設定されたカテゴリの配列
+isDone:            表示するタスクが完了しているかどうか
+categoryData:      カテゴリの情報をもつ配列
+@task:deleted:     タスクの削除ボタンを押した時に発火するイベント
+@task:updated:     タスクの保存ボタンを押した時に発火するイベント
+@category:updated: カテゴリが更新されたときに発火するイベント
+                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+@category:created: カテゴリが新規作成されたときに発火するイベント
+                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
 -->
 <template>
-  <div>
+  <div class="task-info">
     <v-dialog
       v-model="dialog"
       :activator="activator"
@@ -113,25 +117,6 @@ categoryData:   カテゴリの情報をもつ配列
               </v-list-item-content>
             </v-list-item>
             <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title>内容</v-list-item-title>
-                <v-list-item-subtitle v-if="!editable">{{ taskDetail }}</v-list-item-subtitle>
-                <v-textarea
-                  v-else
-                  v-model="editableTaskDetail"
-                  outlined
-                  rows="6"
-                  auto-grow
-                  no-resize
-                  hint="教材のページやURLなどを記入すると便利です"
-                  persistent-hint
-                  placeholder="タスク内容をここに入力できます。"
-                  class="mt-1"
-                >
-                </v-textarea>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
               <v-list-item-content style="position: relative;">
                 <v-list-item-title>
                   カテゴリ
@@ -159,6 +144,25 @@ categoryData:   カテゴリの情報をもつ配列
                 <v-list-item-subtitle v-else>カテゴリが設定されていません</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>内容</v-list-item-title>
+                <v-list-item-subtitle v-if="!editable">{{ taskDetail }}</v-list-item-subtitle>
+                <v-textarea
+                  v-else
+                  v-model="editableTaskDetail"
+                  outlined
+                  rows="6"
+                  auto-grow
+                  no-resize
+                  hint="教材のページやURLなどを記入すると便利です"
+                  persistent-hint
+                  placeholder="タスク内容をここに入力できます。"
+                  class="mt-1"
+                >
+                </v-textarea>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
           
         </v-card-text>
@@ -169,25 +173,34 @@ categoryData:   カテゴリの情報をもつ配列
     <!-- カテゴリを選択するダイアログ -->
     <v-dialog
       v-model="categorySelector"
+      scrollable
+      @click:outside="$refs.categorySelector.save(), closeCategorySelector()"
     >
       <TaskCategorySelector
+        ref="categorySelector"
         :categories="editableCategories"
         :categoryData="categoryData"
-        @back="closeCategorySelector"
+        @back="closeCategorySelector()"
         @editCategory="openCategoryEditor($event)"
         @createNewCategory="openCategoryEditor(''), closeCategorySelector()"
+        @change="editableCategories = $event"
       />
     </v-dialog>
 
     <!-- カテゴリを新規作成・編集するエディタ -->
     <v-dialog
       v-model="categoryEditor"
+      scrollable
+      @click:outside="openCategorySelector(), closeCategoryEditor()"
     >
       <TaskCategoryEditor
+        :id="categoryIdForEditor"
         :name="categoryNameForEditor"
         :color="categoryColorForEditor"
         @back="openCategorySelector(), closeCategoryEditor()"
-        @saved="updateCategoryData()"
+        @done="openCategorySelector(), closeCategoryEditor()"
+        @category:created="addCategoryData($event)"
+        @category:updated="updateCategoryData($event)"
       />
     </v-dialog>
 
@@ -334,10 +347,11 @@ export default {
       this.$delete(this.editableCategories, categoryIndex)
       console.log('category deleted')
     },
-    updateCategoryData() {
-      // 新しいカテゴリの作成の場合どうすればいいだろう？
-
-      // カテゴリを更新した場合
+    updateCategoryData(updatedCategoryData) {
+      this.$emit('category:updated', updatedCategoryData)
+    },
+    addCategoryData(newCategoryData) {
+      this.$emit('category:created', newCategoryData)
     }
   }
 }
