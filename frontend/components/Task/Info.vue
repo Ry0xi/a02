@@ -341,6 +341,7 @@ export default {
         'date': this.editableTaskDate,
         'detail': this.editableTaskDetail
       }
+      this.editable = false
       this.$emit('task:updated', updatedTaskData)
     },
     openCategorySelector() {
