@@ -41,6 +41,7 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
               v-model="newCategoryName"
               outlined
               single-line
+              autofocus
               placeholder="マイカテゴリ"
               class="mt-1"
             ></v-text-field>
