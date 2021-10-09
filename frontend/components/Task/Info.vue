@@ -92,7 +92,12 @@ categoryData:      カテゴリの情報をもつ配列
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>タスクタイトル</v-list-item-title>
-                <v-list-item-subtitle v-if="!editable">{{ taskName }}</v-list-item-subtitle>
+                <v-list-item-subtitle
+                  v-if="!editable"
+                >
+                  {{ taskName }}
+                </v-list-item-subtitle>
+
                 <v-text-field
                   v-else
                   v-model="editableTaskName"
@@ -105,10 +110,16 @@ categoryData:      カテゴリの情報をもつ配列
                 </v-text-field>
               </v-list-item-content>
             </v-list-item>
+
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>直近の表示日</v-list-item-title>
-                <v-list-item-subtitle v-if="!editable">{{ taskDate }}</v-list-item-subtitle>
+                <v-list-item-subtitle
+                  v-if="!editable"
+                >
+                  {{ taskDate }}
+                </v-list-item-subtitle>
+
                 <UserFormSingleDate
                   v-else
                   v-model="editableTaskDate"
@@ -116,6 +127,7 @@ categoryData:      カテゴリの情報をもつ配列
                 />
               </v-list-item-content>
             </v-list-item>
+
             <v-list-item>
               <v-list-item-content style="position: relative;">
                 <v-list-item-title>
@@ -144,6 +156,7 @@ categoryData:      カテゴリの情報をもつ配列
                 <v-list-item-subtitle v-else>カテゴリが設定されていません</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
+
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>内容</v-list-item-title>
@@ -360,7 +373,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-list-item__title {
+.v-list-item__subtitle {
   font-size: 1.125rem;
 }
 </style>
