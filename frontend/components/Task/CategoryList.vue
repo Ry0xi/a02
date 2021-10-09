@@ -32,6 +32,7 @@ export default {
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
+    width: calc(100% - 36px);
     padding: 0;
 
     list-style: none;
@@ -39,7 +40,11 @@ export default {
     &-item {
       width: max-content;
       margin-bottom: 8px;
-      margin-right: 12px;
+      margin-right: 8px;
+
+      &:last-child {
+        margin-right: 0;
+      }
     }
   }
 }
