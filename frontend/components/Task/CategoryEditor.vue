@@ -20,7 +20,7 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
         <v-btn
           icon
           color="secondary"
-          @click="$emit('back')"
+          @click="goBack"
         >
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
@@ -96,9 +96,10 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
         block
         depressed
         rounded
+        :disabled="!newCategoryName || !newCategoryColor"
         height="42"
         color="primary"
-        @click="save()"
+        @click="save"
       >
         <span v-if="categoryId">完了</span>
         <span v-else>追加</span>
@@ -145,11 +146,14 @@ export default {
   },
   methods: {
     save() {
-      // 変化がなかった場合は何もしない
-      if (this.id == this.categoryId && this.name == this.newCategoryName && this.color == this.newCategoryColor) {
+      // 変化がなかった場合や入力がされていない場合は何もしない
+      if (!this.newCategoryName ||
+          !this.newCategoryColor || 
+          this.id == this.categoryId && this.name == this.newCategoryName && this.color == this.newCategoryColor) {
+        
         this.resetData()
         this.$emit('done')
-        return true
+        return
       }
 
       // 【テスト用】仮の新規カテゴリIDを生成
@@ -171,6 +175,10 @@ export default {
 
       this.resetData()
       this.$emit('done')
+    },
+    goBack() {
+      this.resetData()
+      this.$emit('back')
     },
     resetData() {
       this.categoryId = ''
