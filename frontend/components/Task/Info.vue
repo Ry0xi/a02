@@ -254,7 +254,16 @@ categoryData:      カテゴリの情報をもつ配列
 
     <!-- タスク削除時に表示されるお知らせ -->
     <v-snackbar
-      v-model="snackbar"
+      v-model="snackbarUpdate"
+      timeout="4000"
+      color="secondary"
+    >
+      タスクを更新しました。
+    </v-snackbar>
+
+    <!-- タスク削除時に表示されるお知らせ -->
+    <v-snackbar
+      v-model="snackbarDelete"
       timeout="4000"
       color="brown darken-4"
     >
@@ -297,7 +306,8 @@ export default {
     return {
       dialog: false,
       editable: false,
-      snackbar: false,
+      snackbarDelete: false,
+      snackbarUpdate: false,
       categorySelector: false,
       categoryEditor: false,
       dialogDelete: false,
@@ -363,7 +373,7 @@ export default {
     deleteTask() {
       this.$emit('task:deleted', this.taskId)
       this.dialog = false
-      this.snackbar = true
+      this.snackbarDelete = true
     },
     updateTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
@@ -375,8 +385,9 @@ export default {
         'date': this.editableTaskDate,
         'detail': this.editableTaskDetail
       }
-      this.editable = false
       this.$emit('task:updated', updatedTaskData)
+      this.editable = false
+      this.snackbarUpdate = true
     },
     openCategorySelector() {
       this.categorySelector = true
