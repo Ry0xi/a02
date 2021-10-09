@@ -7,10 +7,10 @@ router.register('user', UserViewSet)
 router.register('task', TaskViewSet)
 router.register('category', CategoryViewSet)
 router.register('history', HistoryViewSet)
-router.register('setting-limit', SettingLimitViewSet)
 
 urlpatterns = [
     path('myself/',ManageUserView.as_view( ), name='myself'),
+    path('setting-limit/',SettingLimitViewSet.as_view( ), name='setting-limit'),
     #ユーザ名とパスワードをPOSTするとトークンを返す。
     path('',include(router.urls)),
 ]
