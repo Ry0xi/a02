@@ -174,6 +174,7 @@ categoryData:      カテゴリの情報をもつ配列
     <v-dialog
       v-model="categorySelector"
       scrollable
+      max-width="400"
       @click:outside="$refs.categorySelector.save(), closeCategorySelector()"
     >
       <TaskCategorySelector
@@ -191,6 +192,7 @@ categoryData:      カテゴリの情報をもつ配列
     <v-dialog
       v-model="categoryEditor"
       scrollable
+      max-width="400"
       @click:outside="openCategorySelector(), closeCategoryEditor()"
     >
       <TaskCategoryEditor
