@@ -55,7 +55,7 @@ categoryData:      カテゴリの情報をもつ配列
               <v-btn
                 icon
                 v-if="!editable"
-                @click="deleteTask"
+                @click="openDialogDelete"
               >
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
@@ -92,11 +92,12 @@ categoryData:      カテゴリの情報をもつ配列
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>タスクタイトル</v-list-item-title>
-                <v-list-item-subtitle
+                <p
                   v-if="!editable"
+                  class="task-info-data"
                 >
                   {{ taskName }}
-                </v-list-item-subtitle>
+                </p>
 
                 <v-text-field
                   v-else
@@ -114,11 +115,12 @@ categoryData:      カテゴリの情報をもつ配列
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>直近の表示日</v-list-item-title>
-                <v-list-item-subtitle
+                <p
                   v-if="!editable"
+                  class="task-info-data"
                 >
                   {{ taskDate }}
-                </v-list-item-subtitle>
+                </p>
 
                 <UserFormSingleDate
                   v-else
@@ -160,7 +162,11 @@ categoryData:      カテゴリの情報をもつ配列
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>内容</v-list-item-title>
-                <v-list-item-subtitle v-if="!editable">{{ taskDetail }}</v-list-item-subtitle>
+                <!-- ここのpタグ内を改行すると表示にも反映されてしまう -->
+                <p
+                  v-if="!editable"
+                  class="task-info-data task-info-detail"
+                >{{ taskDetail }}</p>
                 <v-textarea
                   v-else
                   v-model="editableTaskDetail"
@@ -219,6 +225,33 @@ categoryData:      カテゴリの情報をもつ配列
       />
     </v-dialog>
 
+    <!-- 削除ボタンを押した際に確認するダイアログ -->
+    <v-dialog
+      v-model="dialogDelete"
+    >
+      <v-card>
+        <v-card-title>
+          <v-icon color="yellow darken-2" class="mr-2">mdi-alert-circle-outline</v-icon>
+          タスクを削除しますか？
+        </v-card-title>
+        <v-card-actions class="justify-center">
+          <v-btn
+            text
+            @click="closeDialogDelete"
+          >
+            キャンセル
+          </v-btn>
+          <v-btn
+            text
+            color="red"
+            @click="deleteTask(); closeDialogDelete()"
+          >
+            削除
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- タスク削除時に表示されるお知らせ -->
     <v-snackbar
       v-model="snackbar"
@@ -267,6 +300,7 @@ export default {
       snackbar: false,
       categorySelector: false,
       categoryEditor: false,
+      dialogDelete: false,
       categoryIdForEditor: '',
       editableTaskName: String,
       editableCategories: Array,
@@ -357,6 +391,12 @@ export default {
     closeCategoryEditor() {
       this.categoryEditor = false
     },
+    openDialogDelete() {
+      this.dialogDelete = true
+    },
+    closeDialogDelete() {
+      this.dialogDelete = false
+    },
     deleteCategory(categoryId) {
       // 編集可能なカテゴリの配列から引数の配列を削除
       const categoryIndex = this.editableCategories.indexOf(categoryId)
@@ -374,7 +414,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-list-item__subtitle {
-  font-size: 1.125rem;
+.task-info {
+  &-data {
+    font-size: 1.125rem;
+  }
+
+  &-detail {
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
 }
 </style>
