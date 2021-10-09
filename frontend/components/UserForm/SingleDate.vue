@@ -12,7 +12,7 @@ placeholder:  入力フォームに表示するプレイスホルダー
   >
     <template v-slot:activator="{ on, attrs }">
       <v-text-field
-        v-model="inputDate"
+        :value="newDate ? newDate : date"
         single-line
         readonly
         outlined
@@ -34,14 +34,14 @@ placeholder:  入力フォームに表示するプレイスホルダー
       <v-btn
         text
         color="primary"
-        @click="dialog = false"
+        @click="closeDialog"
       >
         Cancel
       </v-btn>
       <v-btn
         text
         color="primary"
-        @click="dialog = false"
+        @click="sendNewDate(), closeDialog()"
       >
         OK
       </v-btn>
@@ -62,15 +62,30 @@ export default {
   data() {
     return {
       dialog: false,
+      newDate: null
     }
   },
   computed: {
     inputDate: {
       get() {
-        return this.date
+        return this.newDate ? this.newDate : this.date
       },
       set(value) {
-        this.$emit('input', value)
+        this.newDate = value
+      }
+    }
+  },
+  methods: {
+    closeDialog: function() {
+      this.refreshInputDate()
+      this.dialog = false
+    },
+    refreshInputDate: function() {
+      this.newDate = null
+    },
+    sendNewDate: function() {
+      if (this.newDate && this.newDate != this.date) {
+        this.$emit('input', this.newDate)
       }
     }
   }
