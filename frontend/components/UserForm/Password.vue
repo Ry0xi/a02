@@ -8,11 +8,11 @@ noValidation: バリデーションメッセージを表示しない
     <v-text-field
       v-model="setPassword"
       :type="toggle.type"
-      prepend-inner-icon="mdi-lock"
+      :prepend-inner-icon="noIcon ? '' : 'mdi-lock'"
       :append-icon="toggle.icon"
       single-line
       outlined
-      label="パスワード"
+      :label="label"
       :rules="form.rules"
       :hint="form.hint"
       @click:append="show = !show"
@@ -29,7 +29,15 @@ export default {
   },
   props: {
     password: String,
+    label: {
+      type: String,
+      default: 'パスワード',
+    },
     noValidation: {
+      type: Boolean,
+      default: false,
+    },
+    noIcon: {
       type: Boolean,
       default: false,
     },
