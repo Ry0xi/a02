@@ -12,7 +12,7 @@ from rest_framework import viewsets, filters
 
 #作成したモデルとシリアライザをインポート
 from .models import User, Task, Category, History
-from .serializer import UserSerializer, TaskSerializer, CategorySerializer, HistorySerializer
+from .serializer import UserSerializer, TaskSerializer, CategorySerializer, HistorySerializer, AuthenticationSerializer
 
 
 class UserQueryset():
@@ -76,3 +76,13 @@ class ManageUserView(generics.RetrieveUpdateAPIView, UserQueryset):
   #ログインしているユーザ情報を返す関数
   def get_object(self):
     return self.request.user
+
+
+class SettingLimitViewSet(generics.UpdateAPIView):
+  queryset = User.objects.all()
+  serializer_class = UserSerializer
+
+
+class SignupViewSet(generics.CreateAPIView):
+  queryset = User.objects.all()
+  serializer_class = AuthenticationSerializer

@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     model = User
     fields = (
       #'user_id',
-      'user_name', 'email_address', 'token', 'task_count', 'is_notification')
+      'user_name', 'email_address', 'password', 'task_count', 'is_notification')
   #ユーザを作る際に使用するcreateメソッドをオーバーライドする。
   def create(self,validated_data):
       user = User.objects.create(**validated_data)
@@ -36,3 +36,8 @@ class HistorySerializer(serializers.ModelSerializer):
     fields = (
       #'history_id',
       'date', 'feedback', 'number_of_tasks', 'execution_tasks', 'user_id', 'task_id')
+
+class AuthenticationSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = User
+    fields = ('user_name', 'email_address', 'password')

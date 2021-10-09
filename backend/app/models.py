@@ -6,7 +6,7 @@ class User(models.Model):
     # user_id = models.AutoField(primary_key=True) #id
     user_name = models.CharField(max_length=30, null=False) #name
     email_address = models.EmailField(null=False) #mail adress
-    token = models.CharField(max_length=100,null=False) #token
+    password = models.CharField(max_length=100,null=False) #token
     task_count = models.IntegerField(default=0, null=False) #today's task count
     is_notification = models.BooleanField(default=True, null=False) #notification flag (on/off)
 
