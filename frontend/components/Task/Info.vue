@@ -228,13 +228,15 @@ categoryData:      カテゴリの情報をもつ配列
     <!-- 削除ボタンを押した際に確認するダイアログ -->
     <v-dialog
       v-model="dialogDelete"
+      max-width="400"
     >
       <v-card>
         <v-card-title>
           <v-icon color="yellow darken-2" class="mr-2">mdi-alert-circle-outline</v-icon>
           タスクを削除しますか？
         </v-card-title>
-        <v-card-actions class="justify-center">
+        <v-card-actions>
+          <v-spacer></v-spacer>
           <v-btn
             text
             @click="closeDialogDelete"
@@ -242,7 +244,8 @@ categoryData:      カテゴリの情報をもつ配列
             キャンセル
           </v-btn>
           <v-btn
-            text
+            dark
+            depressed
             color="red"
             @click="deleteTask(); closeDialogDelete()"
           >
