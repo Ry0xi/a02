@@ -36,3 +36,10 @@ class HistorySerializer(serializers.ModelSerializer):
     fields = (
       #'history_id',
       'date', 'feedback', 'number_of_tasks', 'execution_tasks', 'user_id', 'task_id')
+
+class TaskCompletedSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Task
+    fields = (
+      #'task_id',
+      'priority','next_display_date','display_times','consecutive_times','is_update')

@@ -12,7 +12,7 @@ from rest_framework import viewsets, filters
 
 #作成したモデルとシリアライザをインポート
 from .models import User, Task, Category, History
-from .serializer import UserSerializer, TaskSerializer, CategorySerializer, HistorySerializer
+from .serializer import UserSerializer, TaskSerializer, CategorySerializer, HistorySerializer, TaskCompletedSerializer
 
 
 class UserQueryset():
@@ -50,6 +50,18 @@ class TaskMonthlyAPIView(generics.ListAPIView):
     queryset = self.queryset
     query_set = queryset.filter(user_id=self.request.user.id, next_display_date__year = self.kwargs.get('year'), next_display_date__month = self.kwargs.get('month'))
     return query_set
+
+# タスクが完了した時の処理1(historyの追加)
+class TaskCompletedHistoryAPIView(generics.CreateAPIView):
+  # Historyに完了したタスクを追加
+  queryset = History.objects.all()
+  serializer_class = HistorySerializer
+
+
+# タスクが完了した時の処理1(historyの追加)
+class TaskCompletedTaskAPIView(generics.UpdateAPIView):
+  queryset = History.objects.all()
+  serializer_class = TaskCompletedSerializer
 
 
 class CategoryViewSet(viewsets.ModelViewSet, UserQueryset):
