@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class User(models.Model):
-    user_id = models.AutoField #id
+    # user_id = models.AutoField(primary_key=True) #id
     user_name = models.CharField(max_length=30, null=False) #name
     email_address = models.EmailField(null=False) #mail adress
     token = models.CharField(max_length=100,null=False) #token
@@ -12,14 +12,14 @@ class User(models.Model):
 
 
 class Category(models.Model):
-    category_id = models.AutoField #id
+    # category_id = models.AutoField(primary_key=True) #id
     category_name = models.CharField(max_length=30, null=False) #name
     color_code = models.CharField(max_length=7, null=False) #color code (ex. #FF0060)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
 
 
 class Task(models.Model):
-    task_id = models.AutoField #id
+    # task_id = models.AutoField(primary_key=True) #id
     title = models.CharField(max_length=30, null=False) #task title
     detail = models.CharField(max_length=1000) #task detail
     url = models.CharField(max_length=300) #task URL
@@ -34,7 +34,7 @@ class Task(models.Model):
 
 
 class History(models.Model):
-    history_id = models.AutoField #id
+    # history_id = models.AutoField(primary_key=True) #id
     date = models.DateField(null=False) #completed date
     feedback = models.IntegerField(default=1, null=False) #feedback number
     number_of_tasks = models.IntegerField(default=0, null=False) #today's task count
