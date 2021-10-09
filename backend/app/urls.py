@@ -1,6 +1,12 @@
 from rest_framework import routers
 from django.urls import path, include
+<<<<<<< HEAD
 from .views import UserViewSet, TaskViewSet, CategoryViewSet, HistoryViewSet, ManageUserView, TaskDailyAPIView, TaskMonthlyAPIView, SettingLimitViewSet, SignupViewSet
+=======
+
+from .views import UserViewSet, TaskViewSet, CategoryViewSet, HistoryViewSet, ManageUserView, TaskDailyAPIView, TaskMonthlyAPIView, SettingLimitViewSet, SignupViewSet
+
+>>>>>>> 899b45b3c1bffe4d77a6ddd3c40d9d1280a2069a
 
 router = routers.DefaultRouter()
 router.register('user', UserViewSet)

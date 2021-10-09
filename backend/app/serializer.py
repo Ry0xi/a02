@@ -8,7 +8,11 @@ class UserSerializer(serializers.ModelSerializer):
     model = User
     fields = (
       #'user_id',
+<<<<<<< HEAD
       'user_name', 'email_address', 'password', 'task_count', 'is_notification')
+=======
+      'user_name', 'email_address', 'password', 'is_notification', 'task_limit')
+>>>>>>> 899b45b3c1bffe4d77a6ddd3c40d9d1280a2069a
   #ユーザを作る際に使用するcreateメソッドをオーバーライドする。
   def create(self,validated_data):
       user = User.objects.create(**validated_data)
