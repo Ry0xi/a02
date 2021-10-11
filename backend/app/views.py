@@ -14,6 +14,10 @@ from rest_framework import viewsets, filters
 from .models import User, Task, Category, History
 from .serializer import UserSerializer, TaskSerializer, CategorySerializer, HistorySerializer, TaskCompletedSerializer
 
+#viewの操作のため
+from rest_framework import status
+from rest_framework.response import Response
+
 
 class UserQueryset():
   def get_queryset(self):
@@ -56,6 +60,17 @@ class TaskCompletedHistoryAPIView(generics.CreateAPIView):
   # Historyに完了したタスクを追加
   queryset = History.objects.all()
   serializer_class = HistorySerializer
+
+  def post(self, request, *args, **kwargs):
+    a_Post = History.objects.create(
+      user_id_id=self.request.user.id,
+      feedback=request.data["feedback"],
+      task_id_id=request.data["task_id"],
+    )
+    return Response(
+      data=HistorySerializer(a_Post).data,
+      status=status.HTTP_201_CREATED
+    )
 
 
 # タスクが完了した時の処理1(historyの追加)
