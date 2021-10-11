@@ -43,3 +43,7 @@ class TaskCompletedSerializer(serializers.ModelSerializer):
     fields = (
       #'task_id',
       'priority','next_display_date','display_times','consecutive_times','is_update')
+
+    def update(self, instance, validated_data):
+      # Modify validated_data with the value you need
+      return super().update(instance, validated_data)

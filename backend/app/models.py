@@ -35,9 +35,7 @@ class Task(models.Model):
 
 class History(models.Model):
     # history_id = models.AutoField(primary_key=True) #id
-    date = models.DateField(null=False) #completed date
+    created_at = models.DateTimeField(auto_now_add=True) #completed date
     feedback = models.IntegerField(default=1, null=False) #feedback number
-    number_of_tasks = models.IntegerField(default=0, null=False) #today's task count
-    execution_tasks = models.IntegerField(default=0, null=False) #today's execution task count
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE, null=False) #task id (fk)
