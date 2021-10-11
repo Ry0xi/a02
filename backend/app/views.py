@@ -18,6 +18,9 @@ from .serializer import UserSerializer, TaskSerializer, CategorySerializer, Hist
 from rest_framework import status
 from rest_framework.response import Response
 
+# 次回表示日の設定
+import datetime
+
 
 class UserQueryset():
   def get_queryset(self):
@@ -73,10 +76,70 @@ class TaskCompletedHistoryAPIView(generics.CreateAPIView):
     )
 
 
-# タスクが完了した時の処理1(historyの追加)
+# タスクが完了した時の処理2(taskの次回表示日と優先度の更新)
 class TaskCompletedTaskAPIView(generics.UpdateAPIView):
-  queryset = History.objects.all()
+  queryset = Task.objects.all()
   serializer_class = TaskCompletedSerializer
+
+  def update(self, request, pk=None):
+    instance = self.get_object()
+    feedback = request.data["feedback"]
+
+    # 表示回数を記録
+    instance.display_times = instance.display_times + 1
+    display_times = instance.display_times
+
+    # 優先度を設定
+    if feedback == 2:
+      if display_times == 1:
+        instance.priority = 30
+      elif display_times == 2:
+        instance.priority = 10
+      elif display_times == 3:
+        instance.priority = 1
+    elif feedback == 1:
+      if display_times == 1:
+        instance.priority = 38
+      elif display_times == 2:
+        instance.priority = 16
+      elif display_times == 3:
+        instance.priority = 2
+    elif feedback == 0:
+      if display_times == 1:
+        instance.priority = 47
+      elif display_times == 2:
+        instance.priority = 21
+      elif display_times == 3:
+        instance.priority = 3
+
+    # 次回表示日を設定
+    if display_times == 1:
+      instance.next_display_date = instance.next_display_date + datetime.timedelta(days=1)
+    elif display_times == 2:
+      instance.next_display_date = instance.next_display_date + datetime.timedelta(weeks=1)
+    elif display_times == 3:
+      instance.next_display_date = instance.next_display_date + datetime.timedelta(weeks=4)
+
+    # feedbackが連続で2の回数を記録
+    if feedback == 2:
+      instance.consecutive_times = instance.consecutive_times + 1
+    else:
+      instance.consecutive_times = 0
+
+    # 連続でfeedbackが2，もしくは表示回数が4回あったらタスクの終了
+    if instance.consecutive_times == 2 or instance.display_times == 4:
+      instance.is_update = False
+
+    serializer = self.get_serializer(instance, data=request.data)
+    serializer.is_valid(raise_exception=True)
+    self.perform_update(serializer)
+    instance.save()
+
+    return Response(
+      serializer.data,
+      status=status.HTTP_200_OK
+    )
+
 
 
 class CategoryViewSet(viewsets.ModelViewSet, UserQueryset):

@@ -14,6 +14,6 @@ urlpatterns = [
     path('',include(router.urls)),
     path('task/<int:year>/<int:month>/<int:day>/', TaskDailyAPIView.as_view(),name='daily'),
     path('task/<int:year>/<int:month>/', TaskMonthlyAPIView.as_view(),name='monthly'),
-    path('task-completed-history',TaskCompletedHistoryAPIView.as_view(),  name='task-completed-history'),
-    path('task-completed-task', TaskCompletedTaskAPIView.as_view(), name='task-completed-task')
+    path('task-completed-history/',TaskCompletedHistoryAPIView.as_view(),  name='task-completed-history'),
+    path('task-completed-task/<int:pk>/', TaskCompletedTaskAPIView.as_view(), name='task-completed-task')
 ]
