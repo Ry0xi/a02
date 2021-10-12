@@ -1,5 +1,11 @@
 <template>
   <div class="page-home">
+    <TaskAddFAB
+      :categoryData="testCategoryData"
+      @task:created="addTaskData($event)"
+      @category:updated="updateCategoryData($event)"
+      @category:created="addCategoryData($event)"
+    />
     <Tab
       leftName="未完了"
       rightName="完了"
@@ -57,6 +63,12 @@ export default {
     updateHeader() {
       // タイトルとして使いたい情報を渡す
       this.$nuxt.$emit('updateHeader', this.header.title)
+    },
+    addTaskData(newTaskData) {
+      this.testTasks.splice(0, 0, newTaskData)
+      console.log('add new task')
+      console.log('new:')
+      console.log(this.testTasks)
     },
     deleteTaskData(taskId) {
       // 仮

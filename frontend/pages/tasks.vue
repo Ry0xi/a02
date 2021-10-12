@@ -1,13 +1,22 @@
 <template>
-  <TaskListGroupByDate
-    :shownTasks="0"
-    :tasks="testTasks"
-    :categoryData="testCategoryData"
-    @task:deleted="deleteTaskData($event)"
-    @task:updated="updateTaskData($event)"
-    @category:updated="updateCategoryData($event)"
-    @category:created="addCategoryData($event)"
-  />
+  <div class="page-tasks">
+    <TaskListGroupByDate
+      :shownTasks="0"
+      :tasks="testTasks"
+      :categoryData="testCategoryData"
+      @task:deleted="deleteTaskData($event)"
+      @task:updated="updateTaskData($event)"
+      @category:updated="updateCategoryData($event)"
+      @category:created="addCategoryData($event)"
+    />
+
+    <TaskAddFAB
+      :categoryData="testCategoryData"
+      @task:created="addTaskData($event)"
+      @category:updated="updateCategoryData($event)"
+      @category:created="addCategoryData($event)"
+    />
+  </div>
 </template>
 
 <script>
@@ -46,6 +55,12 @@ export default {
     updateHeader() {
       // タイトルとして使いたい情報を渡す
       this.$nuxt.$emit('updateHeader', this.header.title)
+    },
+    addTaskData(newTaskData) {
+      this.testTasks.splice(0, 0, newTaskData)
+      console.log('add new task')
+      console.log('new:')
+      console.log(this.testTasks)
     },
     deleteTaskData(taskId) {
       // 仮
