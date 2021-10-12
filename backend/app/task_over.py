@@ -12,7 +12,7 @@ def job(update_time):
   for user in users:
 
     #Taskモデルから対象のuser.idでdisplay_dateが昨日のタスクに対し更新処理を行う．
-    tasks = Task.objects.filter(user_id=1)#1->user.id
+    tasks = Task.objects.filter(user_id=user)
     for task in tasks:
       if task.next_display_date < date.today():
 
