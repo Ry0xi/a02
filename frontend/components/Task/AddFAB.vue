@@ -22,10 +22,9 @@ tasks:             全てのタスクのデータ
       id="activator"
       fab
       fixed
-      right
       elevation="8"
       color="primary"
-      style="bottom: 64px;"
+      style="bottom: 64px; right: 8px;"
     >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
