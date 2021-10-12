@@ -9,6 +9,7 @@ class User(models.Model):
     token = models.CharField(max_length=100,null=False) #token
     task_count = models.IntegerField(default=0, null=False) #today's task count
     is_notification = models.BooleanField(default=True, null=False) #notification flag (on/off)
+    update_time = models.IntegerField(default=0, null=False) #Task update time
 
 
 class Category(models.Model):
@@ -29,7 +30,6 @@ class Task(models.Model):
     display_times = models.IntegerField(default=0, null=False) #Number of times displayed
     consecutive_times = models.IntegerField(default=0, null=False) #Number of consecutive 2 achievements
     is_update = models.BooleanField(default=True, null=False) #update flag (on/off)
-    update_time = models.IntegerField(default=0, null=False) #Task update time
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
     category_id = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True) #category id (fk)
 
