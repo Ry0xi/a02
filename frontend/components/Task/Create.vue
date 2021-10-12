@@ -1,12 +1,12 @@
 <!--
 activator:         ダイアログを起動させるためのエレメントをセレクタで指定。例):activator="#activator"
-taskId:            表示するタスクのID
 taskName:          表示するタスクのタイトル
 taskDate:          表示するタスクの最新の表示日
 taskDetail:        表示するタスクの内容
 categories:        表示するタスクに設定されたカテゴリの配列
 isDone:            表示するタスクが完了しているかどうか
 categoryData:      カテゴリの情報をもつ配列
+tasks:             全てのタスクのデータ
 @task:created:     タスクの保存ボタンを押した時に発火するイベント
                    タスクオブジェクトを返す
                    {
@@ -202,17 +202,13 @@ export default {
       type: String,
       required: true
     },
-    taskId: {
-      type: String,
-      required: true
-    },
     taskName: {
       type: String,
       default: ""
     },
     categories: {
       type: Array,
-      default: []
+      default: () => []
     },
     isDone: {
       type: Boolean,
@@ -229,6 +225,10 @@ export default {
     categoryData: {
       type: Object
     },
+    tasks: {
+      type: Array,
+      required: true
+    }
   },
   data() {
     return {
@@ -274,6 +274,22 @@ export default {
       get() {
         return this.categoryIdForEditor ? this.categoryData[this.categoryIdForEditor].color : ''
       }
+    },
+    newTaskId: function() {
+      let newTaskId = ""
+      const min = 1000
+      const max = 9999
+      let ok = false
+      while (!ok) {
+        // 新規タスクIDを生成
+        newTaskId = String(Math.floor( Math.random() * (max + 1 - min) ) + min)
+        // 既存のタスクのIDと被っていなければ決定
+        if (!this.tasks.find(task => task.id == newTaskId)) {
+          ok = true
+        }
+      }
+
+      return newTaskId
     }
   },
   created: function() {
@@ -294,7 +310,7 @@ export default {
     createTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const createdTaskData = {
-        'id': this.taskId,
+        'id': this.newTaskId,
         'name': this.editableTaskName,
         'categories': this.editableCategories,
         'isDone': this.editableIsDone,
@@ -303,6 +319,7 @@ export default {
       }
       this.$emit('task:created', createdTaskData)
       this.snackbarCreate = true
+      this.resetDataForEdit()
       this.closeDialog()
     },
     openCategorySelector() {

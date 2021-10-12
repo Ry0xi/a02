@@ -1,5 +1,6 @@
 <!--
 categoryData:      カテゴリの情報をもつ配列
+tasks:             全てのタスクのデータ
 @task:created:     タスクの保存ボタンを押した時に発火するイベント
                    タスクオブジェクトを返す
                    {
@@ -31,9 +32,9 @@ categoryData:      カテゴリの情報をもつ配列
 
     <TaskCreate
       activator="#activator"
-      taskId=""
       :isDone="false"
       :categoryData="categoryData"
+      :tasks="tasks"
       @task:created="createTask($event)"
       @category:updated="updateCategoryData($event)"
       @category:created="addCategoryData($event)"
@@ -46,6 +47,10 @@ export default {
   props: {
     categoryData: {
       type: Object,
+      required: true
+    },
+    tasks: {
+      type: Array,
       required: true
     }
   },

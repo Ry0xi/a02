@@ -12,6 +12,7 @@
 
     <TaskAddFAB
       :categoryData="testCategoryData"
+      :tasks="testTasks"
       @task:created="addTaskData($event)"
       @category:updated="updateCategoryData($event)"
       @category:created="addCategoryData($event)"
