@@ -30,7 +30,11 @@ class Task(models.Model):
     consecutive_times = models.IntegerField(default=0, null=False) #Number of consecutive 2 achievements
     is_update = models.BooleanField(default=True, null=False) #update flag (on/off)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
-    category_id = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True) #category id (fk)
+    category = models.ManyToManyField(Category, through='TaskCategoryRelation')
+
+class TaskCategoryRelation(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
 class History(models.Model):
