@@ -6,9 +6,9 @@ from datetime import date, timedelta
 from .models import Task, User, History
 
 # 実行job関数
-def job(time):
+def job(update_time):
   # Userモデルからupdate_timeがtimeの時刻のuser_idを取得してusers配列に入れる．
-  users = User.objects.filter(update_time=time)
+  users = User.objects.filter(update_time=update_time)
   for user in users:
 
     #Taskモデルから対象のuser.idでdisplay_dateが昨日のタスクに対し更新処理を行う．
@@ -55,7 +55,7 @@ def job(time):
 
 #1時間毎のjob実行を登録
 for i in range(0, 5):
-  schedule.every().day.at(str(i)+":01").do(job(i))
+  schedule.every().day.at(str(i)+":01").do(job, update_time=i)
 
 # jobの実行監視、指定時間になったらjob関数を実行
 while True:
