@@ -24,10 +24,10 @@ class Task(models.Model):
     detail = models.CharField(max_length=1000) #task detail
     url = models.CharField(max_length=300) #task URL
     created_at = models.DateTimeField(auto_now=True) #create datetime
-    priority = models.IntegerField(default=10, null=False) #priority
+    priority = models.IntegerField(default=100, null=False) #priority
     next_display_date = models.DateField(null=False) #next display date
-    display_times = models.IntegerField(default=1, null=False) #Number of times displayed
-    consecutive_times = models.IntegerField(default=0, null=False) #Number of consecutive achievements
+    display_times = models.IntegerField(default=0, null=False) #Number of times displayed
+    consecutive_times = models.IntegerField(default=0, null=False) #Number of consecutive 2 achievements
     is_update = models.BooleanField(default=True, null=False) #update flag (on/off)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
     category_id = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True) #category id (fk)
@@ -35,9 +35,7 @@ class Task(models.Model):
 
 class History(models.Model):
     # history_id = models.AutoField(primary_key=True) #id
-    date = models.DateField(null=False) #completed date
+    created_at = models.DateTimeField(auto_now_add=True) #completed date
     feedback = models.IntegerField(default=1, null=False) #feedback number
-    number_of_tasks = models.IntegerField(default=0, null=False) #today's task count
-    execution_tasks = models.IntegerField(default=0, null=False) #today's execution task count
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE, null=False) #task id (fk)

@@ -35,4 +35,17 @@ class HistorySerializer(serializers.ModelSerializer):
     model = History
     fields = (
       #'history_id',
-      'date', 'feedback', 'number_of_tasks', 'execution_tasks', 'user_id', 'task_id')
+      'created_at', 'feedback', 'user_id', 'task_id')
+    read_only_fields = ('created_at', 'user_id',)
+
+class TaskCompletedSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Task
+    fields = (
+      #'task_id',
+      'priority','next_display_date','display_times','consecutive_times','is_update')
+    read_only_fields = ('priority','next_display_date','display_times','consecutive_times','is_update')
+
+    # def update(self, instance, validated_data):
+    #   # Modify validated_data with the value you need
+    #   return super().update(instance, validated_data)
