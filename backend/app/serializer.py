@@ -25,15 +25,6 @@ class CategorySerializer(serializers.ModelSerializer):
       'category_name', 'color_code', 'user_id')
     read_only_fields = ('user_id',)
 
-    def creat(self, validated_data):
-      category = Category(
-        category_name=validated_data['category_name'],
-        color_code=validated_data['color_code'],
-        user_id=self.request.user
-      )
-      category.save()
-      return category
-
 
 class TaskSerializer(serializers.ModelSerializer):
   category = CategorySerializer(many=True)
@@ -43,6 +34,7 @@ class TaskSerializer(serializers.ModelSerializer):
       #'task_id',
       'title', 'detail', 'url', 'created_at', 'priority','next_display_date','display_times','consecutive_times','is_update','user_id', 'category')
       # depth= 1
+    read_only_fields = ('user_id',)
 
 class HistorySerializer(serializers.ModelSerializer):
   class Meta:
