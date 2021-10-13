@@ -24,49 +24,29 @@ tasks:             全てのタスクのデータ
 -->
 <template>
   <div class="task-info">
-    <v-dialog
-      v-model="dialog"
-      :activator="activator"
-      fullscreen
-      scrollable
-    >
+    <v-dialog v-model="setDialog" fullscreen scrollable>
       <!-- タスクの詳細を表示するダイアログ -->
       <v-card tile>
         <!-- scrollableプロパティに対応するためv-card-titleを使う -->
         <v-card-title class="pa-0">
-          <v-toolbar
-            dark
-            flat
-            color="primary"
-          >
+          <v-toolbar dark flat color="primary">
             <!-- タスクの変更ダイアログを閉じる -->
-            <v-btn
-              icon
-              @click="closeDialog"
-            >
+            <v-btn icon @click="closeDialog">
               <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
             <v-toolbar-title>タスクの追加</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
               <!-- 保存ボタン -->
-              <v-btn
-                icon
-                @click="createTask"
-                :disabled="!canChangeData"
-              >
+              <v-btn icon @click="createTask" :disabled="!canChangeData">
                 <v-icon>mdi-check</v-icon>
               </v-btn>
             </v-toolbar-items>
           </v-toolbar>
         </v-card-title>
-        
         <!-- scrollableプロパティに対応するためv-card-textを使う -->
         <v-card-text>
-          <v-list
-            three-line
-            subheader
-          >
+          <v-list three-line subheader>
             <v-subheader>基本情報</v-subheader>
             <v-list-item>
               <v-list-item-content>
@@ -97,21 +77,19 @@ tasks:             全てのタスクのデータ
             </v-list-item>
 
             <v-list-item>
-              <v-list-item-content style="position: relative;">
-                <v-list-item-title>
-                  カテゴリ
-                </v-list-item-title>
+              <v-list-item-content style="position: relative">
+                <v-list-item-title> カテゴリ </v-list-item-title>
                 <v-btn
                   id="open-category-selector"
                   text
                   color="secondary"
-                  style="position: absolute; top: 5px; right: 0;"
+                  style="position: absolute; top: 5px; right: 0"
                   @click.stop="openCategorySelector"
                 >
                   <v-icon>mdi-plus-circle-outline</v-icon>
                   カテゴリーを選択
                 </v-btn>
-                
+
                 <TaskCategoryList
                   v-if="editableCategories[0]"
                   :clearable="true"
@@ -120,7 +98,9 @@ tasks:             全てのタスクのデータ
                   :categoryData="categoryData"
                   class="mt-2"
                 />
-                <v-list-item-subtitle v-else>カテゴリが設定されていません</v-list-item-subtitle>
+                <v-list-item-subtitle v-else
+                  >カテゴリが設定されていません</v-list-item-subtitle
+                >
               </v-list-item-content>
             </v-list-item>
 
@@ -142,9 +122,7 @@ tasks:             全てのタスクのデータ
               </v-list-item-content>
             </v-list-item>
           </v-list>
-          
         </v-card-text>
-
       </v-card>
     </v-dialog>
 
@@ -185,11 +163,7 @@ tasks:             全てのタスクのデータ
     </v-dialog>
 
     <!-- タスク追加時に表示されるお知らせ -->
-    <v-snackbar
-      v-model="snackbarCreate"
-      timeout="4000"
-      color="secondary"
-    >
+    <v-snackbar v-model="snackbarCreate" timeout="4000" color="secondary">
       タスクを追加しました。
     </v-snackbar>
   </div>
@@ -197,42 +171,45 @@ tasks:             全てのタスクのデータ
 
 <script>
 export default {
+  model: {
+    prop: 'dialog',
+    event: 'update',
+  },
   props: {
-    activator: {
-      type: String,
-      required: true
+    dialog: {
+      type: Boolean,
+      required: true,
     },
     taskName: {
       type: String,
-      default: ""
+      default: '',
     },
     categories: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     isDone: {
       type: Boolean,
-      default: false
+      default: false,
     },
     taskDate: {
       type: String,
-      default: ""
+      default: '',
     },
     taskDetail: {
       type: String,
-      default: ""
+      default: '',
     },
     categoryData: {
-      type: Object
+      type: Object,
     },
     tasks: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      dialog: false,
       snackbarCreate: false,
       categorySelector: false,
       categoryEditor: false,
@@ -241,24 +218,33 @@ export default {
       editableCategories: Array,
       editableIsDone: Boolean,
       editableTaskDate: String,
-      editableTaskDetail: String
+      editableTaskDetail: String,
     }
   },
   computed: {
-    edited: function() {
+    setDialog: {
+      get() {
+        return this.dialog
+      },
+      set(value) {
+        return this.$emit('update', value)
+      },
+    },
+    edited: function () {
       if (
-        this.taskName == this.editableTaskName
-        && JSON.stringify(this.categories) == JSON.stringify(this.editableCategories)
-        && this.isDone == this.editableIsDone
-        && this.taskDate == this.editableTaskDate
-        && this.taskDetail == this.editableTaskDetail
+        this.taskName == this.editableTaskName &&
+        JSON.stringify(this.categories) ==
+          JSON.stringify(this.editableCategories) &&
+        this.isDone == this.editableIsDone &&
+        this.taskDate == this.editableTaskDate &&
+        this.taskDetail == this.editableTaskDetail
       ) {
         return false
       } else {
         return true
       }
     },
-    canChangeData: function() {
+    canChangeData: function () {
       if (this.edited && this.editableTaskName && this.editableTaskDate) {
         return true
       } else {
@@ -267,55 +253,66 @@ export default {
     },
     categoryNameForEditor: {
       get() {
-        return this.categoryIdForEditor ? this.categoryData[this.categoryIdForEditor].name : ''
-      }
+        return this.categoryIdForEditor
+          ? this.categoryData[this.categoryIdForEditor].name
+          : ''
+      },
     },
     categoryColorForEditor: {
       get() {
-        return this.categoryIdForEditor ? this.categoryData[this.categoryIdForEditor].color : ''
-      }
+        return this.categoryIdForEditor
+          ? this.categoryData[this.categoryIdForEditor].color
+          : ''
+      },
     },
-    newTaskId: function() {
-      let newTaskId = ""
+    newTaskId: function () {
+      let newTaskId = ''
       const min = 1000
       const max = 9999
       let ok = false
       while (!ok) {
         // 新規タスクIDを生成
-        newTaskId = String(Math.floor( Math.random() * (max + 1 - min) ) + min)
+        newTaskId = String(Math.floor(Math.random() * (max + 1 - min)) + min)
         // 既存のタスクのIDと被っていなければ決定
-        if (!this.tasks.find(task => task.id == newTaskId)) {
+        if (!this.tasks.find((task) => task.id == newTaskId)) {
           ok = true
         }
       }
 
       return newTaskId
-    }
+    },
   },
-  created: function() {
-    this.resetDataForEdit()
+  watch: {
+    setDialog() {
+      if (this.setDialog === true) {
+        this.setData()
+      } else {
+        console.log('down')
+      }
+    },
   },
   methods: {
-    resetDataForEdit() {
-      // 編集用のデータを設定値にする
+    setData() {
       this.editableTaskName = this.taskName
-      this.editableCategories = this.categories ? this.categories.slice(0, this.categories.length) : []
+      this.editableCategories = this.categories
+        ? this.categories.slice(0, this.categories.length)
+        : []
       this.editableIsDone = this.isDone
       this.editableTaskDate = this.taskDate
       this.editableTaskDetail = this.taskDetail
     },
     closeDialog() {
-      this.dialog = false
+      this.setDialog = false
     },
     createTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const createdTaskData = {
-        'id': this.newTaskId,
-        'name': this.editableTaskName,
-        'categories': this.editableCategories,
-        'isDone': this.editableIsDone,
-        'date': this.editableTaskDate,
-        'detail': this.editableTaskDetail
+        id: this.newTaskId,
+        name: this.editableTaskName,
+        categories: this.editableCategories,
+        isDone: this.editableIsDone,
+        date: this.editableTaskDate,
+        detail: this.editableTaskDetail,
       }
       this.$emit('task:created', createdTaskData)
       this.snackbarCreate = true
@@ -346,8 +343,8 @@ export default {
     },
     addCategoryData(newCategoryData) {
       this.$emit('category:created', newCategoryData)
-    }
-  }
+    },
+  },
 }
 </script>
 
