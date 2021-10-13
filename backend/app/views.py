@@ -145,8 +145,6 @@ class TaskCompletedTaskAPIView(generics.UpdateAPIView):
 class CategoryViewSet(viewsets.ModelViewSet, UserQueryset):
   queryset = Category.objects.all()
   serializer_class = CategorySerializer
-  authentication_classes = (TokenAuthentication,)
-  permission_classes = (IsAuthenticated,)
 
 
 class HistoryViewSet(viewsets.ModelViewSet, UserQueryset):

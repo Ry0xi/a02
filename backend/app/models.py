@@ -32,6 +32,7 @@ class Task(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
     category = models.ManyToManyField(Category, through='TaskCategoryRelation')
 
+
 class TaskCategoryRelation(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
