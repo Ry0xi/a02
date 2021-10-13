@@ -34,7 +34,7 @@ class TaskSerializer(serializers.ModelSerializer):
       #'task_id',
       'title', 'detail', 'url', 'created_at', 'priority','next_display_date','display_times','consecutive_times','is_update','user_id', 'category')
       # depth= 1
-    read_only_fields = ('user_id',)
+    read_only_fields = ('priority','user_id','display_times','consecutive_times','is_update',)
 
 class HistorySerializer(serializers.ModelSerializer):
   class Meta:
