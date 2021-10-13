@@ -38,6 +38,7 @@ class TaskViewSet(viewsets.ModelViewSet, UserQueryset):
   queryset = Task.objects.all()
   serializer_class = TaskSerializer
 
+
 # 日ごとのタスク表示
 class TaskDailyAPIView(generics.ListAPIView):
   queryset = Task.objects.all()
