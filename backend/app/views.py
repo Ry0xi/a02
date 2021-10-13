@@ -12,6 +12,7 @@ from rest_framework import viewsets, filters
 
 #作成したモデルとシリアライザをインポート
 from .models import User, Task, Category, History, Setting
+<<<<<<< HEAD
 from .serializer import AuthUserSerializer, TaskSerializer, CategorySerializer, HistorySerializer, TaskCompletedSerializer, SettingSerializer
 
 #viewの操作のため
@@ -20,6 +21,12 @@ from rest_framework.response import Response
 
 # 次回表示日の設定
 import datetime
+=======
+from .serializer import AuthUserSerializer, TaskSerializer, CategorySerializer, HistorySerializer, SettingSerializer
+
+from rest_framework.response import Response
+from rest_framework import status, viewsets
+>>>>>>> ef09e42d77e8ca4f0ad2f09947ef07e89d5b1038
 
 from django.contrib.auth import get_user_model, logout
 from django.core.exceptions import ImproperlyConfigured
@@ -34,10 +41,9 @@ User = get_user_model()
 
 class UserQueryset():
   def get_queryset(self):
-    queryset = self.queryset
-    query_set = queryset.filter(user_id=self.request.user.id)
-    return query_set
-
+      queryset = self.queryset
+      query_set = queryset.filter(user_id=self.request.user.id)
+      return query_set
 
 class SettingViewSet(viewsets.ModelViewSet):
   queryset = Setting.objects.all()
@@ -152,14 +158,14 @@ class TaskCompletedTaskAPIView(generics.UpdateAPIView):
 
 
 
-class CategoryViewSet(viewsets.ModelViewSet, UserQueryset):
+class CategoryViewSet(viewsets.ModelViewSet):
   queryset = Category.objects.all()
   serializer_class = CategorySerializer
   authentication_classes = (TokenAuthentication,)
   permission_classes = (IsAuthenticated,)
 
 
-class HistoryViewSet(viewsets.ModelViewSet, UserQueryset):
+class HistoryViewSet(viewsets.ModelViewSet):
   queryset = History.objects.all()
   serializer_class = HistorySerializer
 
@@ -177,6 +183,20 @@ class ManageUserView(generics.RetrieveUpdateAPIView, UserQueryset):
   def get_object(self):
     return self.request.user
 
+<<<<<<< HEAD
+=======
+
+class SettingLimitViewSet(generics.UpdateAPIView):
+  queryset = Setting.objects.all()
+  serializer_class = SettingSerializer
+
+
+# class SignupViewSet(generics.CreateAPIView):
+#   queryset = User.objects.all()
+#   serializer_class = AuthenticationSerializer
+
+
+>>>>>>> ef09e42d77e8ca4f0ad2f09947ef07e89d5b1038
 class AuthViewSet(viewsets.GenericViewSet):
     permission_classes = [AllowAny, ]
     serializer_class = serializer.EmptySerializer
@@ -188,17 +208,29 @@ class AuthViewSet(viewsets.GenericViewSet):
 
     @action(methods=['POST', ], detail=False)
     def login(self, request):
+<<<<<<< HEAD
         serializers = self.get_serializer(data=request.data)
         serializers.is_valid(raise_exception=True)
         user = get_and_authenticate_user(**serializers.validated_data)
+=======
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = get_and_authenticate_user(**serializer.validated_data)
+>>>>>>> ef09e42d77e8ca4f0ad2f09947ef07e89d5b1038
         data = serializer.AuthUserSerializer(user).data
         return Response(data=data, status=status.HTTP_200_OK)
 
     @action(methods=['POST', ], detail=False)
     def register(self, request):
+<<<<<<< HEAD
         serializers = self.get_serializer(data=request.data)
         serializers.is_valid(raise_exception=True)
         user = create_user_account(**serializers.validated_data)
+=======
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = create_user_account(**serializer.validated_data)
+>>>>>>> ef09e42d77e8ca4f0ad2f09947ef07e89d5b1038
         data = serializer.AuthUserSerializer(user).data
         return Response(data=data, status=status.HTTP_201_CREATED)
     
@@ -222,4 +254,8 @@ class AuthViewSet(viewsets.GenericViewSet):
 
         if self.action in self.serializer_classes.keys():
             return self.serializer_classes[self.action]
+<<<<<<< HEAD
         return super().get_serializer_class()
+=======
+        return super().get_serializer_class()
+>>>>>>> ef09e42d77e8ca4f0ad2f09947ef07e89d5b1038

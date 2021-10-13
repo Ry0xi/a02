@@ -143,8 +143,12 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+<<<<<<< HEAD
 CORS_ORIGIN_WHITELIST = (
  'http://localhost:3000',
 )
 
 AUTH_USER_MODEL = 'app.User'
+=======
+AUTH_USER_MODEL = 'app.User'
+>>>>>>> ef09e42d77e8ca4f0ad2f09947ef07e89d5b1038
