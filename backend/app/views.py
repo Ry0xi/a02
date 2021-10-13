@@ -11,16 +11,26 @@ from rest_framework import generics
 from rest_framework import viewsets, filters
 
 #作成したモデルとシリアライザをインポート
-from .models import User, Task, Category, History
-from .serializer import UserSerializer, TaskSerializer, CategorySerializer, HistorySerializer, TaskCompletedSerializer
+from .models import User, Task, Category, History, Setting
+from .serializer import AuthUserSerializer, TaskSerializer, CategorySerializer, HistorySerializer, TaskCompletedSerializer, SettingSerializer
 
 #viewの操作のため
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 # 次回表示日の設定
 import datetime
 
+from django.contrib.auth import get_user_model, logout
+from django.core.exceptions import ImproperlyConfigured
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
+
+from . import serializer
+from .utils import get_and_authenticate_user, create_user_account
+
+
+User = get_user_model()
 
 class UserQueryset():
   def get_queryset(self):
@@ -29,9 +39,9 @@ class UserQueryset():
     return query_set
 
 
-class UserViewSet(viewsets.ModelViewSet):
-  queryset = User.objects.all()
-  serializer_class = UserSerializer
+class SettingViewSet(viewsets.ModelViewSet):
+  queryset = Setting.objects.all()
+  serializer_class = SettingSerializer
 
 
 class TaskViewSet(viewsets.ModelViewSet, UserQueryset):
@@ -155,7 +165,7 @@ class HistoryViewSet(viewsets.ModelViewSet, UserQueryset):
 
 
 class ManageUserView(generics.RetrieveUpdateAPIView, UserQueryset):
-  serializer_class = UserSerializer
+  serializer_class = AuthUserSerializer
 
   #認証が通ったユーザのみアクセスできるように指定する
   authentication_classes = (TokenAuthentication,)
@@ -166,3 +176,50 @@ class ManageUserView(generics.RetrieveUpdateAPIView, UserQueryset):
   #ログインしているユーザ情報を返す関数
   def get_object(self):
     return self.request.user
+
+class AuthViewSet(viewsets.GenericViewSet):
+    permission_classes = [AllowAny, ]
+    serializer_class = serializer.EmptySerializer
+    serializer_classes = {
+        'login': serializer.UserLoginSerializer,
+        'register': serializer.UserRegisterSerializer,
+        'password_change': serializer.PasswordChangeSerializer,
+    }
+
+    @action(methods=['POST', ], detail=False)
+    def login(self, request):
+        serializers = self.get_serializer(data=request.data)
+        serializers.is_valid(raise_exception=True)
+        user = get_and_authenticate_user(**serializers.validated_data)
+        data = serializer.AuthUserSerializer(user).data
+        return Response(data=data, status=status.HTTP_200_OK)
+
+    @action(methods=['POST', ], detail=False)
+    def register(self, request):
+        serializers = self.get_serializer(data=request.data)
+        serializers.is_valid(raise_exception=True)
+        user = create_user_account(**serializers.validated_data)
+        data = serializer.AuthUserSerializer(user).data
+        return Response(data=data, status=status.HTTP_201_CREATED)
+    
+    @action(methods=['POST', ], detail=False)
+    def logout(self, request):
+        logout(request)
+        data = {'success': 'Sucessfully logged out'}
+        return Response(data=data, status=status.HTTP_200_OK)
+
+    @action(methods=['POST'], detail=False, permission_classes=[IsAuthenticated, ])
+    def password_change(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        request.user.set_password(serializer.validated_data['new_password'])
+        request.user.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_serializer_class(self):
+        if not isinstance(self.serializer_classes, dict):
+            raise ImproperlyConfigured("serializer_classes should be a dict mapping.")
+
+        if self.action in self.serializer_classes.keys():
+            return self.serializer_classes[self.action]
+        return super().get_serializer_class()
