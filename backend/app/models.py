@@ -21,8 +21,8 @@ class Category(models.Model):
 class Task(models.Model):
     # task_id = models.AutoField(primary_key=True) #id
     title = models.CharField(max_length=30, null=False) #task title
-    detail = models.CharField(max_length=1000, null=True) #task detail
-    url = models.CharField(max_length=300, null=True) #task URL
+    detail = models.CharField(max_length=1000, null=True,blank=True) #task detail
+    url = models.CharField(max_length=300, null=True,blank=True) #task URL
     created_at = models.DateTimeField(auto_now=True) #create datetime
     priority = models.IntegerField(default=100, null=False) #priority
     next_display_date = models.DateField(null=False) #next display date
