@@ -9,6 +9,7 @@ class User(models.Model):
     token = models.CharField(max_length=100,null=False) #token
     task_count = models.IntegerField(default=0, null=False) #today's task count
     is_notification = models.BooleanField(default=True, null=False) #notification flag (on/off)
+    update_time = models.IntegerField(default=0, null=False) #Task update time
 
 
 class Category(models.Model):
