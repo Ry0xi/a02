@@ -17,11 +17,11 @@ import Header from '@/components/CommonHeader'
 
 export default {
   components: {
-    Header
+    Header,
   },
   data() {
     return {
-      title: ''
+      title: '',
     }
   },
   created() {
@@ -34,16 +34,7 @@ export default {
     },
     setHeader(title) {
       this.title = title || ''
-    }
-  }
+    },
+  },
 }
 </script>
-
-<style scoped>
-.app-container {
-  background-color: #fff;
-  background-image: url("/img/bg-sp.png");
-  background-size: cover;
-  background-position: top center;
-}
-</style>
