@@ -19,18 +19,18 @@ tasks:             全てのタスクのデータ
 <template>
   <div class="task-add-fab">
     <v-btn
-      id="activator"
       fab
       fixed
       elevation="8"
       color="primary"
-      style="bottom: 64px; right: 8px;"
+      style="bottom: 69px; right: 13px"
+      @click="dialog = true"
     >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
 
     <TaskCreate
-      activator="#activator"
+      v-model="dialog"
       :isDone="false"
       :categoryData="categoryData"
       :tasks="tasks"
@@ -46,11 +46,16 @@ export default {
   props: {
     categoryData: {
       type: Object,
-      required: true
+      required: true,
     },
     tasks: {
       type: Array,
-      required: true
+      required: true,
+    },
+  },
+  data() {
+    return {
+      dialog: false,
     }
   },
   methods: {
@@ -62,11 +67,9 @@ export default {
     },
     addCategoryData(newCategoryData) {
       this.$emit('category:created', newCategoryData)
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
