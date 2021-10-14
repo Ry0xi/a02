@@ -160,7 +160,7 @@ tasks:             全てのタスクのデータ
         :categoryData="categoryData"
         @back="closeCategorySelector()"
         @editCategory="openCategoryEditor($event)"
-        @createNewCategory="openCategoryEditor(''), closeCategorySelector()"
+        @createNewCategory="openCategoryEditor(), closeCategorySelector()"
         @change="editableCategories = $event"
       />
     </v-dialog>
@@ -223,10 +223,6 @@ export default {
     },
     categoryData: {
       type: Object
-    },
-    tasks: {
-      type: Array,
-      required: true
     }
   },
   data() {
@@ -235,7 +231,7 @@ export default {
       snackbarCreate: false,
       categorySelector: false,
       categoryEditor: false,
-      categoryIdForEditor: '',
+      categoryIdForEditor: null,
       editableTaskName: String,
       editableCategories: Array,
       editableIsDone: Boolean,
@@ -315,6 +311,7 @@ export default {
       this.categoryEditor = true
     },
     closeCategoryEditor() {
+      this.categoryIdForEditor = null
       this.categoryEditor = false
     },
     deleteCategory(categoryId) {

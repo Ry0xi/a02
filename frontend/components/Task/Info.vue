@@ -202,7 +202,7 @@ categoryData:      カテゴリの情報をもつ配列
         :categoryData="categoryData"
         @back="closeCategorySelector()"
         @editCategory="openCategoryEditor($event)"
-        @createNewCategory="openCategoryEditor(''), closeCategorySelector()"
+        @createNewCategory="openCategoryEditor(), closeCategorySelector()"
         @change="editableCategories = $event"
       />
     </v-dialog>
@@ -314,7 +314,7 @@ export default {
       categorySelector: false,
       categoryEditor: false,
       dialogDelete: false,
-      categoryIdForEditor: '',
+      categoryIdForEditor: null,
       editableTaskName: String,
       editableCategories: Array,
       editableIsDone: Boolean,
@@ -403,6 +403,7 @@ export default {
       this.categoryEditor = true
     },
     closeCategoryEditor() {
+      this.categoryIdForEditor = null
       this.categoryEditor = false
     },
     openDialogDelete() {
