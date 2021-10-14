@@ -4,15 +4,14 @@
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         icon
-        outlined
         absolute
-        bottom
         right
         v-bind="attrs"
         v-on="on"
         color="primary"
+        style="bottom: 9px"
       >
-        <v-icon>mdi-check</v-icon>
+        <v-icon large>mdi-check-circle-outline</v-icon>
       </v-btn>
     </template>
     <!-- ダイアログで完了後に選択 -->
