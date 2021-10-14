@@ -47,12 +47,10 @@ export default {
     updatePassword() {
       this.messages = []
       if (this.$refs.EmailForm.validate()) {
-        console.log('送信')
         this.$axios
           .put('/api/setting/reset_email', this.user)
           .then(() => {
             this.$router.push('/setting')
-            console.log('更新')
           })
           .catch((error) => {
             this.message = '更新できませんでした'

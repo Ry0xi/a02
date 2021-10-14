@@ -49,11 +49,9 @@ export default {
     updatePassword() {
       this.messages = []
       if (this.$refs.passwordForm.validate()) {
-        console.log('送信')
         this.$axios
           .put('/api/setting/reset_password', this.user)
           .then(() => {
-            console.log('更新')
             this.$router.push('/setting')
           })
           .catch((error) => {
