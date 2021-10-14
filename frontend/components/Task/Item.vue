@@ -28,6 +28,14 @@ export default {
     isDone: {
       type: Boolean
     },
+    taskDate: {
+      type: String,
+      default: '未入力'
+    },
+    taskDetail: {
+      type: String,
+      default: '未入力'
+    },
     categoryData: {
       type: Object
     },
@@ -35,6 +43,14 @@ export default {
     hideDoneBtn: {
       type: Boolean,
       default: false
+    },
+    notifications: {
+      type: Boolean,
+      default: true
+    },
+    isAutoAddedTask: {
+      type: Boolean,
+      default: true
     }
   }
 }

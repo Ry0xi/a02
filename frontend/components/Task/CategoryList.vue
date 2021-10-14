@@ -1,12 +1,19 @@
 <!--
-  @param
+  clearable:    チップを削除できるかどうか
+  categories:   表示するカテゴリの配列
+  categoryData: 表示するカテゴリに関する配列
+  @click:clear: チップを削除した際に発火するイベント。カテゴリIDを返す
 -->
 <template>
   <ul class="task-category-list">
-    <li class="task-category-list-item" v-for="category in categories" :key="category">
+    <li class="task-category-list-item" v-for="category in shownCategories" :key="category">
       <v-chip
+        :close="clearable"
         :color="categoryData[category]['color']"
-      >{{categoryData[category]['name']}}</v-chip>
+        @click:close="deleteCategory(category)"
+      >
+        {{categoryData[category]['name']}}
+      </v-chip>
     </li>
   </ul>
 </template>
@@ -14,12 +21,34 @@
 <script>
 export default {
   props: {
+    clearable: {
+      type: Boolean,
+      default: false
+    },
     categoryData: {
       type: Object,
       required: true
     },
     categories: {
       type: Array
+    }
+  },
+  data() {
+    return {
+      shownCategories: this.categories
+    }
+  },
+  watch: {
+    categories: {
+      handler: function(dataAfter, dataBefore) {
+        this.shownCategories = dataAfter
+      },
+      deep: true
+    }
+  },
+  methods: {
+    deleteCategory(categoryId) {
+      this.$emit('click:clear', categoryId)
     }
   }
 }

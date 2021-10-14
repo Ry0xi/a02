@@ -21,7 +21,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: ['~/plugins/dexie.js'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -41,7 +41,9 @@ export default {
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseURL: 'http://localhost:8000/',
+  },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
@@ -58,18 +60,18 @@ export default {
       dark: false,
       themes: {
         light: {
-          primary: "#F8C852",
+          primary: '#F8C852',
           accent: colors.grey.darken3,
-          secondary: "#DD8800",
+          secondary: '#DD8800',
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
-          success: colors.green.accent3
+          success: colors.green.accent3,
         },
         dark: {
-          primary: "#F8C852",
+          primary: '#F8C852',
           accent: colors.grey.darken3,
-          secondary: "#DD8800",
+          secondary: '#DD8800',
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
