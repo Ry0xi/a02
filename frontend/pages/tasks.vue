@@ -1,19 +1,27 @@
 <template>
   <div class="page-tasks">
-    <TaskListGroupByDate
-      :shownTasks="0"
-      :tasks="testTasks"
-      :categoryData="testCategoryData"
-      @task:deleted="deleteTaskData($event)"
-      @task:updated="updateTaskData($event)"
+    <TaskAddFAB
+      v-if="categoryData"
+      :categoryData="categoryData"
+      @task:created="addTaskData($event)"
       @category:updated="updateCategoryData($event)"
       @category:created="addCategoryData($event)"
     />
+    
+    <Tab
+      leftName="未完了"
+      rightName="完了"
+      v-model="activeTab"
+      class="mb-8"
+    />
 
-    <TaskAddFAB
-      :categoryData="testCategoryData"
-      :tasks="testTasks"
-      @task:created="addTaskData($event)"
+    <TaskListGroupByDate
+      v-if="tasks && categoryData"
+      :shownTasks="activeTab"
+      :tasks="tasks"
+      :categoryData="categoryData"
+      @task:deleted="deleteTaskData($event)"
+      @task:updated="updateTaskData($event)"
       @category:updated="updateCategoryData($event)"
       @category:created="addCategoryData($event)"
     />
@@ -27,78 +35,151 @@ export default {
       header: {
         title: 'タスク一覧'
       },
-      tasks: [],
-      categoryData: [],
-      testTasks: [
-        {'id': '1001', 'name': 'タスク１', 'date': '2021-02-27', 'detail': '教材Aのp23~36を学んで、問題集p41~44を解く。', 'categories': ['0001','0002'], 'isDone': true},
-        {'id': '1002', 'name': 'タスク２未完了', 'date': '2021-02-27', 'detail': '', 'categories': ['0001'], 'isDone': false},
-        {'id': '1003', 'name': 'タスク３タスク３未完了', 'date': '2021-02-27', 'detail': '', 'categories': ['0001','0002'], 'isDone': false},
-        {'id': '1004', 'name': 'タスク４タスク４タスク４タスク４', 'date': '2021-02-27', 'detail': '', 'categories': ['0001','0002', '0003'], 'isDone': true},
-        {'id': '1005', 'name': 'タスク５タスク５タスク５タスク５タスク５タスク５タスク５未完了', 'date': '2021-02-27', 'detail': '', 'categories': ['0001','0002','0003'], 'isDone': false},
-        {'id': '1006', 'name': 'タスク６タスク６タスク６タスク６タスク６タスク６タスク６タスク６タスク６タスク６タスク６', 'date': '2021-02-27', 'detail': '', 'categories': ['0001','0002'], 'isDone': true},
-      ],
-      testCategoryData: {
-        '0001': {'name': 'カテゴリ1カテゴリ1', 'color': '#FFC1C1'},
-        '0002': {'name': 'カテゴリ2', 'color': '#FF9090'},
-        '0003': {'name': 'カテゴリ3', 'color': '#D2BBF7'}
-      }
+      activeTab: 1,
+      tasks: null,
+      categoryData: null,
     }
   },
   mounted() {
     this.updateHeader()
+    this.getCategoryDataFromDB()
+    this.getTasksFromDB()
   },
   methods: {
-    fetchTaskData() {
-      // 仮
-      // this.tasksにAPIで取得したタスクデータを保存
-      console.log('fetchTaskData()')
+    async getTasksFromDB() {
+      console.log('getTasksFromDB')
+
+      await this.$db.task.toArray()
+      .then((tasks) => {
+        console.log('tasks >> 取得成功')
+        console.log(tasks)
+
+        this.tasks = tasks
+      })
+      .catch((e) => {
+        console.log('tasks >> 取得失敗')
+        console.log(e.message)
+      })
+    },
+    async getCategoryDataFromDB() {
+      console.log('getCategoryDataFromDB')
+
+      // カテゴリを取得
+      await this.$db.category.toArray()
+      .then((categoryData) => {
+        console.log('categoryData >> 取得成功')
+
+        // データを整形して保持
+        let newData = {}
+        categoryData.forEach((category) => {
+          newData[category.id] = {'name': category.name, 'color': category.color}
+        })
+        this.categoryData = newData
+      })
+      .catch((e) => {
+        console.log('categoryData >> 取得失敗')
+        console.log(e.message)
+      })
     },
     updateHeader() {
       // タイトルとして使いたい情報を渡す
       this.$nuxt.$emit('updateHeader', this.header.title)
     },
-    addTaskData(newTaskData) {
-      this.testTasks.splice(0, 0, newTaskData)
-      console.log('add new task')
-      console.log('new:')
-      console.log(this.testTasks)
+    // fetchTasks() {
+    //   console.log('fetchTasks()')
+    //   axios.get('/api/task/').then((response) => {
+    //     console.log('タスク取得 >> 成功')
+    //     console.log(response.data)
+
+    //     // IDBに保存
+    //     // this.$db.task.clear()
+    //     // this.$db.task.bulkAdd(response.data)
+
+    //   }).catch((e) => {
+    //     console.log('タスク取得 >> 失敗')
+    //   })
+    // },
+    async addTaskData(newTaskData) {
+      // サーバーに追加する
+      // this.$axios.post('/api/task/', newTaskData).then((response) => {
+        
+      // })
+
+      // 【テスト】
+      const newId = this.makeTmpId('task')
+      newTaskData.id = newId
+
+      // IDBに登録する
+      this.$db.task.add(newTaskData).then(() => {
+        console.log('タスク追加 >> 成功')
+        this.getTasksFromDB()
+      })
+      
     },
     deleteTaskData(taskId) {
-      // 仮
-      console.log('deletedTask:')
-      console.log(this.testTasks.find(task => task.id == taskId))
+      // IDBから削除
+      this.$db.task.delete(taskId).then(() => {
+        console.log('task deleted.')
+        // タスクデータの再読み込み
+        this.getTasksFromDB()
+      })
     },
     updateTaskData(updatedData) {
       const taskId = updatedData.id
-      const targetTaskIndex = this.testTasks.findIndex((task) => {
-        return task.id == taskId
-      })
-      
-      Object.keys(updatedData).forEach(key => {
-        if (key != 'id') {
-          this.$set(this.testTasks[targetTaskIndex], key, updatedData[key])
-        }
+      delete updatedData.id
+
+      this.$db.task.update(taskId, updatedData).then(() => {
+        console.log('task updated.')
+        // タスクデータの再読み込み
+        this.getTasksFromDB()
       })
 
-      console.log('task updated.')
     },
     updateCategoryData(updatedCategoryData) {
       // カテゴリデータを更新
-      const updatedCategoryId = Object.keys(updatedCategoryData)[0]
+      const targetId = updatedCategoryData.id
+      delete updatedCategoryData.id
 
-      Object.keys(this.testCategoryData[updatedCategoryId]).forEach(key => {
-        this.$set(this.testCategoryData[updatedCategoryId], key, updatedCategoryData[updatedCategoryId][key])
-      });
+      this.$db.category.update(targetId, updatedCategoryData).then(() => {
+        console.log('category updated.')
+        // カテゴリデータの再読み込み
+        this.getCategoryDataFromDB()
+      })
 
-      console.log('category updated.')
     },
     addCategoryData(newCategoryData) {
       // カテゴリデータを追加
-      const addedCategoryId = Object.keys(newCategoryData)[0]
+      // 【テスト】
+      const newId = this.makeTmpId('category')
+      newCategoryData.id = newId
 
-      this.$set(this.testCategoryData, addedCategoryId, newCategoryData[addedCategoryId])
+      this.$db.category.add(newCategoryData).then(() => {
+        console.log('category created.')
+        // カテゴリデータの再読み込み
+        this.getCategoryDataFromDB()
+      })
+    },
+    makeTmpId(type) {
+      // 【追加系api通信が新規IDを返すようになるまで使用】仮の新規IDを生成
+      let existIds = []
+      if (type == 'category') {
+        existIds = Object.keys(this.categoryData).map(id => Number(id))
+      } else if (type == 'task') {
+        existIds = this.tasks.map(task => task.id)
+      } else {
+        return
+      }
 
-      console.log('category created.')
+      // 存在しているIDの最大値＋1
+      let maxId = null
+      if (existIds[0]) {
+        maxId = existIds.reduce((a, b) => {
+          return Math.max(a, b)
+        })
+        return maxId + 1
+      } else {
+        return 1
+      }
     }
   }
 }

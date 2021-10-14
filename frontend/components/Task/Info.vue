@@ -10,9 +10,9 @@ categoryData:      カテゴリの情報をもつ配列
 @task:deleted:     タスクの削除ボタンを押した時に発火するイベント
 @task:updated:     タスクの保存ボタンを押した時に発火するイベント
 @category:updated: カテゴリが更新されたときに発火するイベント
-                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                   新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 @category:created: カテゴリが新規作成されたときに発火するイベント
-                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                   新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 -->
 <template>
   <div class="task-info">
@@ -202,7 +202,7 @@ categoryData:      カテゴリの情報をもつ配列
         :categoryData="categoryData"
         @back="closeCategorySelector()"
         @editCategory="openCategoryEditor($event)"
-        @createNewCategory="openCategoryEditor(''), closeCategorySelector()"
+        @createNewCategory="openCategoryEditor(), closeCategorySelector()"
         @change="editableCategories = $event"
       />
     </v-dialog>
@@ -283,7 +283,7 @@ export default {
       required: true
     },
     taskId: {
-      type: String,
+      type: Number,
       required: true
     },
     taskName: {
@@ -314,7 +314,7 @@ export default {
       categorySelector: false,
       categoryEditor: false,
       dialogDelete: false,
-      categoryIdForEditor: '',
+      categoryIdForEditor: null,
       editableTaskName: String,
       editableCategories: Array,
       editableIsDone: Boolean,
@@ -403,6 +403,7 @@ export default {
       this.categoryEditor = true
     },
     closeCategoryEditor() {
+      this.categoryIdForEditor = null
       this.categoryEditor = false
     },
     openDialogDelete() {
