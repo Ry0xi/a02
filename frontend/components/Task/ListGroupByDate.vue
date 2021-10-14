@@ -3,9 +3,9 @@
   tasks: {'id': String, 'name': String, date: String, 'categories': Array, 'isDone': Boolean}の配列
   categoryData: 各カテゴリのデータ。[categoryId(String)]: {'name': String, 'color': String}
   @category:updated: カテゴリが更新されたときに発火するイベント
-                     新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                     新しいカテゴリデータを返す。※TaskCategoryEditorを参照
   @category:created: カテゴリが新規作成されたときに発火するイベント
-                     新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                     新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 -->
 <template>
   <div class="task-list-group-by-date">

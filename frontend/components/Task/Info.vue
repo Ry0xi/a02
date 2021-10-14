@@ -10,9 +10,9 @@ categoryData:      カテゴリの情報をもつ配列
 @task:deleted:     タスクの削除ボタンを押した時に発火するイベント
 @task:updated:     タスクの保存ボタンを押した時に発火するイベント
 @category:updated: カテゴリが更新されたときに発火するイベント
-                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                   新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 @category:created: カテゴリが新規作成されたときに発火するイベント
-                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                   新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 -->
 <template>
   <div class="task-info">
