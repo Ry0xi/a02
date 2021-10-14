@@ -54,7 +54,20 @@ export default {
         console.log('tasks >> 取得成功')
         console.log(tasks)
 
-        this.tasks = tasks
+        let taskData = []
+        tasks.forEach((task) => {
+          const objTaskData = {
+            'id': task.id,
+            'name': task.title,
+            'date': task.date,
+            'detail': task.detail,
+            'categories': task.category_ids,
+            'isDone': task.is_done,
+          }
+          taskData.push(objTaskData)
+        })
+
+        this.tasks = taskData
       })
       .catch((e) => {
         console.log('tasks >> 取得失敗')
@@ -110,7 +123,15 @@ export default {
       newTaskData.id = newId
 
       // IDBに登録する
-      this.$db.task.add(newTaskData).then(() => {
+      const taskDataToAdd = {
+        'id': newId,
+        'title': newTaskData.name,
+        'date': newTaskData.date,
+        'detail': newTaskData.detail,
+        'category_ids': newTaskData.categories,
+        'is_done': newTaskData.isDone,
+      }
+      this.$db.task.add(taskDataToAdd).then(() => {
         console.log('タスク追加 >> 成功')
         this.getTasksFromDB()
       })
@@ -127,8 +148,15 @@ export default {
     updateTaskData(updatedData) {
       const taskId = updatedData.id
       delete updatedData.id
+      const taskData = {
+        'title': updatedData.name,
+        'date': updatedData.date,
+        'detail': updatedData.detail,
+        'category_ids': updatedData.categories,
+        'is_done': updatedData.isDone,
+      }
 
-      this.$db.task.update(taskId, updatedData).then(() => {
+      this.$db.task.update(taskId, taskData).then(() => {
         console.log('task updated.')
         // タスクデータの再読み込み
         this.getTasksFromDB()
