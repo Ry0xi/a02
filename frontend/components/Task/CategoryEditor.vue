@@ -177,7 +177,7 @@ export default {
       this.$emit('back')
     },
     resetData() {
-      this.categoryId = ''
+      this.categoryId = null
       this.newCategoryName = ''
       this.newCategoryColor = DEFAULT_COLOR
     }
