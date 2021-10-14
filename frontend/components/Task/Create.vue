@@ -44,25 +44,26 @@ tasks:             全てのタスクのデータ
             <v-toolbar-items>
               <!-- 保存ボタン -->
               <v-btn icon @click="createTask" :disabled="!canChangeData">
-                <v-icon>mdi-check</v-icon>
+                <v-icon>mdi-content-save</v-icon>
               </v-btn>
             </v-toolbar-items>
           </v-toolbar>
         </v-card-title>
 
         <!-- scrollableプロパティに対応するためv-card-textを使う -->
-        <v-card-text>
+        <v-card-text class="px-2">
           <v-list three-line subheader>
             <v-subheader>基本情報</v-subheader>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>タスクタイトル</v-list-item-title>
+                <v-list-item-title>タイトル</v-list-item-title>
 
                 <v-text-field
                   v-model="editableTaskName"
                   single-line
                   outlined
                   clearable
+                  hide-details
                   placeholder="タスク名"
                   autofocus
                   class="mt-1"
@@ -83,18 +84,19 @@ tasks:             全てのタスクのデータ
             </v-list-item>
 
             <v-list-item>
-              <v-list-item-content style="position: relative">
-                <v-list-item-title> カテゴリ </v-list-item-title>
-                <v-btn
-                  id="open-category-selector"
-                  text
-                  color="secondary"
-                  style="position: absolute; top: 5px; right: 0"
-                  @click.stop="openCategorySelector"
-                >
-                  <v-icon>mdi-plus-circle-outline</v-icon>
-                  カテゴリーを選択
-                </v-btn>
+              <v-list-item-content>
+                <div class="d-flex align-center justify-space-between">
+                  <div>カテゴリ</div>
+                  <v-btn
+                    id="open-category-selector"
+                    text
+                    color="secondary"
+                    @click.stop="openCategorySelector"
+                  >
+                    カテゴリーを選択
+                    <v-icon class="ml-2">mdi-plus-circle</v-icon>
+                  </v-btn>
+                </div>
 
                 <TaskCategoryList
                   v-if="editableCategories[0]"

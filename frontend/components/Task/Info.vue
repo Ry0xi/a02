@@ -59,12 +59,12 @@ categoryData:      カテゴリの情報をもつ配列
         </v-card-title>
 
         <!-- scrollableプロパティに対応するためv-card-textを使う -->
-        <v-card-text>
+        <v-card-text class="px-2">
           <v-list three-line subheader>
             <v-subheader>基本情報</v-subheader>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>タスクタイトル</v-list-item-title>
+                <v-list-item-title>タイトル</v-list-item-title>
                 <p v-if="!editable" class="task-info-data">
                   {{ taskName }}
                 </p>
@@ -75,6 +75,7 @@ categoryData:      カテゴリの情報をもつ配列
                   single-line
                   outlined
                   clearable
+                  hide-details
                   placeholder="タスク名"
                   class="mt-1"
                 >
@@ -98,19 +99,20 @@ categoryData:      カテゴリの情報をもつ配列
             </v-list-item>
 
             <v-list-item>
-              <v-list-item-content style="position: relative">
-                <v-list-item-title> カテゴリ </v-list-item-title>
-                <v-btn
-                  id="open-category-selector"
-                  v-if="editable"
-                  text
-                  color="secondary"
-                  style="position: absolute; top: 5px; right: 0"
-                  @click.stop="openCategorySelector"
-                >
-                  <v-icon>mdi-plus-circle-outline</v-icon>
-                  カテゴリーを選択
-                </v-btn>
+              <v-list-item-content>
+                <div class="d-flex align-center justify-space-between">
+                  <div>カテゴリ</div>
+                  <v-btn
+                    id="open-category-selector"
+                    v-if="editable"
+                    text
+                    color="secondary"
+                    @click.stop="openCategorySelector"
+                  >
+                    カテゴリーを選択
+                    <v-icon class="ml-2">mdi-plus-circle</v-icon>
+                  </v-btn>
+                </div>
 
                 <TaskCategoryList
                   v-if="editable ? editableCategories[0] : categories[0]"
@@ -192,19 +194,19 @@ categoryData:      カテゴリの情報をもつ配列
     <!-- 削除ボタンを押した際に確認するダイアログ -->
     <v-dialog v-model="dialogDelete" max-width="400">
       <v-card>
-        <v-card-title>
-          <v-icon color="yellow darken-2" class="mr-2"
-            >mdi-alert-circle-outline</v-icon
-          >
+        <div class="d-flex align-center pa-4">
+          <v-icon color="yellow darken-2" class="mr-2">
+            mdi-alert-circle-outline
+          </v-icon>
           タスクを削除しますか？
-        </v-card-title>
+        </div>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text @click="closeDialogDelete"> キャンセル </v-btn>
           <v-btn
             dark
             depressed
-            color="red"
+            color="#ef7067"
             @click="
               deleteTask()
               closeDialogDelete()
@@ -217,14 +219,14 @@ categoryData:      カテゴリの情報をもつ配列
     </v-dialog>
 
     <!-- タスク削除時に表示されるお知らせ -->
-    <v-snackbar v-model="snackbarUpdate" timeout="4000" color="secondary">
-      タスクを更新しました。
+    <v-snackbar v-model="snackbarUpdate" timeout="2000">
+      タスクを更新しました
     </v-snackbar>
 
     <!-- タスク削除時に表示されるお知らせ -->
-    <v-snackbar v-model="snackbarDelete" timeout="4000" color="brown darken-4">
-      タスクを削除しました。
-    </v-snackbar>
+    <!-- <v-snackbar v-model="snackbarDelete" timeout="4000">
+      タスクを削除しました
+    </v-snackbar> -->
   </div>
 </template>
 

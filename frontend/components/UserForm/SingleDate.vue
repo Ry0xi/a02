@@ -4,18 +4,14 @@ v-model:      日付
 placeholder:  入力フォームに表示するプレイスホルダー
 -->
 <template>
-  <v-dialog
-    ref="dialog"
-    v-model="dialog"
-    persistent
-    width="290px"
-  >
+  <v-dialog ref="dialog" v-model="dialog" persistent width="290px">
     <template v-slot:activator="{ on, attrs }">
       <v-text-field
         :value="newDate ? newDate : date"
         single-line
         readonly
         outlined
+        hide-details
         append-icon="mdi-calendar-month"
         v-bind="attrs"
         v-on="on"
@@ -27,22 +23,12 @@ placeholder:  入力フォームに表示するプレイスホルダー
       v-model="inputDate"
       scrollable
       locale="jp-ja"
-      :day-format="date => new Date(date).getDate()"
+      :day-format="(date) => new Date(date).getDate()"
       color="primary"
     >
       <v-spacer></v-spacer>
-      <v-btn
-        text
-        color="primary"
-        @click="closeDialog"
-      >
-        Cancel
-      </v-btn>
-      <v-btn
-        text
-        color="primary"
-        @click="sendNewDate(), closeDialog()"
-      >
+      <v-btn text color="primary" @click="closeDialog"> Cancel </v-btn>
+      <v-btn text color="primary" @click="sendNewDate(), closeDialog()">
         OK
       </v-btn>
     </v-date-picker>
@@ -53,16 +39,16 @@ placeholder:  入力フォームに表示するプレイスホルダー
 export default {
   model: {
     prop: 'date',
-    event: 'input'
+    event: 'input',
   },
   props: {
     date: String,
-    placeholder: String
+    placeholder: String,
   },
   data() {
     return {
       dialog: false,
-      newDate: null
+      newDate: null,
     }
   },
   computed: {
@@ -72,26 +58,24 @@ export default {
       },
       set(value) {
         this.newDate = value
-      }
-    }
+      },
+    },
   },
   methods: {
-    closeDialog: function() {
+    closeDialog: function () {
       this.refreshInputDate()
       this.dialog = false
     },
-    refreshInputDate: function() {
+    refreshInputDate: function () {
       this.newDate = null
     },
-    sendNewDate: function() {
+    sendNewDate: function () {
       if (this.newDate && this.newDate != this.date) {
         this.$emit('input', this.newDate)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>
