@@ -62,7 +62,7 @@ export default {
         light: {
           primary: '#F8C852',
           accent: colors.grey.darken3,
-          secondary: '#DD8800',
+          secondary: '#ff930c',
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
@@ -71,7 +71,7 @@ export default {
         dark: {
           primary: '#F8C852',
           accent: colors.grey.darken3,
-          secondary: '#DD8800',
+          secondary: '#ff930c',
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
