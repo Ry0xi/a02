@@ -15,7 +15,7 @@ categoryData:      カテゴリの情報をもつ配列
       fixed
       elevation="8"
       color="primary"
-      style="bottom: 64px; right: 8px;"
+      style="bottom: 69px; right: 13px"
     >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
@@ -36,8 +36,8 @@ export default {
   props: {
     categoryData: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
     createTask(createdTaskData) {
@@ -48,11 +48,9 @@ export default {
     },
     addCategoryData(newCategoryData) {
       this.$emit('category:created', newCategoryData)
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
