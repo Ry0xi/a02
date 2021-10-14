@@ -114,8 +114,8 @@ const DEFAULT_COLOR = '#FFC1C1'
 export default {
   props: {
     id: {
-      type: String,
-      default: ''
+      type: Number,
+      default: null
     },
     name: {
       type: String,

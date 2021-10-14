@@ -283,7 +283,7 @@ export default {
       required: true
     },
     taskId: {
-      type: String,
+      type: Number,
       required: true
     },
     taskName: {
