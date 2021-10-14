@@ -4,7 +4,7 @@ v-model:  月日 (2021-02)
 -->
 <template>
   <v-dialog v-model="dialog" max-width="300px">
-    <template #activator>
+    <template #activator="{ on }">
       <slot name="activator" :on="{ click: open }"></slot>
     </template>
     <v-card>
@@ -33,7 +33,7 @@ export default {
   props: {
     date: {
       type: String,
-      default: '2021-01',
+      default: '2021-01-01',
     },
   },
   data() {
@@ -52,6 +52,8 @@ export default {
     },
     save() {
       this.dialog = false
+      // 日付の01を付ける
+      this.editDate = this.editDate + '-01'
       this.$emit('save', this.editDate)
     },
   },
