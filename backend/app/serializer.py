@@ -36,7 +36,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-  category = CategorySerializer(many=True)
+  category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(),many=True)
+  user_id = UserSerializer(read_only=True)
   class Meta:
     model = Task
     fields = (
@@ -45,16 +46,16 @@ class TaskSerializer(serializers.ModelSerializer):
       # depth= 1
     read_only_fields = ('id','priority','user_id','display_times','consecutive_times','is_update',)
 
-  def create(self, validated_data):
-    task = Task(
-        title=validated_data['title'],
-        detail=validated_data['detail'],
-        url=validated_data['url'],
-        user_id_id=self.context['request'].user.id,
-        category=validated_data['category'],
-    )
-    task.save()
-    return task
+  # def create(self, validated_data):
+  #   task = Task(
+  #       title=validated_data['title'],
+  #       detail=validated_data['detail'],
+  #       url=validated_data['url'],
+  #       user_id_id=self.context['request'].user.id,
+  #       category=validated_data['category'],
+  #   )
+  #   task.save()
+  #   return task
 
 class HistorySerializer(serializers.ModelSerializer):
   class Meta:
