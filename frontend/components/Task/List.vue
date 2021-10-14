@@ -1,11 +1,11 @@
 <!--
-  shownTasks: 0 -> 全て、1 -> 未完了のタスクのみ、2 -> 完了のみ
-  tasks: {'id': String, 'name': String, 'categories': Array, 'isDone': Boolean}の配列
-  categoryData: 各カテゴリのデータ。[categoryId(String)]: {'name': String, 'color': String}
-  @category:updated: カテゴリが更新されたときに発火するイベント
-                     新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
-  @category:created: カテゴリが新規作成されたときに発火するイベント
-                     新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+  shownTasks:         0 -> 全て、1 -> 未完了のタスクのみ、2 -> 完了のみ
+  tasks:              {'id': String, 'name': String, 'categories': Array, 'isDone': Boolean}の配列
+  categoryData:       各カテゴリのデータ。[categoryId(String)]: {'name': String, 'color': String}
+  @category:updated:  カテゴリが更新されたときに発火するイベント
+                      新しいカテゴリデータを返す。※TaskCategoryEditorを参照
+  @category:created:  カテゴリが新規作成されたときに発火するイベント
+                      新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 -->
 <template>
   <ul class="task-list">

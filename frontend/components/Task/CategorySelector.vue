@@ -64,7 +64,7 @@ categoryData:     全てのカテゴリのデータの配列
                 <v-btn
                   icon
                   color="#707070"
-                  @click.stop="$emit('editCategory', categoryId)"
+                  @click.stop="$emit('editCategory', Number(categoryId))"
                 >
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
