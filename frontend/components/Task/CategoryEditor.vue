@@ -5,9 +5,9 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
 @back:  戻るボタンを押した時に発火するイベント
 @done:  完了(追加)ボタンを押した時に発火するイベント
 @category:created: 追加ボタンを押して、カテゴリを作成した後に発火するイベント
-                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                   新しいカテゴリデータを返す。{'name': 'タスク名', 'color': '#XXXXXX'}
 @category:updated: 追加ボタンを押して、カテゴリを更新した後に発火するイベント
-                   更新されたカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                   更新されたカテゴリデータを返す。{'id': 1 'name': 'タスク名', 'color': '#XXXXXX'}
 -->
 <template>
   <v-card flat>
@@ -157,18 +157,13 @@ export default {
         return
       }
 
-      // 【テスト用】仮の新規カテゴリIDを生成
-      const min = 1000
-      const max = 9999
-      const testCategoryId = Math.floor( Math.random() * (max + 1 - min) ) + min
-      const idForNewData = this.categoryId ? this.categoryId : testCategoryId
       const newCategoryData = {
-        [idForNewData]: {
-          'name': this.newCategoryName,
-          'color': this.newCategoryColor
-        }
+        'name': this.newCategoryName,
+        'color': this.newCategoryColor
       }
+
       if (this.categoryId) {
+        newCategoryData.id = this.categoryId
         this.$emit('category:updated', newCategoryData)
       } else {
         this.$emit('category:created', newCategoryData)

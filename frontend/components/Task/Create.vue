@@ -10,7 +10,6 @@ tasks:             全てのタスクのデータ
 @task:created:     タスクの保存ボタンを押した時に発火するイベント
                    タスクオブジェクトを返す
                    {
-                     'id': this.taskId,
                      'name': this.editableTaskName,
                      'categories': this.editableCategories,
                      'isDone': this.editableIsDone,
@@ -18,9 +17,9 @@ tasks:             全てのタスクのデータ
                      'detail': this.editableTaskDetail
                    }
 @category:updated: カテゴリが更新されたときに発火するイベント
-                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                   新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 @category:created: カテゴリが新規作成されたときに発火するイベント
-                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                   新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 -->
 <template>
   <div class="task-info">
@@ -274,22 +273,6 @@ export default {
       get() {
         return this.categoryIdForEditor ? this.categoryData[this.categoryIdForEditor].color : ''
       }
-    },
-    newTaskId: function() {
-      let newTaskId = ""
-      const min = 1000
-      const max = 9999
-      let ok = false
-      while (!ok) {
-        // 新規タスクIDを生成
-        newTaskId = String(Math.floor( Math.random() * (max + 1 - min) ) + min)
-        // 既存のタスクのIDと被っていなければ決定
-        if (!this.tasks.find(task => task.id == newTaskId)) {
-          ok = true
-        }
-      }
-
-      return newTaskId
     }
   },
   created: function() {
@@ -310,7 +293,6 @@ export default {
     createTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const createdTaskData = {
-        'id': this.newTaskId,
         'name': this.editableTaskName,
         'categories': this.editableCategories,
         'isDone': this.editableIsDone,
