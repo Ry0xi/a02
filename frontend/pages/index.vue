@@ -23,6 +23,15 @@
       @category:updated="updateCategoryData($event)"
       @category:created="addCategoryData($event)"
     />
+    
+    <!-- タスク削除時に表示されるお知らせ -->
+    <v-snackbar
+      v-model="snackbarDelete"
+      timeout="4000"
+      color="brown darken-4"
+    >
+      タスクを削除しました。
+    </v-snackbar>
   </div>
 </template>
 
@@ -36,6 +45,7 @@ export default {
       activeTab: 1,
       tasks: null,
       categoryData: null,
+      snackbarDelete: false,
     }
   },
   mounted() {
@@ -142,6 +152,9 @@ export default {
         // タスクデータの再読み込み
         this.getTasksFromDB()
       })
+      
+      // 削除を通知
+      this.snackbarDelete = true
     },
     updateTaskData(updatedData) {
       const taskId = updatedData.id
