@@ -183,7 +183,6 @@ export default {
   props: {
     dialog: {
       type: Boolean,
-      required: true,
     },
     taskName: {
       type: String,

@@ -39,6 +39,11 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      dialog: false,
+    }
+  },
   methods: {
     createTask(createdTaskData) {
       this.$emit('task:created', createdTaskData)
