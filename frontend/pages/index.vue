@@ -150,15 +150,8 @@ export default {
     updateTaskData(updatedData) {
       const taskId = updatedData.id
       delete updatedData.id
-      const taskData = {
-        'title': updatedData.name,
-        'date': updatedData.date,
-        'detail': updatedData.detail,
-        'category_ids': updatedData.categories,
-        'is_done': updatedData.isDone,
-      }
 
-      this.$db.task.update(taskId, taskData).then(() => {
+      this.$db.task.update(taskId, updatedData).then(() => {
         console.log('task updated.')
         // タスクデータの再読み込み
         this.getTasksFromDB()
