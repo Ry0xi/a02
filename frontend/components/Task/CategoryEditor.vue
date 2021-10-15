@@ -13,15 +13,8 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
   <v-card flat>
     <!-- 親コンポーネントのv-dialogにおけるscrollableプロパティに対応するためv-card-titleを使う -->
     <v-card-title class="pa-0">
-      <v-toolbar
-        flat
-        class="transparent"
-      >
-        <v-btn
-          icon
-          color="secondary"
-          @click="goBack"
-        >
+      <v-toolbar flat class="transparent">
+        <v-btn icon color="secondary" @click="goBack">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
         <v-toolbar-title class="category-editor-header-title">
@@ -32,7 +25,7 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
     </v-card-title>
 
     <!-- 親コンポーネントのv-dialogにおけるscrollableプロパティに対応するためv-card-textを使う -->
-    <v-card-text>
+    <v-card-text class="px-2 pb-0">
       <v-list>
         <v-list-item>
           <v-list-item-content>
@@ -42,45 +35,40 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
               outlined
               single-line
               autofocus
+              hide-details
               placeholder="マイカテゴリ"
-              class="mt-1"
             ></v-text-field>
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>カテゴリの色</v-list-item-title>
-            <v-item-group
-              v-model="newCategoryColor"
-              mandatory
-            >
+            <v-item-group v-model="newCategoryColor" mandatory>
               <v-row
                 v-for="nRow in Math.ceil(colors.length / 5)"
                 :key="nRow"
                 class="ma-auto align-center justify-center"
               >
-                <v-col
-                  v-for="nCol in 5"
-                  :key="nCol"
-                  class="pa-1"
-                >
+                <v-col v-for="nCol in 5" :key="nCol" class="pa-1">
                   <v-item
-                    :value="colors[(nCol - 1) + (nRow - 1) * 5]"
+                    :value="colors[nCol - 1 + (nRow - 1) * 5]"
                     v-slot="{ active, toggle }"
                   >
                     <v-card
                       @click="toggle"
-                      :color="colors[(nCol - 1) + (nRow - 1) * 5]"
+                      :color="colors[nCol - 1 + (nRow - 1) * 5]"
                       flat
-                      width="100%"
-                      :style="{aspectRatio: 1, border: active ? '2px solid #707070' : 'none'}"
+                      width="80%"
+                      :style="{
+                        borderRadius: '50%',
+                        aspectRatio: 1,
+                        border: active ? '2px solid #707070' : 'none',
+                      }"
                     >
                       <v-scroll-y-transition>
-                        <v-icon
-                          v-if="active"
-                          dark
-                          class="icon-selected"
-                        >mdi-check</v-icon>
+                        <v-icon v-if="active" dark class="icon-selected"
+                          >mdi-check</v-icon
+                        >
                       </v-scroll-y-transition>
                     </v-card>
                   </v-item>
@@ -92,13 +80,13 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
       </v-list>
     </v-card-text>
 
-    <v-card-actions>
+    <v-card-actions class="mb-2">
       <v-btn
         block
         depressed
         rounded
         :disabled="!newCategoryName || !newCategoryColor"
-        height="42"
+        height="48"
         color="primary"
         @click="save"
       >
@@ -115,51 +103,65 @@ export default {
   props: {
     id: {
       type: Number,
-      default: null
+      default: null,
     },
     name: {
       type: String,
-      default: ''
+      default: '',
     },
     color: {
       type: String,
-      default: DEFAULT_COLOR
-    }
+      default: DEFAULT_COLOR,
+    },
   },
   data() {
     return {
       categoryId: this.id,
       newCategoryName: this.name,
       newCategoryColor: this.color,
-      colors: ['#FFC1C1','#FF9090','#D2BBF7','#8B89B9','#B9E4FF','#8EA9F4','#FFE989','#FFCB83','#A3E69A','#74B27A']
+      colors: [
+        '#FFC1C1',
+        '#FF9090',
+        '#D2BBF7',
+        '#8B89B9',
+        '#B9E4FF',
+        '#8EA9F4',
+        '#FFE989',
+        '#FFCB83',
+        '#A3E69A',
+        '#74B27A',
+      ],
     }
   },
   watch: {
-    id: function(newId) {
+    id: function (newId) {
       this.categoryId = newId
     },
-    name: function(newName) {
+    name: function (newName) {
       this.newCategoryName = newName
     },
-    color: function(newColor) {
+    color: function (newColor) {
       this.newCategoryColor = newColor
-    }
+    },
   },
   methods: {
     save() {
       // 変化がなかった場合や入力がされていない場合は何もしない
-      if (!this.newCategoryName ||
-          !this.newCategoryColor || 
-          this.id == this.categoryId && this.name == this.newCategoryName && this.color == this.newCategoryColor) {
-        
+      if (
+        !this.newCategoryName ||
+        !this.newCategoryColor ||
+        (this.id == this.categoryId &&
+          this.name == this.newCategoryName &&
+          this.color == this.newCategoryColor)
+      ) {
         this.resetData()
         this.$emit('done')
         return
       }
 
       const newCategoryData = {
-        'name': this.newCategoryName,
-        'color': this.newCategoryColor
+        name: this.newCategoryName,
+        color: this.newCategoryColor,
       }
 
       if (this.categoryId) {
@@ -180,8 +182,8 @@ export default {
       this.categoryId = null
       this.newCategoryName = ''
       this.newCategoryColor = DEFAULT_COLOR
-    }
-  }
+    },
+  },
 }
 </script>
 

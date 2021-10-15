@@ -40,6 +40,7 @@
 
 <script>
 export default {
+  layout: 'login',
   data() {
     return {
       isActive: 1,

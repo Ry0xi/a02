@@ -18,7 +18,7 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: ['@/assets/css/style.scss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: ['~/plugins/dexie.js'],
@@ -62,7 +62,7 @@ export default {
         light: {
           primary: '#F8C852',
           accent: colors.grey.darken3,
-          secondary: '#DD8800',
+          secondary: '#ff930c',
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
@@ -71,7 +71,7 @@ export default {
         dark: {
           primary: '#F8C852',
           accent: colors.grey.darken3,
-          secondary: '#DD8800',
+          secondary: '#ff930c',
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
