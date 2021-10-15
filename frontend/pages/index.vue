@@ -27,8 +27,7 @@
     <!-- タスク削除時に表示されるお知らせ -->
     <v-snackbar
       v-model="snackbarDelete"
-      timeout="4000"
-      color="brown darken-4"
+      timeout="2000"
     >
       タスクを削除しました。
     </v-snackbar>

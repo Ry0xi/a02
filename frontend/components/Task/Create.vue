@@ -186,8 +186,7 @@ tasks:             全てのタスクのデータ
     <!-- タスク追加時に表示されるお知らせ -->
     <v-snackbar
       v-model="snackbarCreate"
-      timeout="4000"
-      color="secondary"
+      timeout="2000"
     >
       タスクを追加しました。
     </v-snackbar>
