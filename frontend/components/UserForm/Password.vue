@@ -10,7 +10,6 @@ noValidation: バリデーションメッセージを表示しない
       :type="toggle.type"
       :prepend-inner-icon="noIcon ? '' : 'mdi-lock'"
       :append-icon="toggle.icon"
-      single-line
       outlined
       :label="label"
       :rules="form.rules"

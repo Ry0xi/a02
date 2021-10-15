@@ -8,7 +8,7 @@ v-model: 時間
       <slot name="activator" :on="{ click: open }"></slot>
     </template>
     <v-card>
-      <v-time-picker v-model="editTime" format="ampm" full-width>
+      <v-time-picker v-model="editTime" format="24hr" full-width>
       </v-time-picker>
       <v-card-actions>
         <v-spacer></v-spacer>

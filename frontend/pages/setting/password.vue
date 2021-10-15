@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Loading :loading="loading" />
     <v-form ref="passwordForm">
       <UserFormPassword
         v-model="user.password"
@@ -9,7 +10,7 @@
       />
 
       <UserFormPassword
-        v-model="user.newpassword"
+        v-model="user.newPassword"
         noIcon
         label="新しいパスワード"
       />
@@ -30,9 +31,10 @@ export default {
         title: 'パスワードの設定',
         backUrl: '/setting',
       },
+      loading: false,
       user: {
         password: '',
-        newpassword: '',
+        newPassword: '',
       },
       message: null,
     }
@@ -47,14 +49,16 @@ export default {
     },
     // パスワードの更新
     updatePassword() {
-      this.messages = []
+      this.message = null
       if (this.$refs.passwordForm.validate()) {
+        this.loading = true
         this.$axios
           .put('/api/setting/reset_password', this.user)
           .then(() => {
             this.$router.push('/setting')
           })
           .catch((error) => {
+            this.loading = false
             this.message = '更新できませんでした'
           })
       }

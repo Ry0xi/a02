@@ -45,14 +45,16 @@ export default {
     },
     // メールアドレスの更新
     updatePassword() {
-      this.messages = []
+      this.message = null
       if (this.$refs.EmailForm.validate()) {
+        this.loading = true
         this.$axios
           .put('/api/setting/reset_email', this.user)
           .then(() => {
             this.$router.push('/setting')
           })
           .catch((error) => {
+            this.loading = false
             this.message = '更新できませんでした'
           })
       }

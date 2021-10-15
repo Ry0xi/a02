@@ -4,7 +4,7 @@
       <v-container>
         <v-card outlined>
           <v-toolbar flat>
-            <v-btn　large icon color="primary" :to="backUrl">
+            <v-btn large icon color="primary" @click="backSetting">
               <v-icon>mdi-arrow-left-circle</v-icon>
             </v-btn>
             <v-toolbar-title>{{ title }}</v-toolbar-title>
@@ -36,6 +36,9 @@ export default {
     setHeader(header) {
       this.title = header.title || ''
       this.backUrl = header.backUrl || '/setting'
+    },
+    backSetting() {
+      this.$router.push({ path: this.backUrl })
     },
   },
 }

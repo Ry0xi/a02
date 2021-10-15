@@ -8,7 +8,6 @@ noValidation: バリデーションメッセージを表示しない
     <v-text-field
       v-model="setEmail"
       :prepend-inner-icon="noIcon ? '' : 'mdi-email'"
-      single-line
       outlined
       :rules="form.rules"
       :label="label"
@@ -27,7 +26,7 @@ export default {
     email: String,
     label: {
       type: String,
-      default: 'パスワード',
+      default: 'メールアドレス',
     },
     noValidation: {
       type: Boolean,

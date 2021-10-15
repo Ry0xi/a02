@@ -3,9 +3,7 @@
     <!-- 一般設定 -->
     <v-card outlined class="mb-4 pa-2">
       <v-list two-line subheader>
-        <v-subheader>
-          <v-icon small class="mr-2">mdi-cog</v-icon> 一般
-        </v-subheader>
+        <v-subheader> <v-icon class="mr-2">mdi-cog</v-icon> 一般 </v-subheader>
 
         <v-list-item @click="limitDialog = true">
           <v-list-item-content>
@@ -20,6 +18,7 @@
               <v-list dense>
                 <v-list-item
                   v-for="limit in limits"
+                  :key="limit"
                   @click="updateLimit(limit)"
                 >
                   <v-list-item-content>
@@ -70,7 +69,7 @@
     <v-card outlined class="mb-4 pa-2">
       <v-list subheader>
         <v-subheader>
-          <v-icon small class="mr-2">mdi-account-circle</v-icon> アカウント
+          <v-icon class="mr-2">mdi-account-circle</v-icon> アカウント
         </v-subheader>
 
         <v-list-item to="/setting/email">
@@ -109,7 +108,7 @@
     <v-card outlined class="mb-4 pa-2">
       <v-list subheader>
         <v-subheader>
-          <v-icon small class="mr-2">mdi-information</v-icon> アプリについて
+          <v-icon class="mr-2">mdi-information</v-icon> アプリについて
         </v-subheader>
 
         <v-list-item>
@@ -159,7 +158,6 @@ export default {
     },
     // 通知設定の更新
     updateNotice() {
-      console.log(this.is_notification)
       this.$axios
         .put('/api/setting/notification', this.notice)
         .then(console.log('更新'))
