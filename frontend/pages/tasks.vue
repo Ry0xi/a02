@@ -132,15 +132,7 @@ export default {
       newTaskData.id = newId
 
       // IDBに登録する
-      const taskDataToAdd = {
-        'id': newId,
-        'title': newTaskData.name,
-        'date': newTaskData.date,
-        'detail': newTaskData.detail,
-        'category_ids': newTaskData.categories,
-        'is_done': newTaskData.isDone,
-      }
-      this.$db.task.add(taskDataToAdd).then(() => {
+      this.$db.task.add(newTaskData).then(() => {
         console.log('タスク追加 >> 成功')
         this.getTasksFromDB()
       })

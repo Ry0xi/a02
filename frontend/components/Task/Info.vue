@@ -371,9 +371,9 @@ export default {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const updatedTaskData = {
         'id': this.taskId,
-        'name': this.editableTaskName,
-        'categories': this.editableCategories,
-        'isDone': this.editableIsDone,
+        'title': this.editableTaskName,
+        'category_ids': this.editableCategories,
+        'is_done': this.editableIsDone,
         'date': this.editableTaskDate,
         'detail': this.editableTaskDetail
       }
