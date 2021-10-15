@@ -132,9 +132,8 @@ categoryData:      カテゴリの情報をもつ配列
               <v-list-item-content>
                 <v-list-item-title>内容</v-list-item-title>
                 <!-- ここのpタグ内を改行すると表示にも反映されてしまう -->
-                <p v-if="!editable" class="task-info-data task-info-detail">
-                  {{ taskDetail }}
-                </p>
+                <p v-if="!editable" class="task-info-data task-info-detail"
+                >{{ taskDetail }}</p>
                 <v-textarea
                   v-else
                   v-model="editableTaskDetail"
