@@ -14,28 +14,20 @@ categoryData:     全てのカテゴリのデータの配列
   <v-card flat>
     <!-- 親コンポーネントのv-dialogにおけるscrollableプロパティに対応するためv-card-titleを使う -->
     <v-card-title class="pa-0">
-      <v-toolbar
-        flat
-        class="transparent"
-      >
-        <v-btn
-          icon
-          color="secondary"
-          @click="back()"
-        >
-          <v-icon>mdi-arrow-left</v-icon>
+      <v-toolbar flat class="transparent">
+        <v-btn icon color="secondary" @click="back()">
+          <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-toolbar-title class="category-selector-header-title">カテゴリを選択</v-toolbar-title>
+        <v-toolbar-title class="category-selector-header-title">
+          カテゴリを選択
+        </v-toolbar-title>
       </v-toolbar>
     </v-card-title>
-    
+
     <!-- 親コンポーネントのv-dialogにおけるscrollableプロパティに対応するためv-card-textを使う -->
-    <v-card-text>
+    <v-card-text class="px-2 pb-0">
       <v-list>
-        <v-list-item-group
-          v-model="newCategories"
-          multiple
-        >
+        <v-list-item-group v-model="newCategories" multiple>
           <v-list-item
             v-for="(category, categoryId) in categoryData"
             :key="categoryId"
@@ -43,9 +35,8 @@ categoryData:     全てのカテゴリのデータの配列
           >
             <template v-slot:default="{ active }">
               <v-card
-                width="36"
-                max-width="36"
-                height="36"
+                width="30"
+                height="30"
                 flat
                 :color="category.color"
                 class="mr-2 category-list-color"
@@ -55,12 +46,9 @@ categoryData:     全てのカテゴリのデータの配列
               </v-list-item-content>
 
               <v-list-item-action>
-                <v-checkbox
-                  :input-value="active"
-                  color="primary"
-                ></v-checkbox>
+                <v-checkbox :input-value="active" color="primary"></v-checkbox>
               </v-list-item-action>
-              <v-list-item-action>
+              <v-list-item-action class="my-0 ml-2">
                 <v-btn
                   icon
                   color="#707070"
@@ -82,8 +70,8 @@ categoryData:     全てのカテゴリのデータの配列
         class="mx-auto"
         @click="$emit('createNewCategory')"
       >
-        <v-icon>mdi-plus-circle-outline</v-icon>
         カテゴリを新規作成
+        <v-icon class="ml-2">mdi-plus-circle</v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -95,18 +83,18 @@ export default {
     categories: Array,
     categoryData: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      newCategories: this.categories
+      newCategories: this.categories,
     }
   },
   watch: {
-    categories: function(newArray) {
+    categories: function (newArray) {
       this.newCategories = newArray
-    }
+    },
   },
   methods: {
     back() {
@@ -114,14 +102,16 @@ export default {
       this.$emit('back')
     },
     save() {
-      if (JSON.stringify(this.categories) == JSON.stringify(this.newCategories)) {
+      if (
+        JSON.stringify(this.categories) == JSON.stringify(this.newCategories)
+      ) {
         return true
       } else {
         // 変更があった場合はイベントを発火。
         this.$emit('change', this.newCategories)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

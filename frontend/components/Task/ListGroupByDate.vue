@@ -10,11 +10,15 @@
 <template>
   <div class="task-list-group-by-date">
     <div class="tasks-on-the-date" v-for="date in datesInTasks" :key="date">
-      <h3 class="tasks-date">{{date}}</h3>
+      <h3 class="tasks-date">{{ formatDate(date) }}</h3>
       <ul class="task-list">
-        <li class="task-list-item" v-for="task in tasksGroupByDate[date]" :key="task.id">
+        <li
+          class="task-list-item"
+          v-for="task in tasksGroupByDate[date]"
+          :key="task.id"
+        >
           <TaskItem
-            :id="'activator'+task.id"
+            :id="'activator' + task.id"
             v-show="shownTasks == 0 || isShownTask(task)"
             :taskName="task.name"
             :taskDate="task.date"
@@ -25,7 +29,7 @@
             :hideDoneBtn="hideDoneBtn"
           />
           <TaskInfo
-            :activator="'#activator'+task.id"
+            :activator="'#activator' + task.id"
             :taskId="task.id"
             :taskName="task.name"
             :taskDate="task.date"
@@ -49,21 +53,28 @@ export default {
   props: {
     shownTasks: {
       type: Number,
-      default: 0
+      default: 0,
     },
     tasks: {
-      type: Array
+      type: Array,
     },
     categoryData: {
-      type: Object
+      type: Object,
     },
     hideDoneBtn: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   methods: {
-    isShownTask: function(task) {
+    formatDate(date) {
+      const dt = new Date(date)
+      const year = dt.getFullYear()
+      const month = dt.getMonth() + 1
+      const day = dt.getDate()
+      return `${year}年${month}月${day}日`
+    },
+    isShownTask: function (task) {
       // すべて表示する
       if (this.shownTasks === 0) {
         return true
@@ -76,10 +87,10 @@ export default {
         return false
       }
     },
-    deleteTask: function(taskId) {
+    deleteTask: function (taskId) {
       this.$emit('task:deleted', taskId)
     },
-    updateTask: function(updatedData) {
+    updateTask: function (updatedData) {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       this.$emit('task:updated', updatedData)
     },
@@ -88,40 +99,42 @@ export default {
     },
     addCategoryData(newCategoryData) {
       this.$emit('category:created', newCategoryData)
-    }
+    },
   },
   computed: {
-    datesInTasks: function() {
+    datesInTasks: function () {
       // 昇順にソートされ、重複のない日付の配列
       return [...new Set(this.tasks.map((task) => task.date))].sort()
     },
-    tasksGroupByDate: function() {
+    tasksGroupByDate: function () {
       let groupedTasks = {}
-      this.datesInTasks.forEach(date => {
+      this.datesInTasks.forEach((date) => {
         groupedTasks[date] = this.tasks.filter((task) => task['date'] === date)
       })
       return groupedTasks
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .tasks-on-the-date {
   & + & {
-    margin-top: 24px;
+    margin-top: 20px;
   }
 }
 
 .tasks-date {
-  color: #525252;
+  margin-left: 5px;
+  font-size: 16px;
+  color: #747474;
 }
 
 .task-list {
   list-style: none;
   padding: 0;
 
-  &-item + &-item{
+  &-item + &-item {
     margin-top: 16px;
   }
 }

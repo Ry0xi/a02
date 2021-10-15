@@ -1,9 +1,9 @@
 <template>
   <v-app class="app-container">
-    <CommonHeader :title="title" />
+    <!-- <CommonHeader :title="title" /> -->
 
     <v-main>
-      <v-container>
+      <v-container class="mt-4">
         <Nuxt />
       </v-container>
     </v-main>
@@ -13,15 +13,10 @@
 </template>
 
 <script>
-import Header from '@/components/CommonHeader'
-
 export default {
-  components: {
-    Header
-  },
   data() {
     return {
-      title: ''
+      title: '',
     }
   },
   created() {
@@ -34,16 +29,7 @@ export default {
     },
     setHeader(title) {
       this.title = title || ''
-    }
-  }
+    },
+  },
 }
 </script>
-
-<style scoped>
-.app-container {
-  background-color: #fff;
-  background-image: url("/img/bg-sp.png");
-  background-size: cover;
-  background-position: top center;
-}
-</style>

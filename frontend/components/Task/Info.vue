@@ -21,30 +21,19 @@ categoryData:      カテゴリの情報をもつ配列
       :activator="activator"
       fullscreen
       scrollable
+      transition="dialog-bottom-transition"
     >
       <!-- タスクの詳細を表示するダイアログ -->
       <v-card tile>
         <!-- scrollableプロパティに対応するためv-card-titleを使う -->
         <v-card-title class="pa-0">
-          <v-toolbar
-            dark
-            flat
-            color="primary"
-          >
+          <v-toolbar dark flat color="primary">
             <!-- 詳細ダイアログを閉じる -->
-            <v-btn
-              v-if="!editable"
-              icon
-              @click="dialog = false"
-            >
+            <v-btn v-if="!editable" icon @click="dialog = false">
               <v-icon>mdi-close</v-icon>
             </v-btn>
             <!-- タスクの変更ダイアログを閉じる -->
-            <v-btn
-              v-else
-              icon
-              @click="closeTaskEditor"
-            >
+            <v-btn v-else icon @click="closeTaskEditor">
               <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
             <v-toolbar-title v-if="!editable">タスクの詳細</v-toolbar-title>
@@ -52,50 +41,31 @@ categoryData:      カテゴリの情報をもつ配列
             <v-spacer></v-spacer>
             <v-toolbar-items>
               <!-- 削除ボタン -->
-              <v-btn
-                icon
-                v-if="!editable"
-                @click="openDialogDelete"
-              >
+              <v-btn icon v-if="!editable" @click="openDialogDelete">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
 
               <!-- 編集ボタン -->
-              <v-btn
-                icon
-                v-if="!editable"
-                @click="openTaskEditor"
-              >
+              <v-btn icon v-if="!editable" @click="openTaskEditor">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
 
               <!-- 保存ボタン -->
-              <v-btn
-                v-else
-                icon
-                @click="updateTask"
-                :disabled="!canChangeData"
-              >
+              <v-btn v-else icon @click="updateTask" :disabled="!canChangeData">
                 <v-icon>mdi-content-save</v-icon>
               </v-btn>
             </v-toolbar-items>
           </v-toolbar>
         </v-card-title>
-        
+
         <!-- scrollableプロパティに対応するためv-card-textを使う -->
-        <v-card-text>
-          <v-list
-            three-line
-            subheader
-          >
+        <v-card-text class="px-2">
+          <v-list three-line subheader>
             <v-subheader>基本情報</v-subheader>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>タスクタイトル</v-list-item-title>
-                <p
-                  v-if="!editable"
-                  class="task-info-data"
-                >
+                <v-list-item-title>タイトル</v-list-item-title>
+                <p v-if="!editable" class="task-info-data">
                   {{ taskName }}
                 </p>
 
@@ -105,6 +75,7 @@ categoryData:      カテゴリの情報をもつ配列
                   single-line
                   outlined
                   clearable
+                  hide-details
                   placeholder="タスク名"
                   class="mt-1"
                 >
@@ -115,10 +86,7 @@ categoryData:      カテゴリの情報をもつ配列
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>直近の表示日</v-list-item-title>
-                <p
-                  v-if="!editable"
-                  class="task-info-data"
-                >
+                <p v-if="!editable" class="task-info-data">
                   {{ taskDate }}
                 </p>
 
@@ -131,22 +99,22 @@ categoryData:      カテゴリの情報をもつ配列
             </v-list-item>
 
             <v-list-item>
-              <v-list-item-content style="position: relative;">
-                <v-list-item-title>
-                  カテゴリ
-                </v-list-item-title>
-                <v-btn
-                  id="open-category-selector"
-                  v-if="editable"
-                  text
-                  color="secondary"
-                  style="position: absolute; top: 5px; right: 0;"
-                  @click.stop="openCategorySelector"
-                >
-                  <v-icon>mdi-plus-circle-outline</v-icon>
-                  カテゴリーを選択
-                </v-btn>
-                
+              <v-list-item-content>
+                <div class="d-flex align-center justify-space-between">
+                  <v-list-item-title>カテゴリ</v-list-item-title>
+                  <v-btn
+                    id="open-category-selector"
+                    v-if="editable"
+                    text
+                    class="pa-0"
+                    color="secondary"
+                    @click.stop="openCategorySelector"
+                  >
+                    カテゴリを選択
+                    <v-icon class="ml-2">mdi-plus-circle</v-icon>
+                  </v-btn>
+                </div>
+
                 <TaskCategoryList
                   v-if="editable ? editableCategories[0] : categories[0]"
                   :clearable="editable"
@@ -155,7 +123,9 @@ categoryData:      カテゴリの情報をもつ配列
                   :categoryData="categoryData"
                   class="mt-2"
                 />
-                <v-list-item-subtitle v-else>カテゴリが設定されていません</v-list-item-subtitle>
+                <v-list-item-subtitle v-else
+                  >カテゴリが設定されていません</v-list-item-subtitle
+                >
               </v-list-item-content>
             </v-list-item>
 
@@ -163,9 +133,7 @@ categoryData:      カテゴリの情報をもつ配列
               <v-list-item-content>
                 <v-list-item-title>内容</v-list-item-title>
                 <!-- ここのpタグ内を改行すると表示にも反映されてしまう -->
-                <p
-                  v-if="!editable"
-                  class="task-info-data task-info-detail"
+                <p v-if="!editable" class="task-info-data task-info-detail"
                 >{{ taskDetail }}</p>
                 <v-textarea
                   v-else
@@ -183,9 +151,7 @@ categoryData:      カテゴリの情報をもつ配列
               </v-list-item-content>
             </v-list-item>
           </v-list>
-          
         </v-card-text>
-
       </v-card>
     </v-dialog>
 
@@ -226,28 +192,25 @@ categoryData:      カテゴリの情報をもつ配列
     </v-dialog>
 
     <!-- 削除ボタンを押した際に確認するダイアログ -->
-    <v-dialog
-      v-model="dialogDelete"
-      max-width="400"
-    >
+    <v-dialog v-model="dialogDelete" max-width="400">
       <v-card>
-        <v-card-title>
-          <v-icon color="yellow darken-2" class="mr-2">mdi-alert-circle-outline</v-icon>
+        <div class="d-flex align-center pa-4">
+          <v-icon color="yellow darken-2" class="mr-2">
+            mdi-alert-circle-outline
+          </v-icon>
           タスクを削除しますか？
-        </v-card-title>
+        </div>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            text
-            @click="closeDialogDelete"
-          >
-            キャンセル
-          </v-btn>
+          <v-btn text @click="closeDialogDelete"> キャンセル </v-btn>
           <v-btn
             dark
             depressed
-            color="red"
-            @click="deleteTask(); closeDialogDelete()"
+            color="#ef7067"
+            @click="
+              deleteTask()
+              closeDialogDelete()
+            "
           >
             削除
           </v-btn>
@@ -256,22 +219,14 @@ categoryData:      カテゴリの情報をもつ配列
     </v-dialog>
 
     <!-- タスク削除時に表示されるお知らせ -->
-    <v-snackbar
-      v-model="snackbarUpdate"
-      timeout="4000"
-      color="secondary"
-    >
-      タスクを更新しました。
+    <v-snackbar v-model="snackbarUpdate" timeout="2000">
+      タスクを更新しました
     </v-snackbar>
 
     <!-- タスク削除時に表示されるお知らせ -->
-    <v-snackbar
-      v-model="snackbarDelete"
-      timeout="4000"
-      color="brown darken-4"
-    >
-      タスクを削除しました。
-    </v-snackbar>
+    <!-- <v-snackbar v-model="snackbarDelete" timeout="4000">
+      タスクを削除しました
+    </v-snackbar> -->
   </div>
 </template>
 
@@ -280,29 +235,29 @@ export default {
   props: {
     activator: {
       type: String,
-      required: true
+      required: true,
     },
     taskId: {
       type: Number,
-      required: true
+      required: true,
     },
     taskName: {
-      type: String
+      type: String,
     },
     categories: {
-      type: Array
+      type: Array,
     },
     isDone: {
-      type: Boolean
+      type: Boolean,
     },
     taskDate: {
-      type: String
+      type: String,
     },
     taskDetail: {
-      type: String
+      type: String,
     },
     categoryData: {
-      type: Object
+      type: Object,
     },
   },
   data() {
@@ -319,24 +274,25 @@ export default {
       editableCategories: Array,
       editableIsDone: Boolean,
       editableTaskDate: String,
-      editableTaskDetail: String
+      editableTaskDetail: String,
     }
   },
   computed: {
-    edited: function() {
+    edited: function () {
       if (
-        this.taskName == this.editableTaskName
-        && JSON.stringify(this.categories) == JSON.stringify(this.editableCategories)
-        && this.isDone == this.editableIsDone
-        && this.taskDate == this.editableTaskDate
-        && this.taskDetail == this.editableTaskDetail
+        this.taskName == this.editableTaskName &&
+        JSON.stringify(this.categories) ==
+          JSON.stringify(this.editableCategories) &&
+        this.isDone == this.editableIsDone &&
+        this.taskDate == this.editableTaskDate &&
+        this.taskDetail == this.editableTaskDetail
       ) {
         return false
       } else {
         return true
       }
     },
-    canChangeData: function() {
+    canChangeData: function () {
       if (this.edited && this.editableTaskName && this.editableTaskDate) {
         return true
       } else {
@@ -345,16 +301,20 @@ export default {
     },
     categoryNameForEditor: {
       get() {
-        return this.categoryIdForEditor ? this.categoryData[this.categoryIdForEditor].name : ''
-      }
+        return this.categoryIdForEditor
+          ? this.categoryData[this.categoryIdForEditor].name
+          : ''
+      },
     },
     categoryColorForEditor: {
       get() {
-        return this.categoryIdForEditor ? this.categoryData[this.categoryIdForEditor].color : ''
-      }
-    }
+        return this.categoryIdForEditor
+          ? this.categoryData[this.categoryIdForEditor].color
+          : ''
+      },
+    },
   },
-  created: function() {
+  created: function () {
     this.resetDataForEdit()
   },
   methods: {
@@ -381,12 +341,12 @@ export default {
     updateTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const updatedTaskData = {
-        'id': this.taskId,
-        'name': this.editableTaskName,
-        'categories': this.editableCategories,
-        'isDone': this.editableIsDone,
-        'date': this.editableTaskDate,
-        'detail': this.editableTaskDetail
+        id: this.taskId,
+        name: this.editableTaskName,
+        categories: this.editableCategories,
+        isDone: this.editableIsDone,
+        date: this.editableTaskDate,
+        detail: this.editableTaskDetail,
       }
       this.$emit('task:updated', updatedTaskData)
       this.editable = false
@@ -423,8 +383,8 @@ export default {
     },
     addCategoryData(newCategoryData) {
       this.$emit('category:created', newCategoryData)
-    }
-  }
+    },
+  },
 }
 </script>
 

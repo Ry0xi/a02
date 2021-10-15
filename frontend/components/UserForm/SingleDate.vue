@@ -12,6 +12,7 @@ placeholder:  入力フォームに表示するプレイスホルダー
           single-line
           readonly
           outlined
+          hide-details
           append-icon="mdi-calendar-month"
           v-bind="attrs"
           v-on="on"
