@@ -13,7 +13,7 @@
 
       <ErrorMessage :message="message" />
 
-      <Btn @click="updatePassword">メールアドレスを変更する</Btn>
+      <Btn @click="updateEmail">メールアドレスを変更する</Btn>
     </v-form>
   </div>
 </template>
@@ -44,7 +44,7 @@ export default {
       this.$nuxt.$emit('updateHeader', this.header)
     },
     // メールアドレスの更新
-    updatePassword() {
+    updateEmail() {
       this.message = null
       if (this.$refs.EmailForm.validate()) {
         this.loading = true
