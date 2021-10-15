@@ -1,5 +1,5 @@
 <!--
-activator:         ダイアログを起動させるためのエレメントをセレクタで指定。例):activator="#activator"
+v-model:           ダイアログ
 taskName:          表示するタスクのタイトル
 taskDate:          表示するタスクの最新の表示日
 taskDetail:        表示するタスクの内容
@@ -22,14 +22,8 @@ tasks:             全てのタスクのデータ
                    新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 -->
 <template>
-  <div class="task-info">
-    <v-dialog
-      v-model="dialog"
-      :activator="activator"
-      fullscreen
-      scrollable
-      transition="dialog-bottom-transition"
-    >
+  <div class="task-create">
+    <v-dialog v-model="setDialog" fullscreen transition="dialog-bottom-transition">
       <!-- タスクの詳細を表示するダイアログ -->
       <v-card tile>
         <!-- scrollableプロパティに対応するためv-card-titleを使う -->
@@ -37,7 +31,7 @@ tasks:             全てのタスクのデータ
           <v-toolbar dark flat color="primary">
             <!-- タスクの変更ダイアログを閉じる -->
             <v-btn icon @click="closeDialog">
-              <v-icon>mdi-close</v-icon>
+              <v-icon>mdi-arrow-close</v-icon>
             </v-btn>
             <v-toolbar-title>タスクの追加</v-toolbar-title>
             <v-spacer></v-spacer>
@@ -49,7 +43,6 @@ tasks:             全てのタスクのデータ
             </v-toolbar-items>
           </v-toolbar>
         </v-card-title>
-
         <!-- scrollableプロパティに対応するためv-card-textを使う -->
         <v-card-text class="px-2">
           <v-list three-line subheader>
@@ -97,7 +90,6 @@ tasks:             全てのタスクのデータ
                     <v-icon class="ml-2">mdi-plus-circle</v-icon>
                   </v-btn>
                 </div>
-
                 <TaskCategoryList
                   v-if="editableCategories[0]"
                   :clearable="true"
@@ -106,9 +98,9 @@ tasks:             全てのタスクのデータ
                   :categoryData="categoryData"
                   class="mt-2"
                 />
-                <v-list-item-subtitle v-else
-                  >カテゴリが設定されていません</v-list-item-subtitle
-                >
+                <v-list-item-subtitle v-else>
+                  カテゴリが設定されていません
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
 
@@ -179,10 +171,13 @@ tasks:             全てのタスクのデータ
 
 <script>
 export default {
+  model: {
+    prop: 'dialog',
+    event: 'update',
+  },
   props: {
-    activator: {
-      type: String,
-      required: true,
+    dialog: {
+      type: Boolean,
     },
     taskName: {
       type: String,
@@ -210,7 +205,6 @@ export default {
   },
   data() {
     return {
-      dialog: false,
       snackbarCreate: false,
       categorySelector: false,
       categoryEditor: false,
@@ -223,6 +217,14 @@ export default {
     }
   },
   computed: {
+    setDialog: {
+      get() {
+        return this.dialog
+      },
+      set(value) {
+        return this.$emit('update', value)
+      },
+    },
     edited: function () {
       if (
         this.taskName == this.editableTaskName &&
@@ -259,12 +261,15 @@ export default {
       },
     },
   },
-  created: function () {
-    this.resetDataForEdit()
+  watch: {
+    setDialog() {
+      if (this.setDialog === true) {
+        this.setData()
+      }
+    },
   },
   methods: {
-    resetDataForEdit() {
-      // 編集用のデータを設定値にする
+    setData() {
       this.editableTaskName = this.taskName
       this.editableCategories = this.categories
         ? this.categories.slice(0, this.categories.length)
@@ -274,7 +279,7 @@ export default {
       this.editableTaskDetail = this.taskDetail
     },
     closeDialog() {
-      this.dialog = false
+      this.setDialog = false
     },
     createTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
@@ -287,7 +292,6 @@ export default {
       }
       this.$emit('task:created', createdTaskData)
       this.snackbarCreate = true
-      this.resetDataForEdit()
       this.closeDialog()
     },
     openCategorySelector() {
@@ -321,7 +325,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.task-info {
+.task-create {
   &-data {
     font-size: 1.125rem;
   }

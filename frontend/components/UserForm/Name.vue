@@ -7,7 +7,6 @@ v-model:  入力値
     <v-text-field
       v-model="setName"
       prepend-inner-icon="mdi-account-circle"
-      single-line
       outlined
       :rules="rules"
       :counter="max"

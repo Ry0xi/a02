@@ -10,18 +10,18 @@ categoryData:      カテゴリの情報をもつ配列
 <template>
   <div class="task-add-fab">
     <v-btn
-      id="activator"
       fab
       fixed
       elevation="8"
       color="primary"
       style="bottom: 69px; right: 13px"
+      @click="dialog = true"
     >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
 
     <TaskCreate
-      activator="#activator"
+      v-model="dialog"
       :isDone="false"
       :categoryData="categoryData"
       @task:created="createTask($event)"
@@ -38,6 +38,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      dialog: false,
+    }
   },
   methods: {
     createTask(createdTaskData) {

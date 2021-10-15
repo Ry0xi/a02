@@ -1,20 +1,15 @@
 <!--
-年月の選択ダイアログ
-v-model:  月日 (2021-02)
+時間選択ダイアログ
+v-model: 時間
 -->
 <template>
   <v-dialog v-model="dialog" max-width="300px">
-    <template #activator="{ on }">
+    <template #activator="on">
       <slot name="activator" :on="{ click: open }"></slot>
     </template>
     <v-card>
-      <v-date-picker
-        v-model="editDate"
-        type="month"
-        full-width
-        locale="jp-ja"
-        color="primary"
-      ></v-date-picker>
+      <v-time-picker v-model="editTime" format="24hr" full-width>
+      </v-time-picker>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn text @click="close">キャンセル</v-btn>
@@ -27,24 +22,24 @@ v-model:  月日 (2021-02)
 <script>
 export default {
   model: {
-    prop: 'date',
+    prop: 'time',
     event: 'save',
   },
   props: {
-    date: {
+    time: {
       type: String,
-      default: new Date().toISOString().substr(0, 7),
+      default: '08:00',
     },
   },
   data() {
     return {
       dialog: false,
-      editDate: '',
+      editTime: '',
     }
   },
   methods: {
     open() {
-      this.editDate = this.date
+      this.editTime = this.time
       this.dialog = true
     },
     close() {
@@ -52,9 +47,7 @@ export default {
     },
     save() {
       this.dialog = false
-      // 日付の01を付ける
-      this.editDate = this.editDate + '-01'
-      this.$emit('save', this.editDate)
+      this.$emit('save', this.editTime)
     },
   },
 }
