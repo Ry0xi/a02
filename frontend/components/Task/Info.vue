@@ -106,10 +106,11 @@ categoryData:      カテゴリの情報をもつ配列
                     id="open-category-selector"
                     v-if="editable"
                     text
+                    class="pa-0"
                     color="secondary"
                     @click.stop="openCategorySelector"
                   >
-                    カテゴリーを選択
+                    カテゴリを選択
                     <v-icon class="ml-2">mdi-plus-circle</v-icon>
                   </v-btn>
                 </div>

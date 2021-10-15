@@ -83,10 +83,11 @@ tasks:             全てのタスクのデータ
                   <v-btn
                     id="open-category-selector"
                     text
+                    class="pa-0"
                     color="secondary"
                     @click.stop="openCategorySelector"
                   >
-                    カテゴリーを選択
+                    カテゴリを選択
                     <v-icon class="ml-2">mdi-plus-circle</v-icon>
                   </v-btn>
                 </div>
