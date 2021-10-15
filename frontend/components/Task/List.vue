@@ -1,6 +1,6 @@
 <!--
   shownTasks:         0 -> 全て、1 -> 未完了のタスクのみ、2 -> 完了のみ
-  tasks:              {'id': String, 'name': String, 'categories': Array, 'isDone': Boolean}の配列
+  tasks:              タスクオブジェクトの配列
   categoryData:       各カテゴリのデータ。[categoryId(String)]: {'name': String, 'color': String}
   @category:updated:  カテゴリが更新されたときに発火するイベント
                       新しいカテゴリデータを返す。※TaskCategoryEditorを参照

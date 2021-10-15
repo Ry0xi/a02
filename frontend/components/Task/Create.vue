@@ -10,9 +10,9 @@ tasks:             全てのタスクのデータ
 @task:created:     タスクの保存ボタンを押した時に発火するイベント
                    タスクオブジェクトを返す
                    {
-                     'name': this.editableTaskName,
-                     'categories': this.editableCategories,
-                     'isDone': this.editableIsDone,
+                     'title': this.editableTaskName,
+                     'category_ids': this.editableCategories,
+                     'is_done': this.editableIsDone,
                      'date': this.editableTaskDate,
                      'detail': this.editableTaskDetail
                    }
@@ -289,9 +289,9 @@ export default {
     createTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const createdTaskData = {
-        'name': this.editableTaskName,
-        'categories': this.editableCategories,
-        'isDone': this.editableIsDone,
+        'title': this.editableTaskName,
+        'category_ids': this.editableCategories,
+        'is_done': this.editableIsDone,
         'date': this.editableTaskDate,
         'detail': this.editableTaskDetail
       }
