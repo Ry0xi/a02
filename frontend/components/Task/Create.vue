@@ -31,7 +31,7 @@ tasks:             全てのタスクのデータ
           <v-toolbar dark flat color="primary">
             <!-- タスクの変更ダイアログを閉じる -->
             <v-btn icon @click="closeDialog">
-              <v-icon>mdi-arrow-close</v-icon>
+              <v-icon>mdi-close</v-icon>
             </v-btn>
             <v-toolbar-title>タスクの追加</v-toolbar-title>
             <v-spacer></v-spacer>
