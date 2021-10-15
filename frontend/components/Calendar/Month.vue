@@ -33,7 +33,7 @@ export default {
   props: {
     date: {
       type: String,
-      default: '2021-01-01',
+      default: new Date().toISOString().substr(0, 7),
     },
   },
   data() {

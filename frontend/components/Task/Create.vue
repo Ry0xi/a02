@@ -1,5 +1,5 @@
 <!--
-activator:         ダイアログを起動させるためのエレメントをセレクタで指定。例):activator="#activator"
+v-model:           ダイアログ
 taskName:          表示するタスクのタイトル
 taskDate:          表示するタスクの最新の表示日
 taskDetail:        表示するタスクの内容
@@ -22,7 +22,7 @@ tasks:             全てのタスクのデータ
                    新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 -->
 <template>
-  <div class="task-info">
+  <div class="task-create">
     <v-dialog v-model="setDialog" fullscreen>
       <!-- タスクの詳細を表示するダイアログ -->
       <v-card tile>
@@ -103,9 +103,9 @@ tasks:             全てのタスクのデータ
                   :categoryData="categoryData"
                   class="mt-2"
                 />
-                <v-list-item-subtitle v-else
-                  >カテゴリが設定されていません</v-list-item-subtitle
-                >
+                <v-list-item-subtitle v-else>
+                  カテゴリが設定されていません
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
 
@@ -270,8 +270,6 @@ export default {
     setDialog() {
       if (this.setDialog === true) {
         this.setData()
-      } else {
-        console.log('down')
       }
     },
   },
@@ -291,7 +289,6 @@ export default {
     createTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const createdTaskData = {
-        id: this.newTaskId,
         name: this.editableTaskName,
         categories: this.editableCategories,
         isDone: this.editableIsDone,
@@ -333,7 +330,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.task-info {
+.task-create {
   &-data {
     font-size: 1.125rem;
   }

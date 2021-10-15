@@ -72,7 +72,7 @@ export default {
       header: {
         title: 'カレンダー',
       },
-      date: new Date().toISOString().substr(0, 9),
+      date: new Date().toISOString().substr(0, 10),
       dialog: false,
       task: {
         name: '',
@@ -107,10 +107,7 @@ export default {
         .toArray()
         .then((tasks) => {
           console.log('tasks >> 取得成功')
-          this.taskItems = tasks.filter(
-            (element, index, self) =>
-              self.findIndex((e) => e.name === element.name) === index
-          )
+          this.taskItems = this.dedupe(tasks)
           this.tasks = tasks
         })
         .catch((e) => {
@@ -145,6 +142,13 @@ export default {
     updateHeader() {
       // タイトルとして使いたい情報を渡す
       this.$nuxt.$emit('updateHeader', this.header.title)
+    },
+    // 重複の削除
+    dedupe(tasks) {
+      return tasks.filter(
+        (element, index, self) =>
+          self.findIndex((e) => e.name === element.name) === index
+      )
     },
     async addTaskData(newTaskData) {
       // サーバーに追加する
@@ -227,16 +231,15 @@ export default {
     },
     // 追加時の処理
     onAdd(date) {
-      const now = new Date()
-      now.setDate(now.getDate() - 1)
-      const dt = new Date(date)
-      if (dt < now) {
-        this.snackbar = true
-      } else {
+      const now = new Date(this.date)
+      const targetDate = new Date(date)
+      if (targetDate >= now) {
         this.task.name = this.setItem[0].name
         this.task.date = date
         this.dialog = true
         this.setItem = []
+      } else {
+        this.snackbar = true
       }
     },
   },
