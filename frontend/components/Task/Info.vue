@@ -101,7 +101,7 @@ categoryData:      カテゴリの情報をもつ配列
             <v-list-item>
               <v-list-item-content>
                 <div class="d-flex align-center justify-space-between">
-                  <div>カテゴリ</div>
+                  <v-list-item-title>カテゴリ</v-list-item-title>
                   <v-btn
                     id="open-category-selector"
                     v-if="editable"
