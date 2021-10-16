@@ -9,35 +9,81 @@ from django.contrib.auth.models import BaseUserManager
 User = get_user_model()
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
   class Meta:
-    model = Task
+    model = User
     fields = (
-      #'task_id',
-      'title', 'detail', 'url', 'created_at', 'priority','next_display_date','display_times','consecutive_times','is_update','user_id', 'category_id')
+      'id',
+      'email', 'first_name', 'last_name')
+  #ユーザを作る際に使用するcreateメソッドをオーバーライドする。
+  def create(self,validated_data):
+      user = User.objects.create(**validated_data)
+      #トークンを生成する
+      Token.objects.create(user=user)
+      return user
+
+
+class UserIdSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = User
+    fields = ('id', 'first_name', 'last_name')
+
 
 class CategorySerializer(serializers.ModelSerializer):
   class Meta:
     model = Category
     fields = (
-      #'category_id',
+      'id',
       'category_name', 'color_code', 'user_id')
+    read_only_fields = ('id','user_id',)
+
+  def create(self, validated_data):
+    category = Category(
+        category_name=validated_data['category_name'],
+        color_code=validated_data['color_code'],
+        user_id_id=self.context['request'].user.id
+    )
+    category.save()
+    return category
+
+
+class TaskSerializer(serializers.ModelSerializer):
+  category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(),many=True)
+  user_id = UserIdSerializer(read_only=True)
+  class Meta:
+    model = Task
+    fields = (
+      'id',
+      'title', 'detail', 'url', 'created_at', 'priority','next_display_date','display_times','consecutive_times','is_update','user_id', 'category')
+      # depth= 1
+    read_only_fields = ('id','priority','user_id','display_times','consecutive_times','is_update',)
+
+  # def create(self, validated_data):
+  #   task = Task(
+  #       title=validated_data['title'],
+  #       detail=validated_data['detail'],
+  #       url=validated_data['url'],
+  #       user_id_id=self.context['request'].user.id,
+  #       category=validated_data['category'],
+  #   )
+  #   task.save()
+  #   return task
 
 class HistorySerializer(serializers.ModelSerializer):
   class Meta:
     model = History
     fields = (
-      #'history_id',
+      'id',
       'created_at', 'feedback', 'user_id', 'task_id')
-    read_only_fields = ('created_at', 'user_id',)
+    read_only_fields = ('id','created_at', 'user_id',)
 
 class TaskCompletedSerializer(serializers.ModelSerializer):
   class Meta:
     model = Task
     fields = (
-      #'task_id',
+      'task_id',
       'priority','next_display_date','display_times','consecutive_times','is_update')
-    read_only_fields = ('priority','next_display_date','display_times','consecutive_times','is_update')
+    read_only_fields = ('task_id','priority','next_display_date','display_times','consecutive_times','is_update')
 
     # def update(self, instance, validated_data):
     #   # Modify validated_data with the value you need

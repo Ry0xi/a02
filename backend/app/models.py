@@ -1,3 +1,14 @@
+# from django.db import models
+
+# # Create your models here.
+
+# class User(models.Model):
+#     # user_id = models.AutoField(primary_key=True) #id
+#     user_name = models.CharField(max_length=30, null=False) #name
+#     email_address = models.EmailField(null=False) #mail adress
+#     token = models.CharField(max_length=100,null=False) #token
+#     task_count = models.IntegerField(default=0, null=False) #today's task count
+#     is_notification = models.BooleanField(default=True, null=False) #notification flag (on/off)
 from django.db import models
 import django.utils.timezone
 
@@ -24,6 +35,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email: str, password: str, **extra_fields):
         return self._create_user(email, password, True, True, **extra_fields)
 
+
 class User(AbstractUser):
     username = None
     email = models.EmailField('email address', unique=True)
@@ -44,7 +56,6 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.email} - {self.first_name} {self.last_name}"
 
-
 class Category(models.Model):
     # category_id = models.AutoField(primary_key=True) #id
     category_name = models.CharField(max_length=30, null=False) #name
@@ -55,8 +66,8 @@ class Category(models.Model):
 class Task(models.Model):
     # task_id = models.AutoField(primary_key=True) #id
     title = models.CharField(max_length=30, null=False) #task title
-    detail = models.CharField(max_length=1000, null=True) #task detail
-    url = models.CharField(max_length=300, null=True) #task URL
+    detail = models.CharField(max_length=1000, null=True,blank=True) #task detail
+    url = models.CharField(max_length=300, null=True,blank=True) #task URL
     created_at = models.DateTimeField(auto_now=True) #create datetime
     priority = models.IntegerField(default=100, null=False) #priority
     next_display_date = models.DateField(null=False) #next display date
@@ -64,7 +75,12 @@ class Task(models.Model):
     consecutive_times = models.IntegerField(default=0, null=False) #Number of consecutive 2 achievements
     is_update = models.BooleanField(default=True, null=False) #update flag (on/off)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
-    category_id = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True) #category id (fk)
+    category = models.ManyToManyField(Category, through='TaskCategoryRelation')
+
+
+class TaskCategoryRelation(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
 class History(models.Model):

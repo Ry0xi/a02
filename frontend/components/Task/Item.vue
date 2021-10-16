@@ -1,18 +1,9 @@
 <template>
-  <v-card
-    class="task-item"
-    outlined
-  >
+  <v-card class="task-item" outlined>
     <v-card-title class="task-item-name">{{ taskName }}</v-card-title>
-    <TaskCategoryList
-      :categoryData="categoryData"
-      :categories="categories"
-    />
-    
-    <TaskDoneBtn
-      v-if="!isDone"
-      v-show="!hideDoneBtn"
-    />
+    <TaskCategoryList :categoryData="categoryData" :categories="categories" />
+
+    <TaskDoneBtn v-if="!isDone" v-show="!hideDoneBtn" />
   </v-card>
 </template>
 
@@ -20,50 +11,50 @@
 export default {
   props: {
     taskName: {
-      type: String
+      type: String,
     },
     categories: {
-      type: Array
+      type: Array,
     },
     isDone: {
-      type: Boolean
+      type: Boolean,
     },
     taskDate: {
       type: String,
-      default: '未入力'
+      default: '未入力',
     },
     taskDetail: {
       type: String,
-      default: '未入力'
+      default: '未入力',
     },
     categoryData: {
-      type: Object
+      type: Object,
     },
     // 完了ボタンを非表示にするかどうか
     hideDoneBtn: {
       type: Boolean,
-      default: false
+      default: false,
     },
     notifications: {
       type: Boolean,
-      default: true
+      default: true,
     },
     isAutoAddedTask: {
       type: Boolean,
-      default: true
-    }
-  }
+      default: true,
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .task-item {
-  padding: 8px 16px;
+  padding: 6px 16px;
 
   &-name {
-    font-size: 1.25rem;
+    font-size: 18px;
+    margin: 5px 0;
     padding: 0;
-    margin: 8px 0;
   }
 }
 </style>

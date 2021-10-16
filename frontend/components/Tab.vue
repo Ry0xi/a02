@@ -69,7 +69,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   width: var(--tab-width);
-  height: 50px;
+  height: 46px;
   margin: 0 auto;
   background-color: #f5f5f5;
   border-radius: 20px;
