@@ -42,7 +42,7 @@ class TaskCompletedSerializer(serializers.ModelSerializer):
     # def update(self, instance, validated_data):
     #   # Modify validated_data with the value you need
     #   return super().update(instance, validated_data)
-  
+
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=300, required=True)
     password = serializers.CharField(required=True, write_only=True)
@@ -54,8 +54,21 @@ class AuthUserSerializer(serializers.ModelSerializer):
          model = User
          fields = ('id', 'email', 'first_name', 'last_name', 'is_active', 'is_staff', 'auth_token')
          read_only_fields = ('id', 'is_active', 'is_staff')
-    
+
     def get_auth_token(self, obj):
+        token = Token.objects.create(user=obj)
+        return token.key
+
+class AuthUserLoginSerializer(serializers.ModelSerializer):
+    auth_token = serializers.SerializerMethodField()
+
+    class Meta:
+         model = User
+         fields = ('id', 'email', 'first_name', 'last_name', 'is_active', 'is_staff', 'auth_token')
+         read_only_fields = ('id', 'is_active', 'is_staff')
+
+    def get_auth_token(self, obj):
+        Token.objects.get(user=obj).delete()
         token = Token.objects.create(user=obj)
         return token.key
 
