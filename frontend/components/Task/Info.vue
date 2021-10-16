@@ -218,15 +218,14 @@ categoryData:      カテゴリの情報をもつ配列
       </v-card>
     </v-dialog>
 
-    <!-- タスク削除時に表示されるお知らせ -->
-    <v-snackbar v-model="snackbarUpdate" timeout="2000">
-      タスクを更新しました
+    <!-- タスク更新時に表示されるお知らせ -->
+    <v-snackbar
+      v-model="snackbarUpdate"
+      timeout="4000"
+      color="secondary"
+    >
+      タスクを更新しました。
     </v-snackbar>
-
-    <!-- タスク削除時に表示されるお知らせ -->
-    <!-- <v-snackbar v-model="snackbarDelete" timeout="4000">
-      タスクを削除しました
-    </v-snackbar> -->
   </div>
 </template>
 
@@ -264,7 +263,6 @@ export default {
     return {
       dialog: false,
       editable: false,
-      snackbarDelete: false,
       snackbarUpdate: false,
       categorySelector: false,
       categoryEditor: false,
@@ -336,17 +334,16 @@ export default {
     deleteTask() {
       this.$emit('task:deleted', this.taskId)
       this.dialog = false
-      this.snackbarDelete = true
     },
     updateTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const updatedTaskData = {
-        id: this.taskId,
-        name: this.editableTaskName,
-        categories: this.editableCategories,
-        isDone: this.editableIsDone,
-        date: this.editableTaskDate,
-        detail: this.editableTaskDetail,
+        'id': this.taskId,
+        'title': this.editableTaskName,
+        'category_ids': this.editableCategories,
+        'is_done': this.editableIsDone,
+        'date': this.editableTaskDate,
+        'detail': this.editableTaskDetail
       }
       this.$emit('task:updated', updatedTaskData)
       this.editable = false

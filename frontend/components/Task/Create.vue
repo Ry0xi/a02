@@ -10,9 +10,9 @@ tasks:             全てのタスクのデータ
 @task:created:     タスクの保存ボタンを押した時に発火するイベント
                    タスクオブジェクトを返す
                    {
-                     'name': this.editableTaskName,
-                     'categories': this.editableCategories,
-                     'isDone': this.editableIsDone,
+                     'title': this.editableTaskName,
+                     'category_ids': this.editableCategories,
+                     'is_done': this.editableIsDone,
                      'date': this.editableTaskDate,
                      'detail': this.editableTaskDetail
                    }
@@ -164,7 +164,10 @@ tasks:             全てのタスクのデータ
     </v-dialog>
 
     <!-- タスク追加時に表示されるお知らせ -->
-    <v-snackbar v-model="snackbarCreate" timeout="4000" color="secondary">
+    <v-snackbar
+      v-model="snackbarCreate"
+      timeout="2000"
+    >
       タスクを追加しました。
     </v-snackbar>
   </div>
@@ -285,11 +288,11 @@ export default {
     createTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const createdTaskData = {
-        name: this.editableTaskName,
-        categories: this.editableCategories,
-        isDone: this.editableIsDone,
-        date: this.editableTaskDate,
-        detail: this.editableTaskDetail,
+        'title': this.editableTaskName,
+        'category_ids': this.editableCategories,
+        'is_done': this.editableIsDone,
+        'date': this.editableTaskDate,
+        'detail': this.editableTaskDetail
       }
       this.$emit('task:created', createdTaskData)
       this.snackbarCreate = true

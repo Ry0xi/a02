@@ -25,6 +25,14 @@
       @category:updated="updateCategoryData($event)"
       @category:created="addCategoryData($event)"
     />
+    
+    <!-- タスク削除時に表示されるお知らせ -->
+    <v-snackbar
+      v-model="snackbarDelete"
+      timeout="2000"
+    >
+      タスクを削除しました。
+    </v-snackbar>
   </div>
 </template>
 
@@ -38,6 +46,7 @@ export default {
       activeTab: 1,
       tasks: null,
       categoryData: null,
+      snackbarDelete: false,
     }
   },
   mounted() {
@@ -54,7 +63,20 @@ export default {
         console.log('tasks >> 取得成功')
         console.log(tasks)
 
-        this.tasks = tasks
+        let taskData = []
+        tasks.forEach((task) => {
+          const objTaskData = {
+            'id': task.id,
+            'name': task.title,
+            'date': task.date,
+            'detail': task.detail,
+            'categories': task.category_ids,
+            'isDone': task.is_done,
+          }
+          taskData.push(objTaskData)
+        })
+
+        this.tasks = taskData
       })
       .catch((e) => {
         console.log('tasks >> 取得失敗')
@@ -123,6 +145,9 @@ export default {
         // タスクデータの再読み込み
         this.getTasksFromDB()
       })
+            
+      // 削除を通知
+      this.snackbarDelete = true
     },
     updateTaskData(updatedData) {
       const taskId = updatedData.id
