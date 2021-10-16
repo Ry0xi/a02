@@ -70,6 +70,7 @@ class TaskCompletedHistoryAPIView(generics.CreateAPIView):
 
   def post(self, request, *args, **kwargs):
     a_Post = History.objects.create(
+      completed_date=date.today(),
       user_id_id=self.request.user.id,
       feedback=request.data["feedback"],
       task_id_id=request.data["task_id"],

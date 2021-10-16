@@ -57,8 +57,8 @@ class HistorySerializer(serializers.ModelSerializer):
     model = History
     fields = (
       'id',
-      'created_at', 'feedback', 'user_id', 'task_id')
-    read_only_fields = ('id','created_at', 'user_id',)
+      'completed_date', 'feedback', 'user_id', 'task_id')
+    read_only_fields = ('id','completed_date', 'user_id',)
 
 class TaskCompletedSerializer(serializers.ModelSerializer):
   class Meta:
