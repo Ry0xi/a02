@@ -1,39 +1,29 @@
 <!--
 categoryData:      カテゴリの情報をもつ配列
-tasks:             全てのタスクのデータ
 @task:created:     タスクの保存ボタンを押した時に発火するイベント
-                   タスクオブジェクトを返す
-                   {
-                     'id': this.taskId,
-                     'name': this.editableTaskName,
-                     'categories': this.editableCategories,
-                     'isDone': this.editableIsDone,
-                     'date': this.editableTaskDate,
-                     'detail': this.editableTaskDetail
-                   }
+                   タスクオブジェクトを返す ※TaskCreateを参照
 @category:updated: カテゴリが更新されたときに発火するイベント
-                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                   新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 @category:created: カテゴリが新規作成されたときに発火するイベント
-                   新しいカテゴリデータを返す。{ '0005': {'name': 'タスク名', 'color': '#XXXXXX'} }
+                   新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 -->
 <template>
   <div class="task-add-fab">
     <v-btn
-      id="activator"
       fab
       fixed
       elevation="8"
       color="primary"
-      style="bottom: 64px; right: 8px;"
+      style="bottom: 69px; right: 13px"
+      @click="dialog = true"
     >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
 
     <TaskCreate
-      activator="#activator"
+      v-model="dialog"
       :isDone="false"
       :categoryData="categoryData"
-      :tasks="tasks"
       @task:created="createTask($event)"
       @category:updated="updateCategoryData($event)"
       @category:created="addCategoryData($event)"
@@ -46,11 +36,12 @@ export default {
   props: {
     categoryData: {
       type: Object,
-      required: true
+      required: true,
     },
-    tasks: {
-      type: Array,
-      required: true
+  },
+  data() {
+    return {
+      dialog: false,
     }
   },
   methods: {
@@ -62,11 +53,9 @@ export default {
     },
     addCategoryData(newCategoryData) {
       this.$emit('category:created', newCategoryData)
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
