@@ -156,6 +156,27 @@ class HistoryViewSet(viewsets.ModelViewSet, UserQueryset):
   serializer_class = HistorySerializer
 
 
+# 日ごとのヒストリー表示
+class HistoryDailyAPIView(generics.ListAPIView):
+  queryset = History.objects.all()
+  serializer_class = HistorySerializer
+
+  def get_queryset(self):
+    queryset = self.queryset
+    query_set = queryset.filter(user_id=self.request.user.id, completed_date__year = self.kwargs.get('year'), completed_date__month = self.kwargs.get('month'), completed_date__day = self.kwargs.get('day'))
+    return query_set
+
+# 月ごとのごとのヒストリー表示
+class HistoryMonthlyAPIView(generics.ListAPIView):
+  queryset = History.objects.all()
+  serializer_class = HistorySerializer
+
+  def get_queryset(self):
+    queryset = self.queryset
+    query_set = queryset.filter(user_id=self.request.user.id, completed_date__year = self.kwargs.get('year'), completed_date__month = self.kwargs.get('month'))
+    return query_set
+
+
 class ManageUserView(generics.RetrieveUpdateAPIView, UserQueryset):
   serializer_class = UserSerializer
 

@@ -51,16 +51,6 @@ class TaskSerializer(serializers.ModelSerializer):
       # depth= 1
     read_only_fields = ('id','priority','user_id','display_times','consecutive_times','is_update',)
 
-  # def create(self, validated_data):
-  #   task = Task(
-  #       title=validated_data['title'],
-  #       detail=validated_data['detail'],
-  #       url=validated_data['url'],
-  #       user_id_id=self.context['request'].user.id,
-  #       category=validated_data['category'],
-  #   )
-  #   task.save()
-  #   return task
 
 class HistorySerializer(serializers.ModelSerializer):
   class Meta:
