@@ -20,6 +20,7 @@
       :categoryData="categoryData"
       @task:deleted="deleteTaskData($event)"
       @task:updated="updateTaskData($event)"
+      @task:done="doneTask"
       @category:updated="updateCategoryData($event)"
       @category:created="addCategoryData($event)"
     />
@@ -157,6 +158,15 @@ export default {
         this.getTasksFromDB()
       })
 
+    },
+    doneTask(taskId) {
+      // IDBを更新
+      this.$db.task
+        .where({'id': taskId})
+        .modify({'is_done': true})
+      
+      // タスクデータの再読み込み
+      this.getTasksFromDB()
     },
     updateCategoryData(updatedCategoryData) {
       // カテゴリデータを更新

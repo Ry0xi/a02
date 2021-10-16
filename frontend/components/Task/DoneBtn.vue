@@ -1,3 +1,7 @@
+<!--
+taskId:       ボタンを表示しているタスクのID
+@task:done:   タスク完了時に発火するイベント。完了したタスクのIDを返す。
+-->
 <template>
   <v-dialog max-width="300" v-model="dialog" @click:outside="closeDialog">
     <!-- 完了ボタン -->
@@ -17,7 +21,7 @@
     <!-- ダイアログで完了後に選択 -->
     <v-card>
       <v-toolbar flat dark color="primary">
-        <v-toolbar-title> タスクの完了</v-toolbar-title>
+        <v-toolbar-title>タスクの完了</v-toolbar-title>
       </v-toolbar>
 
       <div class="pa-4">完了度を選んでください</div>
@@ -28,8 +32,8 @@
           large
           retain-focus-on-click
           class="mb-2"
-          :color="getBtnColor(1)"
-          @click="select(1)"
+          :color="getBtnColor(2)"
+          @click="select(2)"
           >満足
         </v-btn>
         <v-btn
@@ -38,8 +42,8 @@
           large
           retain-focus-on-click
           class="mb-2"
-          :color="getBtnColor(2)"
-          @click="select(2)"
+          :color="getBtnColor(1)"
+          @click="select(1)"
           >普通
         </v-btn>
         <v-btn
@@ -48,14 +52,14 @@
           large
           retain-focus-on-click
           class="mb-2"
-          :color="getBtnColor(3)"
-          @click="select(3)"
+          :color="getBtnColor(0)"
+          @click="select(0)"
           >全然
         </v-btn>
       </div>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="closeDialog"> キャンセル </v-btn>
+        <v-btn text @click="closeDialog">キャンセル</v-btn>
         <v-btn
           color="primary"
           depressed
@@ -71,6 +75,12 @@
 
 <script>
 export default {
+  props: {
+    taskId: {
+      type: Number,
+      required: true,
+    },
+  },
   data() {
     return {
       dialog: false,
@@ -86,7 +96,8 @@ export default {
       return this.selectedItem == item ? 'primary' : '#f5f5f5'
     },
     save() {
-      console.log(this.selectedItem)
+      this.$emit('task:done', this.taskId)
+      console.log('Task Done!')
       this.closeDialog()
     },
     closeDialog() {
