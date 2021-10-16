@@ -16,6 +16,11 @@ class UserSerializer(serializers.ModelSerializer):
       Token.objects.create(user=user)
       return user
 
+class UserIdSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = User
+    fields = ('id', 'first_name', 'last_name')
+
 
 class CategorySerializer(serializers.ModelSerializer):
   class Meta:
@@ -37,12 +42,12 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
   category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(),many=True)
-  user_id = UserSerializer(read_only=True)
+  user_id = UserIdSerializer(read_only=True)
   class Meta:
     model = Task
     fields = (
       'id',
-      'title', 'detail', 'url', 'created_at', 'priority','next_display_date','display_times','consecutive_times','is_update','user_id', 'category',)
+      'title', 'detail', 'url', 'created_at', 'priority','next_display_date','display_times','consecutive_times','is_update','user_id', 'category')
       # depth= 1
     read_only_fields = ('id','priority','user_id','display_times','consecutive_times','is_update',)
 
