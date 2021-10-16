@@ -107,8 +107,23 @@ export default {
         .toArray()
         .then((tasks) => {
           console.log('tasks >> 取得成功')
-          this.taskItems = this.dedupe(tasks)
-          this.tasks = tasks
+          console.log(tasks)
+
+          let taskData = []
+          tasks.forEach((task) => {
+            const objTaskData = {
+              'id': task.id,
+              'name': task.title,
+              'date': task.date,
+              'detail': task.detail,
+              'categories': task.category_ids,
+              'isDone': task.is_done,
+            }
+            taskData.push(objTaskData)
+          })
+
+          this.tasks = taskData
+          this.taskItems = this.dedupe(this.tasks)
         })
         .catch((e) => {
           console.log('tasks >> 取得失敗')
