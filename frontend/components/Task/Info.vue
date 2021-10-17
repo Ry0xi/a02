@@ -133,8 +133,11 @@ categoryData:      カテゴリの情報をもつ配列
               <v-list-item-content>
                 <v-list-item-title>内容</v-list-item-title>
                 <!-- ここのpタグ内を改行すると表示にも反映されてしまう -->
-                <p v-if="!editable" class="task-info-data task-info-detail"
-                >{{ taskDetail }}</p>
+                <div v-if="!editable">
+                  <p v-if="taskDetail" class="task-info-data task-info-detail"
+                  >{{ taskDetail }}</p>
+                  <p v-else class="grey--text">タスクの詳細は未入力です。</p>
+                </div>
                 <v-textarea
                   v-else
                   v-model="editableTaskDetail"
@@ -148,6 +151,26 @@ categoryData:      カテゴリの情報をもつ配列
                   class="mt-1"
                 >
                 </v-textarea>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>完了</v-list-item-title>
+                <v-checkbox
+                  v-if="!editable"
+                  v-model="isDone"
+                  :label="isDone ? '完了しています' : '完了していません'"
+                  disabled
+                ></v-checkbox>
+                <!-- 編集時 -->
+                <!-- バックエンドの対応待ち -->
+                <v-checkbox
+                  v-else
+                  v-model="editableIsDone"
+                  :label="editableIsDone ? '完了しています' : '完了していません'"
+                  disabled
+                ></v-checkbox>
               </v-list-item-content>
             </v-list-item>
           </v-list>

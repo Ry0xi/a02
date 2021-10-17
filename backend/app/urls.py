@@ -1,12 +1,15 @@
 from rest_framework import routers
 from django.urls import path, include
-from .views import UserViewSet, TaskViewSet, CategoryViewSet, HistoryViewSet, ManageUserView, TaskDailyAPIView, TaskMonthlyAPIView, HistoryDailyAPIView,HistoryMonthlyAPIView, TaskCompletedHistoryAPIView, TaskCompletedTaskAPIView
+
+from .views import TaskViewSet, CategoryViewSet, HistoryViewSet, ManageUserView, TaskDailyAPIView, TaskMonthlyAPIView, HistoryDailyAPIView, HistoryMonthlyAPIView, TaskCompletedHistoryAPIView, TaskCompletedTaskAPIView
+from .views import AuthViewSet, SettingViewSet
 
 router = routers.DefaultRouter()
-router.register('user', UserViewSet)
+router.register('auth', AuthViewSet, basename='auth')
 router.register('task', TaskViewSet)
 router.register('category', CategoryViewSet)
 router.register('history', HistoryViewSet)
+router.register('setting', SettingViewSet)
 
 urlpatterns = [
     path('myself/',ManageUserView.as_view( ), name='myself'),
@@ -18,4 +21,5 @@ urlpatterns = [
     path('task-completed-task/<int:pk>/', TaskCompletedTaskAPIView.as_view(), name='task-completed-task'),
     path('history/<int:year>/<int:month>/<int:day>/', HistoryDailyAPIView.as_view(),name='daily'),
     path('history/<int:year>/<int:month>/', HistoryMonthlyAPIView.as_view(),name='monthly'),
+    # path('setting-limit/',SettingLimitViewSet.as_view( ), name='setting-limit'),
 ]
