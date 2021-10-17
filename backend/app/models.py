@@ -85,7 +85,7 @@ class TaskCategoryRelation(models.Model):
 
 class History(models.Model):
     # history_id = models.AutoField(primary_key=True) #id
-    created_at = models.DateTimeField(auto_now_add=True) #completed date
+    completed_date = models.DateField(null=False) #completed date
     feedback = models.IntegerField(default=1, null=False) #feedback number
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE, null=False) #task id (fk)

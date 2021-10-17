@@ -79,6 +79,7 @@ class TaskCompletedHistoryAPIView(generics.CreateAPIView):
 
   def post(self, request, *args, **kwargs):
     a_Post = History.objects.create(
+      completed_date=date.today(),
       user_id_id=self.request.user.id,
       feedback=request.data["feedback"],
       task_id_id=request.data["task_id"],
@@ -163,6 +164,27 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class HistoryViewSet(viewsets.ModelViewSet):
   queryset = History.objects.all()
   serializer_class = HistorySerializer
+
+
+# 日ごとのヒストリー表示
+class HistoryDailyAPIView(generics.ListAPIView):
+  queryset = History.objects.all()
+  serializer_class = HistorySerializer
+
+  def get_queryset(self):
+    queryset = self.queryset
+    query_set = queryset.filter(user_id=self.request.user.id, completed_date__year = self.kwargs.get('year'), completed_date__month = self.kwargs.get('month'), completed_date__day = self.kwargs.get('day'))
+    return query_set
+
+# 月ごとのごとのヒストリー表示
+class HistoryMonthlyAPIView(generics.ListAPIView):
+  queryset = History.objects.all()
+  serializer_class = HistorySerializer
+
+  def get_queryset(self):
+    queryset = self.queryset
+    query_set = queryset.filter(user_id=self.request.user.id, completed_date__year = self.kwargs.get('year'), completed_date__month = self.kwargs.get('month'))
+    return query_set
 
 
 class ManageUserView(generics.RetrieveUpdateAPIView, UserQueryset):
