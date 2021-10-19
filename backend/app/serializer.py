@@ -71,9 +71,9 @@ class TaskCompletedSerializer(serializers.ModelSerializer):
   class Meta:
     model = Task
     fields = (
-      'task_id',
+      'id',
       'priority','next_display_date','display_times','consecutive_times','is_update')
-    read_only_fields = ('task_id','priority','next_display_date','display_times','consecutive_times','is_update')
+    read_only_fields = ('id','priority','next_display_date','display_times','consecutive_times','is_update')
 
     # def update(self, instance, validated_data):
     #   # Modify validated_data with the value you need

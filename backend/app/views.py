@@ -35,7 +35,7 @@ User = get_user_model()
 class UserQueryset():
   def get_queryset(self):
       queryset = self.queryset
-      query_set = queryset.filter(user_id=self.request.user.id)
+      query_set = queryset.filter(user_id=self.request.user)
       return query_set
 
 class SettingViewSet(viewsets.ModelViewSet):
@@ -50,6 +50,10 @@ class TaskViewSet(viewsets.ModelViewSet, UserQueryset):
   def perform_create(self, serializer):
     serializer.save(user_id=self.request.user)
 
+  def get_queryset(self):
+      queryset = self.queryset
+      query_set = queryset.filter(user_id=self.request.user)
+      return query_set
 
 # 日ごとのタスク表示
 class TaskDailyAPIView(generics.ListAPIView):
@@ -58,7 +62,7 @@ class TaskDailyAPIView(generics.ListAPIView):
 
   def get_queryset(self):
     queryset = self.queryset
-    query_set = queryset.filter(user_id=self.request.user.id, next_display_date__year = self.kwargs.get('year'), next_display_date__month = self.kwargs.get('month'), next_display_date__day = self.kwargs.get('day'))
+    query_set = queryset.filter(user_id=self.request.user, next_display_date__year = self.kwargs.get('year'), next_display_date__month = self.kwargs.get('month'), next_display_date__day = self.kwargs.get('day'))
     return query_set
 
 # 月ごとのごとのタスク表示
@@ -68,7 +72,7 @@ class TaskMonthlyAPIView(generics.ListAPIView):
 
   def get_queryset(self):
     queryset = self.queryset
-    query_set = queryset.filter(user_id=self.request.user.id, next_display_date__year = self.kwargs.get('year'), next_display_date__month = self.kwargs.get('month'))
+    query_set = queryset.filter(user_id=self.request.user, next_display_date__year = self.kwargs.get('year'), next_display_date__month = self.kwargs.get('month'))
     return query_set
 
 # タスクが完了した時の処理1(historyの追加)
@@ -155,15 +159,24 @@ class TaskCompletedTaskAPIView(generics.UpdateAPIView):
     )
 
 
-
 class CategoryViewSet(viewsets.ModelViewSet):
   queryset = Category.objects.all()
   serializer_class = CategorySerializer
+
+  def get_queryset(self):
+      queryset = self.queryset
+      query_set = queryset.filter(user_id=self.request.user)
+      return query_set
 
 
 class HistoryViewSet(viewsets.ModelViewSet):
   queryset = History.objects.all()
   serializer_class = HistorySerializer
+
+  def get_queryset(self):
+      queryset = self.queryset
+      query_set = queryset.filter(user_id=self.request.user)
+      return query_set
 
 
 # 日ごとのヒストリー表示
