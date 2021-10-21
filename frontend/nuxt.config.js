@@ -17,6 +17,10 @@ export default {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
 
+  router: {
+    middleware: ['auth'],
+  },
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: ['@/assets/css/style.scss'],
 
@@ -38,11 +42,36 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '@nuxtjs/auth',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     baseURL: 'http://localhost:8000/',
+  },
+
+  auth: {
+    plugins: ['~/plugins/axios.js'],
+    redirect: {
+      login: '/login',
+      logout: false,
+      callback: false,
+      home: '/',
+    },
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: '/api/auth/login/',
+            method: 'post',
+            propertyName: 'auth_token',
+          },
+          logout: false,
+          user: false,
+        },
+        tokenType: 'Token',
+      },
+    },
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa

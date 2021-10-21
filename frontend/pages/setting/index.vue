@@ -95,7 +95,7 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn text @click="logoutDialog = false">キャンセル</v-btn>
-              <v-btn depressed class="primary" to="/sign_out">
+              <v-btn depressed class="primary" @click="logout">
                 ログアウト
               </v-btn>
             </v-card-actions>
@@ -171,6 +171,9 @@ export default {
         .put('/api/setting/limit', { limit: this.limit })
         .then(console.log('更新'))
         .catch((error) => {})
+    },
+    logout() {
+      this.$router.push('/logout')
     },
   },
 }
