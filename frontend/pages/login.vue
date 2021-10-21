@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Loading :loading="loading" />
     <v-card class="px-6 py-12 login-card" outlined>
       <!-- タブボタン -->
       <Tab
@@ -44,6 +45,7 @@ export default {
   data() {
     return {
       isActive: 1,
+      loading: false,
       user: {
         email: '',
         password: '',
@@ -81,12 +83,14 @@ export default {
     // ログイン処理
     signIn() {
       if (this.$refs.SignInForm.validate()) {
+        this.loading = true
         this.auth()
       }
     },
     // 登録処理
     signUp() {
       if (this.$refs.SignUpForm.validate()) {
+        this.loading = true
         this.$axios
           .post('/api/auth/register/', {
             email: this.user.email,
@@ -98,6 +102,7 @@ export default {
           .catch((error) => {
             console.log(error)
             this.message = error.response.data
+            this.loading = false
           })
       }
     },
@@ -120,6 +125,7 @@ export default {
         })
         .catch((error) => {
           this.message = error.response.data
+          this.loading = false
         })
     },
   },
