@@ -28,7 +28,7 @@
       </div>
 
       <!-- エラーメッセージ -->
-      <div v-show="message" class="error-message">{{ message }}</div>
+      <ErrorMessage :message="message" />
 
       <!-- ボタン -->
       <Btn @click="submit">{{ btnName }}</Btn>
@@ -49,7 +49,7 @@ export default {
         password: '',
         name: '',
       },
-      message: 'パスワードまたはメールアドレスが間違っています。',
+      message: null,
     }
   },
   computed: {
@@ -59,16 +59,17 @@ export default {
     },
   },
   watch: {
-    // タブの切替時にバリデーションをリセット
+    // タブの切替時にバリデーション、メッセージをリセット
     isActive() {
-      this.resetValidate()
+      this.reset()
     },
   },
   methods: {
-    // バリデーションのリセット
-    resetValidate() {
+    // バリデーション、メッセージのリセット
+    reset() {
       this.$refs.SignInForm.reset()
       this.$refs.SignUpForm.reset()
+      this.message = null
     },
     submit() {
       if (this.isActive == 1) {
@@ -80,14 +81,46 @@ export default {
     // ログイン処理
     signIn() {
       if (this.$refs.SignInForm.validate()) {
-        console.log('signin')
+        this.auth()
       }
     },
     // 登録処理
     signUp() {
       if (this.$refs.SignUpForm.validate()) {
-        console.log('signup')
+        this.$axios
+          .post('/api/auth/register/', {
+            email: this.user.email,
+            password: this.user.password,
+          })
+          .then((response) => {
+            this.auth('signup')
+          })
+          .catch((error) => {
+            console.log(error)
+            this.message = error.response.data
+          })
       }
+    },
+    // 認証処理
+    auth(type) {
+      this.$auth
+        .loginWith('local', {
+          data: {
+            email: this.user.email,
+            password: this.user.password,
+          },
+        })
+        .then(() => {
+          if (type === 'signup') {
+            // アカウント作成にユーザー名を登録
+            this.$axios.post('/api/profile/', {
+              username: this.user.name,
+            })
+          }
+        })
+        .catch((error) => {
+          this.message = error.response.data
+        })
     },
   },
 }
@@ -97,14 +130,6 @@ export default {
 .login-card {
   max-width: 500px;
   margin: 0 auto;
-}
-.error-message {
-  margin-bottom: 28px;
-  padding: 20px;
-  font-size: 14px;
-  border-radius: 20px;
-  color: #fff;
-  background-color: #f8535b;
 }
 .link-reset-password {
   margin: 50px 0 10px;
