@@ -11,11 +11,11 @@ from rest_framework import generics
 from rest_framework import viewsets, filters
 
 #作成したモデルとシリアライザをインポート
-from .models import User, Task, Category, History, Setting
-from .serializer import AuthUserSerializer, TaskSerializer, CategorySerializer, HistorySerializer, TaskCompletedSerializer, SettingSerializer
+from .models import User, Task, Category, History, Profile
+from .serializer import AuthUserSerializer, TaskSerializer, CategorySerializer, HistorySerializer, TaskCompletedSerializer, ProfileSerializer
 
 #viewの操作のため
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, mixins
 from rest_framework.response import Response
 
 # 次回表示日の設定
@@ -38,9 +38,20 @@ class UserQueryset():
       query_set = queryset.filter(user_id=self.request.user)
       return query_set
 
-class SettingViewSet(viewsets.ModelViewSet):
-  queryset = Setting.objects.all()
-  serializer_class = SettingSerializer
+class ProfileViewSet(
+                mixins.CreateModelMixin,
+                mixins.RetrieveModelMixin, 
+                mixins.UpdateModelMixin, 
+                viewsets.GenericViewSet):
+  
+  queryset = Profile.objects.all()
+  serializer_class = ProfileSerializer
+
+  def get_queryset(self):
+    queryset = self.queryset
+    query_set = queryset.filter(user_id=self.request.user)
+    return query_set
+
 
 
 class TaskViewSet(viewsets.ModelViewSet, UserQueryset):
@@ -241,7 +252,7 @@ class AuthViewSet(viewsets.GenericViewSet):
     @action(methods=['POST', ], detail=False)
     def logout(self, request):
         logout(request)
-        data = {'success': 'Sucessfully logged out'}
+        data = {'success': 'ログアウトに成功しました。'}
         return Response(data=data, status=status.HTTP_200_OK)
 
     @action(methods=['POST'], detail=False, permission_classes=[IsAuthenticated, ])

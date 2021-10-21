@@ -90,7 +90,7 @@ class History(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False) #user id (fk)
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE, null=False) #task id (fk)
 
-class Setting(models.Model):
+class Profile(models.Model):
     username = models.CharField(max_length=30, null=True) #name
     is_notification = models.BooleanField(default=True, null=False) #notification flag (on/off)
     task_limit = models.IntegerField(default=100, null=False) #task display limit

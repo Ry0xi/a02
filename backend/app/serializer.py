@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 
-from .models import User, Task, Category, History, Setting
+from .models import User, Task, Category, History, Profile
 
 from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.models import BaseUserManager
@@ -88,7 +88,7 @@ class AuthUserSerializer(serializers.ModelSerializer):
 
     class Meta:
          model = User
-         fields = ('id', 'email', 'first_name', 'last_name', 'is_active', 'is_staff', 'auth_token')
+         fields = ('id', 'email', 'is_active', 'is_staff', 'auth_token')
          read_only_fields = ('id', 'is_active', 'is_staff')
 
     def get_auth_token(self, obj):
@@ -100,7 +100,7 @@ class AuthUserLoginSerializer(serializers.ModelSerializer):
 
     class Meta:
          model = User
-         fields = ('id', 'email', 'first_name', 'last_name', 'is_active', 'is_staff', 'auth_token')
+         fields = ('id', 'email', 'is_active', 'is_staff', 'auth_token')
          read_only_fields = ('id', 'is_active', 'is_staff')
 
     def get_auth_token(self, obj):
@@ -118,7 +118,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'password', 'first_name', 'last_name')
+        fields = ('id', 'email', 'password')
 
     def validate_email(self, value):
         user = User.objects.filter(email=value)
@@ -143,7 +143,7 @@ class PasswordChangeSerializer(serializers.Serializer):
         password_validation.validate_password(value)
         return value
 
-class SettingSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
   class Meta:
-    model = Setting
+    model = Profile
     fields = ('username', 'is_notification', 'task_limit', 'user_id')
