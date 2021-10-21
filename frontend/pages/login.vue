@@ -34,7 +34,9 @@
       <!-- ボタン -->
       <Btn @click="submit">{{ btnName }}</Btn>
 
-      <div class="link-reset-password">パスワードを忘れた方はこちら</div>
+      <div v-show="isActive === 1">
+        <div class="link-reset-password">パスワードを忘れた方はこちら</div>
+      </div>
     </v-card>
   </div>
 </template>
