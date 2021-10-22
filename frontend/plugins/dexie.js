@@ -6,10 +6,11 @@ const db = new Dexie('db')
 // テーブルの作成
 db.version(1).stores({
   user: 'id, name',
-  task: 'id, title, detail, url, priority, date, display_times, consecutive_times, is_update, category_ids, is_done',
+  task: 'id, title, detail, url, priority, next_display_date, display_times, consecutive_times, is_update, category, created_at',
+  task_date: '++id, task_id, date, is_done',
   category: 'id, name, color',
-  offline_task: 'id, type',
-  offline_category: 'id, type',
+  offline_task: '++id, task_id, type, data',
+  offline_category: '++id, category_id, type, data',
 })
 
 const testTasks = [
