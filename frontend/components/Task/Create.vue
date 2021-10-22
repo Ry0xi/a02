@@ -4,15 +4,13 @@ taskName:          表示するタスクのタイトル
 taskDate:          表示するタスクの最新の表示日
 taskDetail:        表示するタスクの内容
 categories:        表示するタスクに設定されたカテゴリの配列
-isDone:            表示するタスクが完了しているかどうか
 categoryData:      カテゴリの情報をもつ配列
 tasks:             全てのタスクのデータ
 @task:created:     タスクの保存ボタンを押した時に発火するイベント
                    タスクオブジェクトを返す
                    {
                      'title': this.editableTaskName,
-                     'category_ids': this.editableCategories,
-                     'is_done': this.editableIsDone,
+                     'category': this.editableCategories,
                      'date': this.editableTaskDate,
                      'detail': this.editableTaskDetail
                    }
@@ -191,10 +189,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    isDone: {
-      type: Boolean,
-      default: false,
-    },
     taskDate: {
       type: String,
       default: '',
@@ -215,7 +209,6 @@ export default {
       categoryIdForEditor: null,
       editableTaskName: String,
       editableCategories: Array,
-      editableIsDone: Boolean,
       editableTaskDate: String,
       editableTaskDetail: String,
     }
@@ -234,7 +227,6 @@ export default {
         this.taskName == this.editableTaskName &&
         JSON.stringify(this.categories) ==
           JSON.stringify(this.editableCategories) &&
-        this.isDone == this.editableIsDone &&
         this.taskDate == this.editableTaskDate &&
         this.taskDetail == this.editableTaskDetail
       ) {
@@ -278,7 +270,6 @@ export default {
       this.editableCategories = this.categories
         ? this.categories.slice(0, this.categories.length)
         : []
-      this.editableIsDone = this.isDone
       this.editableTaskDate = this.taskDate
       this.editableTaskDetail = this.taskDetail
     },
@@ -289,9 +280,8 @@ export default {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const createdTaskData = {
         'title': this.editableTaskName,
-        'category_ids': this.editableCategories,
-        'is_done': this.editableIsDone,
-        'date': this.editableTaskDate,
+        'category': this.editableCategories,
+        'next_display_date': this.editableTaskDate,
         'detail': this.editableTaskDetail
       }
       this.$emit('task:created', createdTaskData)

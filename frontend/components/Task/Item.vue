@@ -1,6 +1,6 @@
 <!--
 taskDateId:       task_dateのID
-taskName:         タスクのタイトル
+taskTitle:         タスクのタイトル
 categories:       タスクに登録しているカテゴリの配列
 isDone:           タスクを完了しているかどうか
 taskDate:         タスクの表示日
@@ -11,7 +11,7 @@ isAutoAddedTask:  タスクの自動追加のオンオフ
 -->
 <template>
   <v-card class="task-item" outlined>
-    <v-card-title class="task-item-name">{{ taskName }}</v-card-title>
+    <v-card-title class="task-item-name">{{ taskTitle }}</v-card-title>
     <TaskCategoryList :categoryData="categoryData" :categories="categories" />
 
     <TaskDoneBtn :taskDateId="taskDateId" v-if="!isDone" v-show="!hideDoneBtn" @task:done="doneTask" />
@@ -25,7 +25,7 @@ export default {
       type: Number,
       required: true,
     },
-    taskName: {
+    taskTitle: {
       type: String,
     },
     categories: {
