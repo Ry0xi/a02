@@ -23,7 +23,7 @@
           <TaskItem
             :id="'activator' + task.id"
             v-show="shownTasks == 0 || isShownTask(task)"
-            :taskId="task.id"
+            :taskDateId="task.id"
             :taskName="task.name"
             :taskDate="task.date"
             :taskDetail="task.detail"
