@@ -1,6 +1,6 @@
 <!--
 v-model:           ダイアログ
-taskName:          表示するタスクのタイトル
+taskTitle:          表示するタスクのタイトル
 taskDate:          表示するタスクの最新の表示日
 taskDetail:        表示するタスクの内容
 categories:        表示するタスクに設定されたカテゴリの配列
@@ -9,7 +9,7 @@ tasks:             全てのタスクのデータ
 @task:created:     タスクの保存ボタンを押した時に発火するイベント
                    タスクオブジェクトを返す
                    {
-                     'title': this.editableTaskName,
+                     'title': this.editabletaskTitle,
                      'category': this.editableCategories,
                      'date': this.editableTaskDate,
                      'detail': this.editableTaskDetail
@@ -50,7 +50,7 @@ tasks:             全てのタスクのデータ
                 <v-list-item-title>タイトル</v-list-item-title>
 
                 <v-text-field
-                  v-model="editableTaskName"
+                  v-model="editabletaskTitle"
                   single-line
                   outlined
                   clearable
@@ -181,7 +181,7 @@ export default {
     dialog: {
       type: Boolean,
     },
-    taskName: {
+    taskTitle: {
       type: String,
       default: '',
     },
@@ -207,7 +207,7 @@ export default {
       categorySelector: false,
       categoryEditor: false,
       categoryIdForEditor: null,
-      editableTaskName: String,
+      editabletaskTitle: String,
       editableCategories: Array,
       editableTaskDate: String,
       editableTaskDetail: String,
@@ -224,7 +224,7 @@ export default {
     },
     edited: function () {
       if (
-        this.taskName == this.editableTaskName &&
+        this.taskTitle == this.editabletaskTitle &&
         JSON.stringify(this.categories) ==
           JSON.stringify(this.editableCategories) &&
         this.taskDate == this.editableTaskDate &&
@@ -236,7 +236,7 @@ export default {
       }
     },
     canChangeData: function () {
-      if (this.edited && this.editableTaskName && this.editableTaskDate) {
+      if (this.edited && this.editabletaskTitle && this.editableTaskDate) {
         return true
       } else {
         return false
@@ -266,7 +266,7 @@ export default {
   },
   methods: {
     setData() {
-      this.editableTaskName = this.taskName
+      this.editabletaskTitle = this.taskTitle
       this.editableCategories = this.categories
         ? this.categories.slice(0, this.categories.length)
         : []
@@ -279,7 +279,7 @@ export default {
     createTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const createdTaskData = {
-        'title': this.editableTaskName,
+        'title': this.editabletaskTitle,
         'category': this.editableCategories,
         'next_display_date': this.editableTaskDate,
         'detail': this.editableTaskDetail
