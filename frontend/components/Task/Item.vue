@@ -14,7 +14,7 @@ isAutoAddedTask:  タスクの自動追加のオンオフ
     <v-card-title class="task-item-name">{{ taskName }}</v-card-title>
     <TaskCategoryList :categoryData="categoryData" :categories="categories" />
 
-    <TaskDoneBtn :taskId="taskId" v-if="!isDone" v-show="!hideDoneBtn" @task:done="doneTask" />
+    <TaskDoneBtn :taskDateId="taskId" v-if="!isDone" v-show="!hideDoneBtn" @task:done="doneTask" />
   </v-card>
 </template>
 
