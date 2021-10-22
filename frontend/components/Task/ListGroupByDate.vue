@@ -65,7 +65,7 @@ export default {
       type: Array,
     },
     taskData: {
-      type: Array
+      type: Object,
     },
     categoryData: {
       type: Object,
