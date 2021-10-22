@@ -13,10 +13,12 @@
       v-model="activeTab"
       class="mb-8"
     />
+    <!-- !loadingTaskがないとタスク削除後読み込み最中にレンダーしてしまう -->
     <TaskList
-      v-if="tasks && categoryData"
+      v-if="!loadingTask && tasks && taskData && categoryData"
       :shownTasks="activeTab"
       :tasks="tasks"
+      :taskData="taskData"
       :categoryData="categoryData"
       @task:deleted="deleteTaskData($event)"
       @task:updated="updateTaskData($event)"
@@ -44,6 +46,8 @@ export default {
       },
       activeTab: 1,
       tasks: null,
+      taskData: null,
+      loadingTask: false,
       categoryData: null,
       snackbarDelete: false,
     }
@@ -56,31 +60,35 @@ export default {
   methods: {
     async getTasksFromDB() {
       console.log('getTasksFromDB')
-
+      this.loadingTask = true
+      // タスクデータの取得
       await this.$db.task.toArray()
       .then((tasks) => {
         console.log('tasks >> 取得成功')
         console.log(tasks)
 
-        let taskData = []
+        // データを整形して保持
+        let newData = {}
         tasks.forEach((task) => {
-          const objTaskData = {
-            'id': task.id,
-            'name': task.title,
-            'date': task.date,
-            'detail': task.detail,
-            'categories': task.category_ids,
-            'isDone': task.is_done,
-          }
-          taskData.push(objTaskData)
+          const taskId = task.id
+          delete task.id
+          delete task.is_done
+          newData[taskId] = task
         })
-
-        this.tasks = taskData
+        // タスクデータの適用
+        this.taskData = newData
       })
       .catch((e) => {
         console.log('tasks >> 取得失敗')
         console.log(e.message)
       })
+      // タスクリストを取得
+      await this.$db.task_date.toArray()
+      .then(tasks => {
+        this.tasks = tasks
+      })
+
+      this.loadingTask = false
     },
     async getCategoryDataFromDB() {
       console.log('getCategoryDataFromDB')
@@ -133,7 +141,12 @@ export default {
       // IDBに登録する
       this.$db.task.add(newTaskData).then(() => {
         console.log('タスク追加 >> 成功')
-        this.getTasksFromDB()
+
+        this.$db.task_date.add({
+          'task_id': newTaskData.id,
+          'date': newTaskData.next_display_date,
+          'is_done': false,
+        }).then(() => this.getTasksFromDB())
       })
       
     },
@@ -141,8 +154,15 @@ export default {
       // IDBから削除
       this.$db.task.delete(taskId).then(() => {
         console.log('task deleted.')
-        // タスクデータの再読み込み
-        this.getTasksFromDB()
+
+        this.$db.task_date
+          .where('task_id')
+          .equals(taskId)
+          .delete().then(() => {
+          console.log('task deleted.')
+          // タスクデータの再読み込み
+          this.getTasksFromDB()
+        })
       })
       
       // 削除を通知
@@ -159,14 +179,12 @@ export default {
       })
 
     },
-    doneTask(taskId) {
+    doneTask(taskDateId) {
       // IDBを更新
-      this.$db.task
-        .where({'id': taskId})
-        .modify({'is_done': true})
-      
-      // タスクデータの再読み込み
-      this.getTasksFromDB()
+      this.$db.task_date.update(taskDateId, {'is_done': true}).then(() => {
+        // タスクデータの再読み込み
+        this.getTasksFromDB()
+      })
     },
     updateCategoryData(updatedCategoryData) {
       // カテゴリデータを更新
@@ -198,7 +216,7 @@ export default {
       if (type == 'category') {
         existIds = Object.keys(this.categoryData).map(id => Number(id))
       } else if (type == 'task') {
-        existIds = this.tasks.map(task => task.id)
+        existIds = this.tasks.map(task => task.task_id)
       } else {
         return
       }
