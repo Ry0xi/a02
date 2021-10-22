@@ -49,7 +49,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
   category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(),many=True)
-  user_id = UserIdSerializer(read_only=True)
   class Meta:
     model = Task
     fields = (
@@ -146,4 +145,5 @@ class PasswordChangeSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
   class Meta:
     model = Profile
-    fields = ('username', 'is_notification', 'task_limit', 'user_id')
+    fields = ('id', 'username', 'is_notification', 'task_limit', 'user_id')
+    read_only_fields = ('id', 'user_id',)
