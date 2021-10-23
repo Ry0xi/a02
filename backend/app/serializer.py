@@ -145,5 +145,5 @@ class PasswordChangeSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
   class Meta:
     model = Profile
-    fields = ('id', 'username', 'is_notification', 'task_limit', 'user_id')
+    fields = ('id', 'username', 'is_notification', 'task_limit','update_time', 'user_id')
     read_only_fields = ('id', 'user_id',)
