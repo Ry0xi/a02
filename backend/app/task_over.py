@@ -11,7 +11,7 @@ def job(update_time):
   for user in users:
 
     #Profileモデルから対象のuser.idでdisplay_dateが昨日のタスクに対し更新処理を行う．
-    tasks = Task.objects.filter(user_id=user.user_id)
+    tasks = Task.objects.filter(user_id=user.user_id, is_update=True)
     for task in tasks:
       if task.next_display_date < date.today():
 
@@ -55,23 +55,23 @@ def job(update_time):
 
     print("update completed! user_id:"+str(user.user_id)+str(update_time)+":00")
 
-# 本番
-def start():
-  """
-  Scheduling data update
-  """
-  scheduler = BackgroundScheduler()
-  for update_time in range(0,6):
-    scheduler.add_job(job, 'cron', [update_time],  hour=update_time) # schedule
-  scheduler.start()
-
-# #test
+# # 本番
 # def start():
 #   """
 #   Scheduling data update
-#   Run update function once every 1 minutes
 #   """
 #   scheduler = BackgroundScheduler()
 #   for update_time in range(0,6):
-#     scheduler.add_job(job, 'interval', [update_time],  seconds=60) # schedule
+#     scheduler.add_job(job, 'cron', [update_time],  hour=update_time) # schedule
 #   scheduler.start()
+
+#test
+def start():
+  """
+  Scheduling data update
+  Run update function once every 1 minutes
+  """
+  scheduler = BackgroundScheduler()
+  for update_time in range(0,6):
+    scheduler.add_job(job, 'interval', [update_time],  seconds=20) # schedule
+  scheduler.start()
