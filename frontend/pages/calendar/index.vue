@@ -39,7 +39,7 @@
               :key="index"
               class="taskItem"
             >
-              {{ task.name }}
+              {{ task.title }}
             </div>
           </draggable>
         </div>
@@ -47,7 +47,7 @@
     </v-card>
     <TaskCreate
       v-model="dialog"
-      :taskName="task.name"
+      :taskTitle="task.title"
       :taskDate="task.date"
       :categoryData="categoryData"
       @task:created="addTaskData($event)"
@@ -75,7 +75,7 @@ export default {
       date: new Date().toISOString().substr(0, 10),
       dialog: false,
       task: {
-        name: '',
+        title: '',
         date: '',
       },
       setItem: [],
@@ -109,20 +109,7 @@ export default {
           console.log('tasks >> 取得成功')
           console.log(tasks)
 
-          let taskData = []
-          tasks.forEach((task) => {
-            const objTaskData = {
-              'id': task.id,
-              'name': task.title,
-              'date': task.date,
-              'detail': task.detail,
-              'categories': task.category_ids,
-              'isDone': task.is_done,
-            }
-            taskData.push(objTaskData)
-          })
-
-          this.tasks = taskData
+          this.tasks = tasks
           this.taskItems = this.dedupe(this.tasks)
         })
         .catch((e) => {
@@ -162,7 +149,7 @@ export default {
     dedupe(tasks) {
       return tasks.filter(
         (element, index, self) =>
-          self.findIndex((e) => e.name === element.name) === index
+          self.findIndex((e) => e.title === element.title) === index
       )
     },
     async addTaskData(newTaskData) {
@@ -178,15 +165,27 @@ export default {
       // IDBに登録する
       this.$db.task.add(newTaskData).then(() => {
         console.log('タスク追加 >> 成功')
-        this.getTasksFromDB()
+
+        this.$db.task_date.add({
+          'task_id': newTaskData.id,
+          'date': newTaskData.next_display_date,
+          'is_done': false,
+        }).then(() => this.getTasksFromDB())
       })
     },
     deleteTaskData(taskId) {
       // IDBから削除
       this.$db.task.delete(taskId).then(() => {
         console.log('task deleted.')
-        // タスクデータの再読み込み
-        this.getTasksFromDB()
+
+        this.$db.task_date
+          .where('task_id')
+          .equals(taskId)
+          .delete().then(() => {
+          console.log('task deleted.')
+          // タスクデータの再読み込み
+          this.getTasksFromDB()
+        })
       })
     },
     updateTaskData(updatedData) {
@@ -226,9 +225,9 @@ export default {
       // 【追加系api通信が新規IDを返すようになるまで使用】仮の新規IDを生成
       let existIds = []
       if (type == 'category') {
-        existIds = Object.keys(this.categoryData).map((id) => Number(id))
+        existIds = Object.keys(this.categoryData).map(id => Number(id))
       } else if (type == 'task') {
-        existIds = this.tasks.map((task) => task.id)
+        existIds = this.tasks.map(task => task.id)
       } else {
         return
       }
@@ -249,7 +248,7 @@ export default {
       const now = new Date(this.date)
       const targetDate = new Date(date)
       if (targetDate >= now) {
-        this.task.name = this.setItem[0].name
+        this.task.title = this.setItem[0].title
         this.task.date = date
         this.dialog = true
         this.setItem = []

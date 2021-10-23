@@ -11,11 +11,11 @@ from rest_framework import generics
 from rest_framework import viewsets, filters
 
 #作成したモデルとシリアライザをインポート
-from .models import User, Task, Category, History, Setting
-from .serializer import AuthUserSerializer, TaskSerializer, CategorySerializer, HistorySerializer, TaskCompletedSerializer, SettingSerializer
+from .models import User, Task, Category, History, Profile
+from .serializer import AuthUserSerializer, TaskSerializer, CategorySerializer, HistorySerializer, TaskCompletedSerializer, ProfileSerializer
 
 #viewの操作のため
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, mixins
 from rest_framework.response import Response
 
 # 次回表示日の設定
@@ -38,9 +38,24 @@ class UserQueryset():
       query_set = queryset.filter(user_id=self.request.user)
       return query_set
 
-class SettingViewSet(viewsets.ModelViewSet):
-  queryset = Setting.objects.all()
-  serializer_class = SettingSerializer
+# class ProfileViewSet(
+#                 mixins.CreateModelMixin,
+#                 mixins.RetrieveModelMixin,
+#                 mixins.UpdateModelMixin,
+#                 viewsets.GenericViewSet):
+class ProfileViewSet(viewsets.ModelViewSet):
+
+  queryset = Profile.objects.all()
+  serializer_class = ProfileSerializer
+
+  def get_queryset(self):
+    queryset = self.queryset
+    query_set = queryset.filter(user_id=self.request.user.id)
+    return query_set
+
+  def perform_create(self, serializer):
+    serializer.save(user_id_id=self.request.user.id)
+
 
 
 class TaskViewSet(viewsets.ModelViewSet, UserQueryset):
@@ -48,11 +63,11 @@ class TaskViewSet(viewsets.ModelViewSet, UserQueryset):
   serializer_class = TaskSerializer
 
   def perform_create(self, serializer):
-    serializer.save(user_id=self.request.user)
+    serializer.save(user_id_id=self.request.user.id)
 
   def get_queryset(self):
       queryset = self.queryset
-      query_set = queryset.filter(user_id=self.request.user)
+      query_set = queryset.filter(user_id=self.request.user.id)
       return query_set
 
 # 日ごとのタスク表示
@@ -62,7 +77,7 @@ class TaskDailyAPIView(generics.ListAPIView):
 
   def get_queryset(self):
     queryset = self.queryset
-    query_set = queryset.filter(user_id=self.request.user, next_display_date__year = self.kwargs.get('year'), next_display_date__month = self.kwargs.get('month'), next_display_date__day = self.kwargs.get('day'))
+    query_set = queryset.filter(user_id=self.request.user.id, next_display_date__year = self.kwargs.get('year'), next_display_date__month = self.kwargs.get('month'), next_display_date__day = self.kwargs.get('day'))
     return query_set
 
 # 月ごとのごとのタスク表示
@@ -72,7 +87,7 @@ class TaskMonthlyAPIView(generics.ListAPIView):
 
   def get_queryset(self):
     queryset = self.queryset
-    query_set = queryset.filter(user_id=self.request.user, next_display_date__year = self.kwargs.get('year'), next_display_date__month = self.kwargs.get('month'))
+    query_set = queryset.filter(user_id=self.request.user.id, next_display_date__year = self.kwargs.get('year'), next_display_date__month = self.kwargs.get('month'))
     return query_set
 
 # タスクが完了した時の処理1(historyの追加)
@@ -241,7 +256,7 @@ class AuthViewSet(viewsets.GenericViewSet):
     @action(methods=['POST', ], detail=False)
     def logout(self, request):
         logout(request)
-        data = {'success': 'Sucessfully logged out'}
+        data = {'success': 'ログアウトに成功しました。'}
         return Response(data=data, status=status.HTTP_200_OK)
 
     @action(methods=['POST'], detail=False, permission_classes=[IsAuthenticated, ])

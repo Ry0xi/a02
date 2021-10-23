@@ -1,5 +1,5 @@
 <!--
-taskId:       ボタンを表示しているタスクのID
+taskDateId:   ボタンを表示しているタスクのID(task_dateテーブル)
 @task:done:   タスク完了時に発火するイベント。完了したタスクのIDを返す。
 -->
 <template>
@@ -76,7 +76,7 @@ taskId:       ボタンを表示しているタスクのID
 <script>
 export default {
   props: {
-    taskId: {
+    taskDateId: {
       type: Number,
       required: true,
     },
@@ -96,7 +96,7 @@ export default {
       return this.selectedItem == item ? 'primary' : '#f5f5f5'
     },
     save() {
-      this.$emit('task:done', this.taskId)
+      this.$emit('task:done', this.taskDateId)
       console.log('Task Done!')
       this.closeDialog()
     },

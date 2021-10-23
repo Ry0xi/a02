@@ -2,14 +2,14 @@ from rest_framework import routers
 from django.urls import path, include
 
 from .views import TaskViewSet, CategoryViewSet, HistoryViewSet, ManageUserView, TaskDailyAPIView, TaskMonthlyAPIView, HistoryDailyAPIView, HistoryMonthlyAPIView, TaskCompletedHistoryAPIView, TaskCompletedTaskAPIView
-from .views import AuthViewSet, SettingViewSet
+from .views import AuthViewSet, ProfileViewSet
 
 router = routers.DefaultRouter()
 router.register('auth', AuthViewSet, basename='auth')
 router.register('task', TaskViewSet)
 router.register('category', CategoryViewSet)
 router.register('history', HistoryViewSet)
-router.register('setting', SettingViewSet)
+router.register('profile', ProfileViewSet)
 
 urlpatterns = [
     path('myself/',ManageUserView.as_view( ), name='myself'),
