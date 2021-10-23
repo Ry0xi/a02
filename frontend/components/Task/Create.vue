@@ -9,9 +9,9 @@ tasks:             全てのタスクのデータ
 @task:created:     タスクの保存ボタンを押した時に発火するイベント
                    タスクオブジェクトを返す
                    {
-                     'title': this.editabletaskTitle,
+                     'title': this.editableTaskName,
                      'category': this.editableCategories,
-                     'date': this.editableTaskDate,
+                     'next_display_date': this.editableTaskDate,
                      'detail': this.editableTaskDetail
                    }
 @category:updated: カテゴリが更新されたときに発火するイベント
@@ -279,10 +279,11 @@ export default {
     createTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const createdTaskData = {
-        'title': this.editabletaskTitle,
+        'title': this.editableTaskName,
         'category': this.editableCategories,
         'next_display_date': this.editableTaskDate,
-        'detail': this.editableTaskDetail
+        'detail': this.editableTaskDetail,
+        'url': null
       }
       this.$emit('task:created', createdTaskData)
       this.snackbarCreate = true

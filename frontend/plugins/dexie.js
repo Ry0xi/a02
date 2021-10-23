@@ -12,6 +12,7 @@ db.version(1).stores({
   offline_task: '++id, task_id, type, data',
   offline_category: '++id, category_id, type, data',
 })
+// task.type : create, update, delete, done
 
 const testTasks = [
   {'id': '1001', 'name': 'タスク１', 'date': '2021-02-27', 'detail': '教材Aのp23~36を学んで、問題集p41~44を解く。', 'categories': ['0001','0002'], 'isDone': true},
