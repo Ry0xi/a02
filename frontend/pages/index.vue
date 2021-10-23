@@ -60,11 +60,12 @@ export default {
   methods: {
     getTasksFromDB() {
       console.log('getTasksFromDB()')
+      this.loadingTask = true
 
       // IDBからタスクを取得
-      this.$db.task.toArray()
+      const promiseTaskData = this.$db.task.toArray()
       .then((tasks) => {
-        console.log('tasks >> 取得成功')
+        console.log('Got tasks from table: task')
 
         // データを整形して保持
         let newData = {}
@@ -76,17 +77,17 @@ export default {
         // タスクデータの適用
         this.taskData = newData
       })
-      .catch((e) => {
-        console.log('tasks >> 取得失敗')
-        console.error(e.message)
-      })
       // タスクリストを取得
-      await this.$db.task_date.toArray()
+      const promiseTaskDate = this.$db.task_date.toArray()
       .then(tasks => {
+        console.log('Got tasks from table: task_date.')
         this.tasks = tasks
       })
 
-      this.loadingTask = false
+      Promise.all([promiseTaskData, promiseTaskDate])
+      .then(() => {
+        this.loadingTask = false
+      })
     },
     getCategoryDataFromDB() {
       console.log('getCategoryDataFromDB()')
@@ -114,110 +115,111 @@ export default {
     },
     fetchTasks() {
       console.log('fetchTasks()')
-      // サーバーから未完了のタスクデータを取得する
-      const promiseTask = this.$axios.get('/api/task/').then((response) => {
+      // サーバーから未完了のタスクデータを取得し、保存する
+      const promiseTask = this.$axios.get('/api/task/').then(response => response.data)
+      .then(tasks => {
+        console.log('promiseTask１')
         console.log('タスク取得(API) >> 成功')
-
         // IDBからタスクを削除
-        this.$db.task.clear().catch((e) => {
-          console.log('タスク(IDB)削除 >> 失敗')
-        }).then(() => {
-          // IDBに保存
-          // const dataToSave = []
-          // response.data.forEach((task) => {
-          //   const taskToSave = {
-          //     'id': task.id,
-          //     'title': task.title,
-          //     'detail': task.detail,
-          //     'url': task.url,
-          //     'priority': task.priority,
-          //     'date': task.next_display_date,
-          //     'display_times': task.display_times,
-          //     'consecutive_times': task.consecutive_times,
-          //     'is_update': task.is_update,
-          //     'category_ids': task.category,
-          //     'is_done': false,
-          //     'created_at': task.created_at,
-          //   }
-          //   dataToSave.push(taskToSave)
-          // })
-  
-          // console.log('タスク整形 >> 成功')
-          
-          this.$db.task.bulkAdd(response.data).then(() => {
+        return this.$db.task.clear()
+        .then(() => {
+          console.log('promiseTask２')
+          // タスクデータをIDBに保存
+          return this.$db.task.bulkAdd(tasks).then(() => {
+            console.log('promiseTask３')
             console.log('タスク保存(IDB) >> 成功')
+            return tasks
           }).catch((e) => {
             console.log('タスク保存(IDB) >> 失敗')
             console.error(e.message)
           })
-
+        })
+        .catch((e) => {
+          console.log('タスク(IDB)削除 >> 失敗')
         })
       })
 
       // サーバーから完了済のタスクデータを取得する
-      const promiseHistory = this.$axios.get('/api/history/').then((response) => {
+      const promiseHistory = this.$axios.get('/api/history/')
+      .then(response => response.data)
+      .then(history => {
+        console.log('promiseHistory１')
         console.log('ヒストリー取得(API) >> 成功')
+        return history
+      })
 
-        // IDBからヒストリーを削除
-        this.$db.history.clear().catch((e) => {
-          console.log('ヒストリー(IDB)削除 >> 失敗')
+      // task_dateを削除する
+      const promiseClearTaskDate = this.$db.task_date.clear()
+
+      // task_dateにタスクリストを追加する
+      const promiseAddTaskDate = (tasks, history) => {
+        console.log('promiseAddTaskDate１')
+        // データを整形
+        let newTaskData = []
+        tasks.forEach(task => {
+          const taskData = {
+            'task_id': task.id,
+            'date': task.next_display_date,
+            'is_done': false,
+          }
+          newTaskData.push(taskData)
         })
-
-        // IDBに保存
-        const dataToSave = []
-        response.data.forEach((task) => {
-          const taskToSave = {
-            'id': task.id,
-            'completed_date': task.completed_date,
+        history.forEach((task) => {
+          const taskData = {
+            'date': task.completed_date,
+            'is_done': true,
             'feedback': task.feedback,
             'task_id': task.task_id,
           }
-          dataToSave.push(taskToSave)
+          newTaskData.push(taskData)
         })
-
-        console.log('ヒストリー整形 >> 成功')
-        
-        this.$db.history.bulkAdd(dataToSave).then(() => {
-          console.log('ヒストリー保存(IDB) >> 成功')
-        }).catch((e) => {
-          console.log('ヒストリー保存(IDB) >> 失敗')
+        // IDBに保存
+        return this.$db.task_date.bulkAdd(newTaskData).then(() => {
+          console.log('タスクリスト保存(IDB) >> 成功')
+        }).catch(e => {
+          console.log('タスクリスト保存(IDB) >> 失敗')
           console.error(e.message)
         })
-      })
+      }
 
-      Promise.all([promiseTask, promiseHistory]).then(() => {
-        this.getTasksFromDB()
-      }).catch((e) => {
+
+      Promise.all([promiseTask, promiseHistory])
+      .then(arrays => {
+        return promiseClearTaskDate
+        .then(() => {
+          console.log('promiseClearTaskDate１')
+          return arrays
+        })
+      })
+      .then(arrays => {
+        return promiseAddTaskDate(arrays[0], arrays[1])
+      })
+      .then(() => this.getTasksFromDB())
+      .catch((e) => {
         console.error('fetchTaskData Error: '+e.message)
       })
     },
     addTaskData(newTaskData) {
-
       // サーバーに追加する
       this.$axios.post('/api/task/', newTaskData).then((response) => {
         console.log('タスク追加(API) >> 成功')
 
-        // IDB登録用にデータを整形
-        newTaskData.id = response.data.id
-        newTaskData.date = newTaskData.next_display_date
-        delete newTaskData.next_display_date
-        newTaskData.category_ids = response.data.category
-        delete newTaskData.category
-        newTaskData.priority = response.data.priority
-        newTaskData.display_times = response.data.display_times
-        newTaskData.consecutive_times = response.data.consecutive_times
-        newTaskData.is_update = response.data.is_update
-
-        console.log('newTaskData')
-        console.log(newTaskData)
-
         // IDBに登録する
-        this.$db.task.add(newTaskData).then(() => {
-          console.log('タスク追加(IDB) >> 成功')
-          this.getTasksFromDB()
+        this.$db.task.add(response.data).then(() => {
+          console.log('タスク追加(IDB1) >> 成功')
         }).catch((e) => {
           console.log('タスク追加(IDB) >> 失敗')
           console.error(e.message)
+        }).then(() => {
+          // データを整形
+          let newData = {
+            'task_id': response.data.id,
+            'date': response.data.next_display_date,
+            'is_done': false,
+          }
+          this.$db.task_date.add(newData).then(() => {
+            this.getTasksFromDB()
+          })
         })
 
       }).catch((e) => {
@@ -261,17 +263,8 @@ export default {
       this.$axios.put('/api/task/'+String(taskId)+'/', updatedData).then(() => {
         console.log('タスク更新(API) >> 成功')
 
-        // IDB更新用にデータを整形
-        const dataToUpdate = {
-          'title': updatedData.title,
-          'category_ids': updatedData.category,
-          'is_done': updatedData.is_done,
-          'date': updatedData.next_display_date,
-          'detail': updatedData.detail,
-        }
-
         // IDBで更新
-        this.$db.task.update(taskId, dataToUpdate).then(() => {
+        this.$db.task.update(taskId, updatedData).then(() => {
           console.log('タスク更新(IDB) >> 成功')
           // タスクデータの再読み込み
           this.getTasksFromDB()
@@ -286,8 +279,10 @@ export default {
       })
     },
     doneTask(data) {
-      const taskId = data.id
+      const taskDateId = data.taskDateId
       const taskFeedback = data.feedback
+
+      const taskId = this.tasks.find(task => task.id === taskDateId).task_id
 
       const promiseCompleteTask = this.$axios.put('/api/task-completed-task/'+String(taskId)+'/', {'feedback': taskFeedback})
       const promiseAddHistory = this.$axios.post('/api/task-completed-history/', {'task_id': taskId, 'feedback': taskFeedback})
@@ -298,7 +293,7 @@ export default {
         console.log(response)
 
         // IDBを更新
-        this.$db.task_date.update(taskDateId, {'is_done': true})
+        this.$db.task_date.update(taskDateId, {'is_done': true, 'feedback': taskFeedback})
         .then(() => {
           console.log('タスク完了(IDB) >> 成功')
           // タスクデータの再読み込み
