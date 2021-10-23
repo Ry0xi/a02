@@ -268,6 +268,7 @@ export default {
     },
     categories: {
       type: Array,
+      default: () => [],
     },
     isDone: {
       type: Boolean,
@@ -335,14 +336,14 @@ export default {
       },
     },
   },
-  created: function () {
+  mounted: function () {
     this.resetDataForEdit()
   },
   methods: {
     resetDataForEdit() {
       // 編集用のデータを設定値にする
       this.editableTaskTitle = this.taskTitle
-      this.editableCategories = this.categories.slice(0, this.categories.length)
+      this.editableCategories = this.categories ? this.categories.slice(0, this.categories.length) : []
       this.editableIsDone = this.isDone
       this.editableTaskDate = this.taskDate
       this.editableTaskDetail = this.taskDetail
