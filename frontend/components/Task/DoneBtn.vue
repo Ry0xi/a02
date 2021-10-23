@@ -97,7 +97,7 @@ export default {
     },
     save() {
       const data = {
-        'id': this.taskDateId,
+        'taskDateId': this.taskDateId,
         'feedback': this.selectedItem,
       }
       this.$emit('task:done', data)
