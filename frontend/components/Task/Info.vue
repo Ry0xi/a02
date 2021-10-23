@@ -71,7 +71,7 @@ categoryData:      カテゴリの情報をもつ配列
 
                 <v-text-field
                   v-else
-                  v-model="editabletaskTitle"
+                  v-model="editableTaskTitle"
                   single-line
                   outlined
                   clearable
@@ -291,7 +291,7 @@ export default {
       categoryEditor: false,
       dialogDelete: false,
       categoryIdForEditor: null,
-      editabletaskTitle: String,
+      editableTaskTitle: String,
       editableCategories: Array,
       editableIsDone: Boolean,
       editableTaskDate: String,
@@ -301,7 +301,7 @@ export default {
   computed: {
     edited: function () {
       if (
-        this.taskTitle == this.editabletaskTitle &&
+        this.taskTitle == this.editableTaskTitle &&
         JSON.stringify(this.categories) ==
           JSON.stringify(this.editableCategories) &&
         this.isDone == this.editableIsDone &&
@@ -314,7 +314,7 @@ export default {
       }
     },
     canChangeData: function () {
-      if (this.edited && this.editabletaskTitle && this.editableTaskDate) {
+      if (this.edited && this.editableTaskTitle && this.editableTaskDate) {
         return true
       } else {
         return false
@@ -341,7 +341,7 @@ export default {
   methods: {
     resetDataForEdit() {
       // 編集用のデータを設定値にする
-      this.editabletaskTitle = this.taskTitle
+      this.editableTaskTitle = this.taskTitle
       this.editableCategories = this.categories.slice(0, this.categories.length)
       this.editableIsDone = this.isDone
       this.editableTaskDate = this.taskDate
@@ -362,9 +362,8 @@ export default {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const updatedTaskData = {
         'id': this.taskId,
-        'title': this.editabletaskTitle,
+        'title': this.editableTaskTitle,
         'category': this.editableCategories,
-        'is_done': this.editableIsDone,
         'next_display_date': this.editableTaskDate,
         'detail': this.editableTaskDetail
       }

@@ -9,7 +9,7 @@ tasks:             全てのタスクのデータ
 @task:created:     タスクの保存ボタンを押した時に発火するイベント
                    タスクオブジェクトを返す
                    {
-                     'title': this.editableTaskName,
+                     'title': this.editableTaskTitle,
                      'category': this.editableCategories,
                      'next_display_date': this.editableTaskDate,
                      'detail': this.editableTaskDetail
@@ -50,7 +50,7 @@ tasks:             全てのタスクのデータ
                 <v-list-item-title>タイトル</v-list-item-title>
 
                 <v-text-field
-                  v-model="editabletaskTitle"
+                  v-model="editableTaskTitle"
                   single-line
                   outlined
                   clearable
@@ -207,7 +207,7 @@ export default {
       categorySelector: false,
       categoryEditor: false,
       categoryIdForEditor: null,
-      editabletaskTitle: String,
+      editableTaskTitle: String,
       editableCategories: Array,
       editableTaskDate: String,
       editableTaskDetail: String,
@@ -224,7 +224,7 @@ export default {
     },
     edited: function () {
       if (
-        this.taskTitle == this.editabletaskTitle &&
+        this.taskTitle == this.editableTaskTitle &&
         JSON.stringify(this.categories) ==
           JSON.stringify(this.editableCategories) &&
         this.taskDate == this.editableTaskDate &&
@@ -236,7 +236,7 @@ export default {
       }
     },
     canChangeData: function () {
-      if (this.edited && this.editabletaskTitle && this.editableTaskDate) {
+      if (this.edited && this.editableTaskTitle && this.editableTaskDate) {
         return true
       } else {
         return false
@@ -266,7 +266,7 @@ export default {
   },
   methods: {
     setData() {
-      this.editabletaskTitle = this.taskTitle
+      this.editableTaskTitle = this.taskTitle
       this.editableCategories = this.categories
         ? this.categories.slice(0, this.categories.length)
         : []
@@ -279,7 +279,7 @@ export default {
     createTask() {
       // 親コンポーネントに変更後のタスクオブジェクトを伝える
       const createdTaskData = {
-        'title': this.editableTaskName,
+        'title': this.editableTaskTitle,
         'category': this.editableCategories,
         'next_display_date': this.editableTaskDate,
         'detail': this.editableTaskDetail,
