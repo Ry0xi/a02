@@ -4,15 +4,15 @@ from datetime import date, timedelta
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from .models import Task, Setting, History
+from .models import Task, Profile, History
 
 # 実行job関数
 def job(update_time):
   # Userモデルからupdate_timeがtimeの時刻のuser_idを取得してusers配列に入れる．
-  users = Setting.objects.filter(update_time=update_time)
+  users = Profile.objects.filter(update_time=update_time)
   for user in users:
 
-    #Settingモデルから対象のuser.idでdisplay_dateが昨日のタスクに対し更新処理を行う．
+    #Profileモデルから対象のuser.idでdisplay_dateが昨日のタスクに対し更新処理を行う．
     tasks = Task.objects.filter(user_id=user.user_id)
     for task in tasks:
       if task.next_display_date < date.today():
@@ -22,9 +22,10 @@ def job(update_time):
         # 優先度を設定
         if display_times == 0:
           task.priority = task.priority + 20
+          task.next_display_date = task.next_display_date + timedelta(days=1)
 
         #対象のtaskに対して更新処理
-        history = History.objects.filter(task_id=task.id).order_by("-created_at")[:1]
+        history = History.objects.filter(task_id=task.id).order_by("-completed_date")[:1]
         for history in history:
           feedback = history.feedback
 
@@ -51,41 +52,28 @@ def job(update_time):
               task.priority = task.priority + 2
 
           task.next_display_date = task.next_display_date + timedelta(days=1)
-          task.save()
 
-  print("update completed! "+str(update_time)+":00")
+        task.save()
 
+    print("update completed! user_id:"+str(user.user_id)+str(update_time)+":00")
 
+#本番
 # def start():
 #   """
 #   Scheduling data update
-#   Run update function once every 12 seconds
 #   """
 #   scheduler = BackgroundScheduler()
 #   for update_time in range(0,6):
 #     scheduler.add_job(job, 'cron', [update_time],  hour=update_time) # schedule
 #   scheduler.start()
 
+#test
 def start():
   """
   Scheduling data update
-  Run update function once every 12 seconds
+  Run update function once every 1 minutes
   """
   scheduler = BackgroundScheduler()
   for update_time in range(0,6):
-    scheduler.add_job(job, 'interval', [update_time],  seconds=0.1) # schedule
+    scheduler.add_job(job, 'interval', [update_time],  seconds=60) # schedule
   scheduler.start()
-
-# def test(update_time):
-#   print("update completed! ", update_time)
-
-# def start():
-#   """
-#   Scheduling data update
-#   Run update function once every 12 seconds
-#   """
-#   scheduler = BackgroundScheduler()
-#   print("start")
-#   for update_time in range(0,6):
-#     scheduler.add_job(test, 'interval', [update_time],  seconds=0.05) # schedule
-#   scheduler.start()
