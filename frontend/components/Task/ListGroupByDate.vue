@@ -1,6 +1,7 @@
 <!--
   shownTasks: 0 -> 全て、1 -> 未完了のタスクのみ、2 -> 完了のみ
-  tasks: {'id': String, 'name': String, date: String, 'categories': Array, 'isDone': Boolean}の配列
+  tasks:              {id, task_id, date, is_done}
+  taskData:           タスクオブジェクトの配列
   categoryData: 各カテゴリのデータ。[categoryId(String)]: {'name': String, 'color': String}
   @task:done:        タスク完了時に発火するイベント。※TaskDoneBtnを参照
   @task:deleted:     タスクの削除ボタンを押した時に発火するイベント
@@ -23,24 +24,24 @@
           <TaskItem
             :id="'activator' + task.id"
             v-show="shownTasks == 0 || isShownTask(task)"
-            :taskId="task.id"
-            :taskName="task.name"
+            :taskDateId="task.id"
+            :taskTitle="taskData[task.task_id].title"
             :taskDate="task.date"
-            :taskDetail="task.detail"
-            :categories="task.categories"
-            :isDone="task.isDone"
+            :taskDetail="taskData[task.task_id].detail"
+            :categories="taskData[task.task_id].category"
+            :isDone="task.is_done"
             :categoryData="categoryData"
             :hideDoneBtn="hideDoneBtn"
             @task:done="doneTask"
           />
           <TaskInfo
             :activator="'#activator' + task.id"
-            :taskId="task.id"
-            :taskName="task.name"
+            :taskId="task.task_id"
+            :taskTitle="taskData[task.task_id].title"
             :taskDate="task.date"
-            :taskDetail="task.detail"
-            :categories="task.categories"
-            :isDone="task.isDone"
+            :taskDetail="taskData[task.task_id].detail"
+            :categories="taskData[task.task_id].category"
+            :isDone="task.is_done"
             :categoryData="categoryData"
             @task:deleted="deleteTask($event)"
             @task:updated="updateTask($event)"
@@ -62,6 +63,9 @@ export default {
     },
     tasks: {
       type: Array,
+    },
+    taskData: {
+      type: Object,
     },
     categoryData: {
       type: Object,
@@ -85,7 +89,7 @@ export default {
         return true
       }
 
-      const taskType = task.isDone ? 2 : 1
+      const taskType = task.is_done ? 2 : 1
       if (this.shownTasks === taskType) {
         return true
       } else {
