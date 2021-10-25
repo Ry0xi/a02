@@ -31,7 +31,7 @@ categoryData:     全てのカテゴリのデータの配列
           <v-list-item
             v-for="(category, categoryId) in categoryData"
             :key="categoryId"
-            :value="categoryId"
+            :value="Number(categoryId)"
           >
             <template v-slot:default="{ active }">
               <v-card
