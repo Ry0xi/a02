@@ -96,7 +96,11 @@ export default {
       return this.selectedItem == item ? 'primary' : '#f5f5f5'
     },
     save() {
-      this.$emit('task:done', this.taskDateId)
+      const data = {
+        'taskDateId': this.taskDateId,
+        'feedback': this.selectedItem,
+      }
+      this.$emit('task:done', data)
       console.log('Task Done!')
       this.closeDialog()
     },
