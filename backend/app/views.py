@@ -1,5 +1,4 @@
 #filter用のimport
-import django_filters
 from datetime import date
 
 #トークン認証に必要なライブラリ
