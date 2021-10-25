@@ -82,14 +82,18 @@ export default {
       },
       setItem: [],
       taskItems: [],
-      tasks: [],
-      taskData: null,
       categoryData: null,
       snackbar: false,
       errorMessage: null,
     }
   },
   computed: {
+    tasks() {
+      return this.$store.getters.tasks
+    },
+    taskData() {
+      return this.$store.getters.taskData
+    },
     // 日付をフォーマット
     formatDate() {
       const dt = new Date(this.date)
@@ -100,7 +104,9 @@ export default {
   },
   mounted() {
     this.updateHeader()
-    this.fetchTasks()
+    // this.fetchTasks()
+    this.$store.dispatch('getTaskDataFromIDB')
+    .then(taskData => this.taskItems = this.dedupe(taskData))
     this.fetchCategoryData()
   },
   methods: {

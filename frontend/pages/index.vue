@@ -46,17 +46,23 @@ export default {
         title: 'ホーム'
       },
       activeTab: 1,
-      tasks: null,
-      taskData: null,
       loadingTask: false,
       categoryData: null,
       snackbarDelete: false,
       errorMessage: null,
     }
   },
+  computed: {
+    tasks() {
+      return this.$store.getters.tasks
+    },
+    taskData() {
+      return this.$store.getters.taskData
+    },
+  },
   mounted() {
     this.updateHeader()
-    this.fetchTasks()
+    // this.fetchTasks()
     this.fetchCategoryData()
   },
   methods: {
