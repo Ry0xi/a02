@@ -48,6 +48,8 @@ export const getters = {
 }
 
 export const actions = {
+  // API経由でTaskとHistoryの情報を取得
+  // それらをIDBに保存し、保存したデータをVuexのStateに適用
   fetchAndApplyTasks({dispatch, commit, state, getters}) {
     console.log('fetchAndApplyTasks()')
     const promiseGetTasks = dispatch('getTasksFromServer')
@@ -55,6 +57,7 @@ export const actions = {
 
     promiseGetTasks
     .then(tasks => {
+      // test
       console.log('promiseGetTasks: tasks')
       console.log(tasks)
       return tasks
@@ -65,9 +68,13 @@ export const actions = {
       promiseGetTasks,
       promiseGetHistory
     ])
-    .then((data) => {
+    .then(data => {
+      // test
       console.log('promiseAll: data')
       console.log(data)
+      return data
+    })
+    .then(data => {
       const tasks = data[0]
       const history = data[1]
       // データを整形
@@ -98,14 +105,7 @@ export const actions = {
       return tasks
     })
     .then(tasks => dispatch('replaceIDBTaskDateWithNewTasks', tasks))
-    .then(() => {
-      return Promise.all([
-        dispatch('getTaskDataFromIDB')
-        .then(taskData => commit('replaceTaskData', taskData)),
-        dispatch('getTasksFromIDB')
-        .then(tasks => commit('replaceTasks', tasks))
-      ])
-    })
+    .then(() => dispatch('replaceAllTaskStateWithTasksFromIDB'))
     .then(() => {
       // test
       console.log('state.tasks:', state.tasks)
@@ -117,6 +117,80 @@ export const actions = {
       console.error('fetchAndApplyTasks Error:', e.message)
     })
   },
+  addTask({state, dispatch}, taskData) {
+
+    const addTaskToIDB = taskData => {
+      const formattedTaskData = {
+        'task_id': taskData.id,
+        'date': taskData.next_display_date,
+        'is_done': false,
+      }
+
+      console.log('taskData')
+      console.log(taskData)
+      console.log('formattedTaskData')
+      console.log(formattedTaskData)
+      return Promise.all([
+        dispatch('addTaskToIDBTask', taskData),
+        dispatch('addTaskToIDBTaskDate', formattedTaskData)
+      ])
+    }
+
+    if (state.online) {
+      // オンラインの場合は、
+      // データをサーバーに送信して、
+      // 返り値の新規IDを元にIDBに保存
+      return dispatch('addTaskToServer', taskData)
+      .then(responsedTaskData => addTaskToIDB(responsedTaskData))
+    } else {
+      // オフラインの場合は、
+      // 仮のIDでIDBに保存し、offline_taskテーブルに登録
+      dispatch('makeTmpId', 'task')
+      .then(id => {
+        const dataToSave = {'id': id, ...taskData}
+        return Promise.all([
+          addTaskToIDB(dataToSave),
+          dispatch('addTaskToIDBOfflineTask', {
+            taskId: id,
+            type: 'created',
+            data: taskData,
+          })
+        ])
+      })
+    }
+  },
+  // IDBから取得したタスク関連の情報をVuexのStateに適用する
+  replaceAllTaskStateWithTasksFromIDB({commit, dispatch}) {
+    return Promise.all([
+      dispatch('getTaskDataFromIDB')
+      .then(taskData => commit('replaceTaskData', taskData)),
+      dispatch('getTasksFromIDB')
+      .then(tasks => commit('replaceTasks', tasks))
+    ])
+  },
+  // 仮の新規IDを生成(Vuex Stateに存在しているIDの最大値＋1)
+  makeTmpId({state}, type) {
+    let existIds = []
+    if (type == 'category') {
+      existIds = Object.keys(state.categoryData).map(id => Number(id))
+    } else if (type == 'task') {
+      existIds = state.tasks.map(task => task.task_id)
+    } else {
+      return
+    }
+
+    // 存在しているIDの最大値＋1
+    let maxId = null
+    if (existIds[0]) {
+      maxId = existIds.reduce((a, b) => {
+        return Math.max(a, b)
+      })
+      return maxId + 1
+    } else {
+      return 1
+    }
+  },
+  // 単一の処理
   getTasksFromServer({state}) {
     if (state.online) {
       return this.$axios.get('/api/task/')
@@ -134,6 +208,25 @@ export const actions = {
   },
   getTaskDataFromIDB({}) {
     return this.$db.task.toArray()
+  },
+  addTaskToServer({state}, task) {
+    if (state.online) {
+      return this.$axios.post('/api/task/', task)
+      .then(response => response.data)
+    }
+  },
+  addTaskToIDBTask({}, task) {
+    return this.$db.task.add(task)
+  },
+  addTaskToIDBTaskDate({}, task) {
+    return this.$db.task_date.add(task)
+  },
+  addTaskToIDBOfflineTask({}, {taskId, type, data}) {
+    return this.$db.offline_task.add({
+      'task_id': taskId,
+      'type': type,
+      'data': data,
+    })
   },
   replaceIDBTaskWithNewTasks({}, tasks) {
     return this.$db.task.clear()
