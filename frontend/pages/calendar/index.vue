@@ -266,57 +266,8 @@ export default {
       }
     },
     addTaskData(newTaskData) {
-      // IDBに登録する
-      const promiseAddTaskToIDB = taskData => {
-        return this.$db.task.add(taskData).then(() => {
-          console.log('タスク追加(IDB) >> 成功')
-        }).catch((e) => {
-          console.log('タスク追加(IDB) >> 失敗')
-          console.error(e.message)
-        }).then(() => {
-          // データを整形
-          let newData = {
-            'task_id': taskData.id,
-            'date': taskData.next_display_date,
-            'is_done': false,
-          }
-          return this.$db.task_date.add(newData)
-        })
-      }
-
-      if (this.$store.getters.isOnline) {
-        // オンラインの場合
-        // サーバーに追加する
-        const promiseAddTaskToServer = this.$axios.post('/api/task/', newTaskData)
-        .then(response => response.data)
-        .then(taskData => {
-          console.log('タスク追加(API) >> 成功')
-          return taskData
-        }).catch((e) => {
-          console.log('タスク追加(API) >> 失敗')
-          console.error(e.message)
-        })
-
-        // オンライン時はデータを同期して保存
-        promiseAddTaskToServer
-        .then((taskData) => promiseAddTaskToIDB(taskData))
-        .then(() => this.getTasksFromDB())
-      } else {
-        // オフライン時は仮のIDで保存し、offline_taskテーブルに追加
-        const taskId = this.makeTmpId('task')
-        const saveData = {'id': taskId, ...newTaskData}
-        promiseAddTaskToIDB(saveData)
-        .then(() => {
-          this.errorMessage = 'タスク追加の同期に失敗しました。オンラインに復帰後同期します。'
-
-          return this.$db.offline_task.add({
-            'task_id': taskId,
-            'type': 'create',
-            'data': newTaskData,
-          })
-        })
-        .then(() => this.getTasksFromDB())
-      }
+      this.$store.dispatch('addTask', newTaskData)
+      .then(() => this.$store.dispatch('replaceAllTaskStateWithTasksFromIDB'))
     },
     deleteTaskData(taskId) {
       // IDBから削除
