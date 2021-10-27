@@ -124,6 +124,7 @@
 
 <script>
 export default {
+  middleware: 'update',
   data() {
     return {
       header: {
