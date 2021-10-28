@@ -218,66 +218,19 @@ export default {
     },
     addTaskData(newTaskData) {
       this.$store.dispatch('addTask', newTaskData)
-      .then(() => this.$store.dispatch('replaceAllTaskStateWithTasksFromIDB'))
+      .then(() => {
+        this.loadingTask = true
+        this.$store.dispatch('replaceAllTaskStateWithTasksFromIDB')
+        .then(() => this.loadingTask = false)
+      })
     },
     deleteTaskData(taskId) {
-      // IDBから削除
-      const promiseDeleteTaskOnIDB = this.$db.task.delete(taskId)
+      this.$store.dispatch('deleteTask', taskId)
       .then(() => {
-        console.log('タスク削除(IDB)1 >> 成功')
-
-        return this.$db.task_date
-        .where('task_id')
-        .equals(taskId)
-        .delete().then(() => {
-          console.log('タスク削除(IDB)2 >> 成功')
-        })
+        this.loadingTask = true
+        this.$store.dispatch('replaceAllTaskStateWithTasksFromIDB')
+        .then(() => this.loadingTask = false)
       })
-
-      if (this.$store.getters.isOnline) {
-        // オンラインの場合
-        // サーバーに送信(オンラインの場合)
-        const promiseDeleteTaskOnServer = this.$axios.delete('/api/task/'+String(taskId)+'/')
-        .then(() => {
-          console.log('タスク削除(API) >> 成功')
-        })
-
-        promiseDeleteTaskOnIDB
-        .then(() => promiseDeleteTaskOnServer)
-        .catch(e => {
-          console.log('タスク削除(Online) >> 失敗')
-          console.error(e.message)
-        })
-        .then(() => {
-          // 削除を通知
-          this.snackbarDelete = true
-          // タスクデータの再読み込み
-          this.getTasksFromDB()
-        })
-
-      } else {
-        // オフラインの場合
-        promiseDeleteTaskOnIDB
-        .then(() => {
-          // offline_taskに登録
-          return this.$db.offline_task.add({
-            'task_id': taskId,
-            'type': 'delete',
-            'data': null,
-          })
-        })
-        .catch(e => {
-          console.log('タスク削除(Offline) >> 失敗')
-          console.error(e.message)
-        })
-        .then(() => {
-          this.errorMessage = 'タスク削除の同期に失敗しました。オンラインに復帰後同期します。'
-          // 削除を通知
-          this.snackbarDelete = true
-          // タスクデータの再読み込み
-          this.getTasksFromDB()
-        })
-      }
     },
     updateTaskData(updatedData) {
       const taskId = updatedData.id
