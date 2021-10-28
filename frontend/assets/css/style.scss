@@ -10,3 +10,8 @@
   max-width: 500px;
   margin: 0 auto;
 }
+
+// タスク一覧でボタンとの重なりを回避するための余白
+.taskListMarginBottom {
+  margin-bottom: 66px;
+}

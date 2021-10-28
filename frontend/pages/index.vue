@@ -26,6 +26,7 @@
       @task:done="doneTask"
       @category:updated="updateCategoryData($event)"
       @category:created="addCategoryData($event)"
+      class="taskListMarginBottom"
     />
     
     <!-- タスク削除時に表示されるお知らせ -->
