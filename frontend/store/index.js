@@ -1,3 +1,7 @@
+// TODOs:
+// - サーバーへの処理が失敗した場合にOffline_○○テーブルに登録
+// - サーバーへの処理を行わないとき(失敗したときも含む)に各ページに表示するメッセージの扱い
+// - addTaskToIDBOfflineTask(|Category)の、既にCreateがあった場合のdeleteやupdateの処理
 export const state = () => ({
   online: window.navigator.onLine,
   tasks: null,
@@ -15,7 +19,6 @@ export const mutations = {
     state.online = false
     console.log('offline now')
   },
-  // 
   replaceTasks(state, tasks) {
     state.tasks = tasks
   },
@@ -117,6 +120,17 @@ export const actions = {
       console.error('fetchAndApplyTasks Error:', e.message)
     })
   },
+  // IDBから取得したタスク関連の情報をVuexのStateに適用する
+  replaceAllTaskStateWithTasksFromIDB({commit, dispatch}) {
+    return Promise.all([
+      dispatch('getTaskDataFromIDB')
+      .then(taskData => commit('replaceTaskData', taskData)),
+      dispatch('getTasksFromIDB')
+      .then(tasks => commit('replaceTasks', tasks))
+    ])
+  },
+  // サーバーへの新規追加とIDBへの登録処理
+  // オフラインの場合は仮のIDでの登録とOffline_taskへの登録
   addTask({state, dispatch}, taskData) {
 
     const addTaskToIDB = taskData => {
@@ -159,14 +173,35 @@ export const actions = {
       })
     }
   },
-  // IDBから取得したタスク関連の情報をVuexのStateに適用する
-  replaceAllTaskStateWithTasksFromIDB({commit, dispatch}) {
-    return Promise.all([
-      dispatch('getTaskDataFromIDB')
-      .then(taskData => commit('replaceTaskData', taskData)),
-      dispatch('getTasksFromIDB')
-      .then(tasks => commit('replaceTasks', tasks))
-    ])
+  // サーバーからの削除とIDBからの削除を行う
+  // オフラインの場合はIDBからのみ削除しOffline_taskに登録
+  deleteTask({state, dispatch}, taskId) {
+    if (state.online) {
+      // オンラインの場合は、
+      // サーバーとIDBから削除する
+      return dispatch('deleteTaskOnServer', taskId)
+      .then(() => {
+        return Promise.all([
+          dispatch('deleteTaskOnIDBTask', taskId),
+          dispatch('deleteTaskOnIDBTaskDate', taskId)
+        ])
+      })
+      .catch(e => console.error('deleteTask(Online) Error:', e.message))
+
+    } else {
+      // オフラインの場合は、
+      // IDBから削除しOffline_taskに登録
+      return Promise.all([
+        dispatch('deleteTaskOnIDBTask', taskId),
+        dispatch('deleteTaskOnIDBTaskDate', taskId),
+        dispatch('addTaskToIDBOfflineTask', {
+          taskId: taskId,
+          type: 'delete',
+          data: null,
+        })
+      ])
+      .catch(e => console.error('deleteTask(Offline) Error:', e.message))
+    }
   },
   // 仮の新規IDを生成(Vuex Stateに存在しているIDの最大値＋1)
   makeTmpId({state}, type) {
@@ -209,6 +244,13 @@ export const actions = {
   getTaskDataFromIDB({}) {
     return this.$db.task.toArray()
   },
+  addTaskToIDBOfflineTask({}, {taskId, type, data}) {
+    return this.$db.offline_task.add({
+      'task_id': taskId,
+      'type': type,
+      'data': data,
+    })
+  },
   addTaskToServer({state}, task) {
     if (state.online) {
       return this.$axios.post('/api/task/', task)
@@ -221,12 +263,19 @@ export const actions = {
   addTaskToIDBTaskDate({}, task) {
     return this.$db.task_date.add(task)
   },
-  addTaskToIDBOfflineTask({}, {taskId, type, data}) {
-    return this.$db.offline_task.add({
-      'task_id': taskId,
-      'type': type,
-      'data': data,
-    })
+  deleteTaskOnServer({state}, taskId) {
+    if (state.online) {
+      return this.$axios.delete('/api/task/'+String(taskId)+'/')
+    }
+  },
+  deleteTaskOnIDBTask({}, taskId) {
+    return this.$db.task.delete(taskId)
+  },
+  deleteTaskOnIDBTaskDate({}, taskId) {
+    return this.$db.task_date
+    .where('task_id')
+    .equals(taskId)
+    .delete()
   },
   replaceIDBTaskWithNewTasks({}, tasks) {
     return this.$db.task.clear()
