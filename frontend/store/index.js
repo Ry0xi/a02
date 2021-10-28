@@ -2,6 +2,7 @@
 // - サーバーへの処理が失敗した場合にOffline_○○テーブルに登録
 // - サーバーへの処理を行わないとき(失敗したときも含む)に各ページに表示するメッセージの扱い
 // - addTaskToIDBOfflineTask(|Category)の、既にCreateがあった場合のdeleteやupdateの処理
+// - オフラインでタスクを完了した場合の次回表示日をどうするか
 export const state = () => ({
   online: window.navigator.onLine,
   tasks: null,
@@ -44,6 +45,15 @@ export const getters = {
   },
   tasks(state) {
     return state.tasks
+  },
+  tasksToday(state) {
+    const today = new Date().toISOString().substr(0, 10)
+    const tasks = state.tasks
+    return tasks?.filter(task => task.date == today) ?? null
+    // オプショナルチェイニング演算子
+    // https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Optional_chaining
+    // Null合体演算子
+    // https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator
   },
   taskData(state) {
     return state.taskData
@@ -205,6 +215,8 @@ export const actions = {
       .catch(e => console.error('deleteTask(Offline) Error:', e.message))
     }
   },
+  // サーバーとIDBでタスクの更新を行う
+  // オフラインの場合はIDBでの更新とOffline_taskへの登録を行う
   updateTask({state, dispatch}, {taskId, data}) {
     if (state.online) {
       // オンラインの場合は、
@@ -235,6 +247,51 @@ export const actions = {
         })
       ])
       .catch(e => console.error('updateTask Error:', e.message))
+    }
+  },
+  completeTask({state, dispatch}, {taskDateId, taskId, feedback}) {
+    if (state.online) {
+      // オンラインの場合は、
+      // 2つのAPI通信とIDBでの更新処理
+      return Promise.all([
+        dispatch('completeTaskOnServer', {
+          taskId: taskId,
+          feedback: feedback,
+        })
+        .then(response => response.data)
+        .then(taskData => {
+          return dispatch('updateTaskOnIDBTask', {
+            taskId: taskId,
+            data: taskData,
+          })
+        }),
+        dispatch('addTaskOnServerHistory', {
+          taskId: taskId,
+          feedback: feedback,
+        }),
+        dispatch('completeTaskOnIDBTaskDate', {
+          taskDateId: taskDateId,
+          feedback: feedback,
+        })
+      ])
+
+    } else {
+      // オフラインの場合は、
+      // task_dateでの完了とOffline_taskへの登録を行う
+      return Promise.all([
+        dispatch('completeTaskOnIDBTaskDate', {
+          taskDateId: taskDateId,
+          feedback: feedback,
+        }),
+        dispatch('addTaskToIDBOfflineTask', {
+          taskId: taskId,
+          type: 'done',
+          data: {
+            'task_id': taskId,
+            'feedback': feedback,
+          }
+        })
+      ])
     }
   },
   // 仮の新規IDを生成(Vuex Stateに存在しているIDの最大値＋1)
@@ -318,7 +375,26 @@ export const actions = {
     }
   },
   updateTaskOnIDBTask({}, {taskId, data}) {
-    return this.$db.task.update(taskId, data)
+    return this.$db.task.put({'id': taskId, ...data})
+  },
+  completeTaskOnServer({state}, {taskId, feedback}) {
+    if (state.online) {
+      return this.$axios.put('/api/task-completed-task/'+String(taskId)+'/', {'feedback': feedback})
+    }
+  },
+  addTaskOnServerHistory({state}, {taskId, feedback}) {
+    if (state.online) {
+      return this.$axios.post('/api/task-completed-history/', {
+        'task_id': taskId,
+        'feedback': feedback
+      })
+    }
+  },
+  completeTaskOnIDBTaskDate({}, {taskDateId, feedback}) {
+    return this.$db.task_date.update(taskDateId, {
+      'is_done': true,
+      'feedback': feedback,
+    })
   },
   replaceIDBTaskWithNewTasks({}, tasks) {
     return this.$db.task.clear()
