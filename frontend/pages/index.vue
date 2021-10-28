@@ -117,110 +117,16 @@ export default {
         .then(() => this.loadingTask = false)
       })
     },
-    fetchCategoryData() {
-      console.log('fetchCategoryData()')
-
-      // IDBに保存
-      const promiseAddAllCategoryToIDB = dataToSave => {
-        // IDBのデータを削除
-        this.$db.category.clear()
-        return this.$db.category.bulkAdd(dataToSave)
-        .then(() => {
-          console.log('カテゴリ一斉追加 >> 成功')
-        })
-      }
-
-      if (this.$store.getters.isOnline) {
-        // オンラインの場合
-        // サーバーからデータを取得する処理
-        const promiseGetCategoryFromServer = this.$axios.get('/api/category/')
-        .then((response) => {
-          console.log('カテゴリ取得(API) >> 成功')
-          return response.data
-        })
-
-        promiseGetCategoryFromServer
-        .then(categories => {
-          // IDB用にデータを整形
-          let dataToSave = []
-          categories.forEach((category) => {
-            const categoryToSave = {
-              'id': category.id,
-              'name': category.category_name,
-              'color': category.color_code,
-            }
-            dataToSave.push(categoryToSave)
-          })
-          return dataToSave
-        })
-        .then((categories) => promiseAddAllCategoryToIDB(categories))
-        .then(() => this.getCategoryDataFromDB())
-        .catch(e => {
-          console.error('fetchCategoryData Error:', e.message)
-        })
-
-      } else {
-        // オフラインの場合
-        this.errorMessage = 'カテゴリデータの取得に失敗しました。ローカルデータを表示します。'
-        this.getCategoryDataFromDB()
-      }
-    },
     updateCategoryData(updatedCategoryData) {
       // カテゴリデータを更新
       const targetId = updatedCategoryData.id
       delete updatedCategoryData.id
 
-      // 更新するデータ
-      const sendData = {
-        'category_name': updatedCategoryData.name,
-        'color_code': updatedCategoryData.color,
-      }
-
-      // IDBで更新する処理
-      const promiseUpdateCategoryOnIDB = this.$db.category.update(targetId, updatedCategoryData)
-      .then(() => {
-        console.log('カテゴリ更新(IDB) >> 成功')
+      this.$store.dispatch('updateCategoryData', {
+        categoryId: targetId,
+        data: updatedCategoryData,
       })
-
-      if (this.$store.getters.isOnline) {
-        // オンラインの場合
-        // サーバーに送信する処理
-        const promiseUpdateCategoryOnServer = this.$axios.put('/api/category/'+targetId+'/', sendData)
-        .then(() => {
-          console.log('カテゴリ更新(API) >> 成功')
-        })
-
-        Promise.all([promiseUpdateCategoryOnIDB, promiseUpdateCategoryOnServer])
-        .then(() => {
-          // カテゴリデータの再読み込み
-          this.getCategoryDataFromDB()
-        })
-        .catch(e => {
-          console.log('カテゴリ更新(Online) >> 失敗')
-          console.error(e.message)
-        })
-
-      } else {
-        // オフラインの場合
-        promiseUpdateCategoryOnIDB
-        .then(() => {
-          // offline_categoryに登録
-          return this.$db.offline_category.add({
-            'category_id': targetId,
-            'type': 'update',
-            'data': sendData,
-          })
-        })
-        .then(() => {
-          this.errorMessage = 'カテゴリ更新の同期に失敗しました。オンラインに復帰後同期します。'
-          // カテゴリデータの再読み込み
-          this.getCategoryDataFromDB()
-        })
-        .catch(e => {
-          console.log('カテゴリ更新(Offline) >> 失敗')
-          console.error(e.message)
-        })
-      }
+      .then(() => this.$store.dispatch('replaceCategoryStateWithCategoryOnIDBCategory'))
     },
     addCategoryData(newCategoryData) {
       // カテゴリデータを追加

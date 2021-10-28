@@ -204,57 +204,11 @@ export default {
       const targetId = updatedCategoryData.id
       delete updatedCategoryData.id
 
-      // 更新するデータ
-      const sendData = {
-        'category_name': updatedCategoryData.name,
-        'color_code': updatedCategoryData.color,
-      }
-
-      // IDBで更新する処理
-      const promiseUpdateCategoryOnIDB = this.$db.category.update(targetId, updatedCategoryData)
-      .then(() => {
-        console.log('カテゴリ更新(IDB) >> 成功')
+      this.$store.dispatch('updateCategoryData', {
+        categoryId: targetId,
+        data: updatedCategoryData,
       })
-
-      if (this.$store.getters.isOnline) {
-        // オンラインの場合
-        // サーバーに送信する処理
-        const promiseUpdateCategoryOnServer = this.$axios.put('/api/category/'+targetId+'/', sendData)
-        .then(() => {
-          console.log('カテゴリ更新(API) >> 成功')
-        })
-
-        Promise.all([promiseUpdateCategoryOnIDB, promiseUpdateCategoryOnServer])
-        .then(() => {
-          // カテゴリデータの再読み込み
-          this.getCategoryDataFromDB()
-        })
-        .catch(e => {
-          console.log('カテゴリ更新(Online) >> 失敗')
-          console.error(e.message)
-        })
-
-      } else {
-        // オフラインの場合
-        promiseUpdateCategoryOnIDB
-        .then(() => {
-          // offline_categoryに登録
-          return this.$db.offline_category.add({
-            'category_id': targetId,
-            'type': 'update',
-            'data': sendData,
-          })
-        })
-        .then(() => {
-          this.errorMessage = 'カテゴリ更新の同期に失敗しました。オンラインに復帰後同期します。'
-          // カテゴリデータの再読み込み
-          this.getCategoryDataFromDB()
-        })
-        .catch(e => {
-          console.log('カテゴリ更新(Offline) >> 失敗')
-          console.error(e.message)
-        })
-      }
+      .then(() => this.$store.dispatch('replaceCategoryStateWithCategoryOnIDBCategory'))
     },
     addCategoryData(newCategoryData) {
       // カテゴリデータを追加
