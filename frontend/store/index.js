@@ -1,7 +1,6 @@
 // TODOs:
 // - サーバーへの処理が失敗した場合にOffline_○○テーブルに登録
 // - サーバーへの処理を行わないとき(失敗したときも含む)に各ページに表示するメッセージの扱い
-// - addTaskToIDBOfflineTask(|Category)の、既にCreateがあった場合のdeleteやupdateの処理
 // - オフラインでタスクを完了した場合の次回表示日をどうするか
 export const state = () => ({
   online: window.navigator.onLine,
@@ -55,7 +54,7 @@ export const getters = {
     return state.tasks
   },
   tasksToday(state) {
-    const today = new Date().toISOString().substr(0, 10)
+    const today = new Date().toLocaleDateString().split('/').join('-')
     const tasks = state.tasks
     return tasks?.filter(task => task.date == today) ?? null
     // オプショナルチェイニング演算子
@@ -185,7 +184,7 @@ export const actions = {
           addTaskToIDB(dataToSave),
           dispatch('addTaskToIDBOfflineTask', {
             taskId: id,
-            type: 'created',
+            type: 'create',
             data: taskData,
           })
         ])
@@ -451,11 +450,46 @@ export const actions = {
   },
   addTaskToIDBOfflineTask({}, {taskId, type, data}) {
     // offline_taskへ登録
-    return this.$db.offline_task.add({
-      'task_id': taskId,
-      'type': type,
-      'data': data,
-    })
+    if (type == 'delete') {
+      // 追加操作が未同期の場合、追加した履歴ごと削除する
+      return this.$db.offline_task.where({'task_id': taskId}).toArray()
+      .then(tasks => {
+        const index = tasks.findIndex(task => task.type == 'create')
+        if (index !== -1) {
+          return this.$db.offline_task.delete(tasks[index].id)
+        } else {
+          return this.$db.offline_task.add({
+            'task_id': taskId,
+            'type': type,
+            'data': data,
+          })
+        }
+      })
+
+    } else if (type == 'update') {
+      // 追加操作が未同期の場合、登録されている追加するデータを上書きする
+      return this.$db.offline_task.where({'task_id': taskId}).toArray()
+      .then(tasks => {
+        const index = tasks.findIndex(task => task.type == 'create')
+        if (index !== -1) {
+          return this.$db.offline_task.update(tasks[index].id, {'data': data})
+        } else {
+          return this.$db.offline_task.add({
+            'task_id': taskId,
+            'type': type,
+            'data': data,
+          })
+        }
+      })
+    } else {
+      // typeがcreate, doneの場合
+      return this.$db.offline_task.add({
+        'task_id': taskId,
+        'type': type,
+        'data': data,
+      })
+    }
+
   },
   addTaskToServer({state}, task) {
     if (state.online) {
@@ -489,7 +523,7 @@ export const actions = {
     }
   },
   updateTaskOnIDBTask({}, {taskId, data}) {
-    return this.$db.task.update({'id': taskId, ...data})
+    return this.$db.task.update(taskId, data)
   },
   completeTaskOnServer({state}, {taskId, feedback}) {
     if (state.online) {
@@ -534,11 +568,29 @@ export const actions = {
   },
   addCategoryToIDBOfflineCategory({}, {categoryId, type, data}) {
     // offline_categoryに登録
-    return this.$db.offline_category.add({
-      'category_id': categoryId,
-      'type': type,
-      'data': data,
-    })
+    if (type == 'update') {
+      // 新規作成が未同期の場合、作成したデータを上書きする
+      return this.$db.offline_category.where({'category_id': categoryId}).toArray()
+      .then(categories => {
+        const index = categories.findIndex(category => category.type == 'create')
+        if (index !== -1) {
+          return this.$db.offline_category.update(categories[index].id, {'data': data})
+        } else {
+          return this.$db.offline_category.add({
+            'category_id': categoryId,
+            'type': type,
+            'data': data,
+          })
+        }
+      })
+
+    } else {
+      return this.$db.offline_category.add({
+        'category_id': categoryId,
+        'type': type,
+        'data': data,
+      })
+    }
   },
   updateCategoryOnServer({state}, {categoryId, data}) {
     if (state.online) {
