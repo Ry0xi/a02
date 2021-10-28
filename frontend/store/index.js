@@ -489,7 +489,7 @@ export const actions = {
     }
   },
   updateTaskOnIDBTask({}, {taskId, data}) {
-    return this.$db.task.put({'id': taskId, ...data})
+    return this.$db.task.update({'id': taskId, ...data})
   },
   completeTaskOnServer({state}, {taskId, feedback}) {
     if (state.online) {
