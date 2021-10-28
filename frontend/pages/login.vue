@@ -1,7 +1,7 @@
 <template>
   <div>
     <Loading :loading="loading" />
-    <v-card class="px-6 py-12 login-card" outlined>
+    <v-card class="px-6 py-12 short-card" outlined>
       <!-- タブボタン -->
       <Tab
         v-model="isActive"
@@ -135,10 +135,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.login-card {
-  max-width: 500px;
-  margin: 0 auto;
-}
 .link-reset-password {
   margin: 50px 0 10px;
   font-size: 14px;
