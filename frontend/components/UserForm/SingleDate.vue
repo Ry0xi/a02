@@ -27,7 +27,7 @@ placeholder:  入力フォームに表示するプレイスホルダー
           full-width
           scrollable
           locale="jp-ja"
-          :min="new Date().toLocaleDateString().split('/').join('-')"
+          :min="new Date().toLocaleDateString().replaceAll('/', '-')"
           :day-format="(date) => new Date(date).getDate()"
           color="primary"
         >

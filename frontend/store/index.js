@@ -54,7 +54,7 @@ export const getters = {
     return state.tasks
   },
   tasksToday(state) {
-    const today = new Date().toLocaleDateString().split('/').join('-')
+    const today = new Date().toLocaleDateString().replaceAll('/', '-')
     const tasks = state.tasks
     return tasks?.filter(task => task.date == today) ?? null
     // オプショナルチェイニング演算子

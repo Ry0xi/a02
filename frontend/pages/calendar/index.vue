@@ -74,7 +74,7 @@ export default {
       header: {
         title: 'カレンダー',
       },
-      date: new Date().toISOString().substr(0, 10),
+      date: new Date().toLocaleDateString().replaceAll('/', '-'),
       dialog: false,
       task: {
         title: '',
