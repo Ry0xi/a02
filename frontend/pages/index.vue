@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     tasks() {
-      return this.$store.getters.tasks
+      return this.$store.getters.tasksToday
     },
     taskData() {
       return this.$store.getters.taskData
@@ -229,58 +229,6 @@ export default {
         .then(() => this.loadingTask = false)
       })
     },
-    // updateTaskData(updatedData) {
-    //   const taskId = updatedData.id
-    //   delete updatedData.id
-
-    //   // IDBで更新する処理
-    //   const promiseUpdateTaskOnIDB = this.$db.task.update(taskId, updatedData)
-    //   .then(() => {
-    //     console.log('タスク更新(IDB) >> 成功')
-    //   })
-      
-    //   if (this.$store.getters.isOnline) {
-    //     // オンラインの場合
-    //     // サーバーに送信する処理
-    //     const promiseUpdateTaskOnServer = this.$axios.put('/api/task/'+String(taskId)+'/', updatedData)
-    //     .then(() => {
-    //       console.log('タスク更新(API) >> 成功')
-    //     })
-
-    //     promiseUpdateTaskOnIDB
-    //     .then(() => promiseUpdateTaskOnServer)
-    //     .catch(e => {
-    //       console.log('タスク更新(Online) >> 失敗')
-    //       console.error(e.message)
-    //     })
-    //     .then(() => {
-    //       // タスクデータの再読み込み
-    //       this.getTasksFromDB()
-    //     })
-
-    //   } else {
-    //     // オフラインの場合
-    //     promiseUpdateTaskOnIDB
-    //     .then(() => {
-    //       // offline_taskに登録
-    //       return this.$db.offline_task.add({
-    //         'task_id': taskId,
-    //         'type': 'update',
-    //         'data': updatedData,
-    //       })
-    //     })
-    //     .catch(e => {
-    //       console.log('タスク更新(Offline) >> 失敗')
-    //       console.error(e.message)
-    //     })
-    //     .then(() => {
-    //       this.errorMessage = 'タスク更新の同期に失敗しました。オンラインに復帰後同期します。'
-
-    //       // タスクデータの再読み込み
-    //       this.getTasksFromDB()
-    //     })
-    //   }
-    // },
     updateTaskData(updatedData) {
       const taskId = updatedData.id
       delete updatedData.id
@@ -301,60 +249,16 @@ export default {
 
       const taskId = this.tasks.find(task => task.id === taskDateId).task_id
 
-      // IDBを更新
-      const promiseDoneTaskOnIDB = this.$db.task_date.update(taskDateId, {
-        'is_done': true,
-        'feedback': taskFeedback,
+      this.$store.dispatch('completeTask', {
+        taskDateId: taskDateId,
+        taskId: taskId,
+        feedback: taskFeedback,
       })
       .then(() => {
-        console.log('タスク完了(IDB) >> 成功')
+        this.loadingTask = true
+        this.$store.dispatch('replaceAllTaskStateWithTasksFromIDB')
+        .then(() => this.loadingTask = false)
       })
-
-      if (this.$store.getters.isOnline) {
-        // オンラインの場合
-        // API処理
-        const promiseCompleteTask = this.$axios.put('/api/task-completed-task/'+String(taskId)+'/', {'feedback': taskFeedback})
-        const promiseAddHistory = this.$axios.post('/api/task-completed-history/', {'task_id': taskId, 'feedback': taskFeedback})
-
-        // サーバーに送信し、IDBにも保存
-        Promise.all([promiseCompleteTask, promiseAddHistory, promiseDoneTaskOnIDB])
-        .then(() => {
-          console.log('タスク完了(Online) >> 成功')
-          // タスクデータの再取得・読み込み
-          this.fetchTasks()
-        })
-        .catch((e) => {
-          console.log('タスク完了(Online) >> 失敗')
-          console.error(e.message)
-        })
-
-      } else {
-        // オフラインの場合
-        promiseDoneTaskOnIDB
-        .then(() => {
-          // offline_taskに登録
-          return this.$db.offline_task.add({
-            'task_id': taskId,
-            'type': 'done',
-            'data': {
-              'task_id': taskId,
-              'feedback': taskFeedback,
-            }
-          })
-        })
-        .then(() => {
-          console.log('タスク完了(Offline) >> 成功')
-          this.errorMessage = 'タスク完了の同期に失敗しました。オンラインに復帰後同期します。'
-
-          // タスクデータの再読み込み
-          this.getTasksFromDB()
-        })
-        .catch((e) => {
-          console.log('タスク完了(Offline) >> 失敗')
-          console.error(e.message)
-        })
-      }
-      
     },
     fetchCategoryData() {
       console.log('fetchCategoryData()')
