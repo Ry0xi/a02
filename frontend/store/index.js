@@ -140,10 +140,12 @@ export const actions = {
         'is_done': false,
       }
 
+      // test
       console.log('taskData')
       console.log(taskData)
       console.log('formattedTaskData')
       console.log(formattedTaskData)
+
       return Promise.all([
         dispatch('addTaskToIDBTask', taskData),
         dispatch('addTaskToIDBTaskDate', formattedTaskData)
@@ -203,6 +205,38 @@ export const actions = {
       .catch(e => console.error('deleteTask(Offline) Error:', e.message))
     }
   },
+  updateTask({state, dispatch}, {taskId, data}) {
+    if (state.online) {
+      // オンラインの場合は、
+      // サーバーでの更新とIDBでの更新処理
+      return Promise.all([
+        dispatch('updateTaskOnServer', {
+          taskId: taskId,
+          data: data,
+        }),
+        dispatch('updateTaskOnIDBTask', {
+          taskId: taskId,
+          data: data,
+        })
+      ])
+      .catch(e => console.error('updateTask Error:', e.message))
+    } else {
+      // オフラインの場合は、
+      // IDBで更新し、Offline_taskに登録
+      return Promise.all([
+        dispatch('updateTaskOnIDBTask', {
+          taskId: taskId,
+          data: data,
+        }),
+        dispatch('addTaskToIDBOfflineTask', {
+          taskId: taskId,
+          type: 'update',
+          data: data,
+        })
+      ])
+      .catch(e => console.error('updateTask Error:', e.message))
+    }
+  },
   // 仮の新規IDを生成(Vuex Stateに存在しているIDの最大値＋1)
   makeTmpId({state}, type) {
     let existIds = []
@@ -245,6 +279,7 @@ export const actions = {
     return this.$db.task.toArray()
   },
   addTaskToIDBOfflineTask({}, {taskId, type, data}) {
+    // offline_taskへ登録
     return this.$db.offline_task.add({
       'task_id': taskId,
       'type': type,
@@ -276,6 +311,14 @@ export const actions = {
     .where('task_id')
     .equals(taskId)
     .delete()
+  },
+  updateTaskOnServer({state}, {taskId, data}) {
+    if (state.online) {
+      return this.$axios.put('/api/task/'+String(taskId)+'/', data)
+    }
+  },
+  updateTaskOnIDBTask({}, {taskId, data}) {
+    return this.$db.task.update(taskId, data)
   },
   replaceIDBTaskWithNewTasks({}, tasks) {
     return this.$db.task.clear()
