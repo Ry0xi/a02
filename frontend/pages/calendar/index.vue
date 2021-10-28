@@ -289,60 +289,12 @@ export default {
 
       const taskId = this.tasks.find(task => task.id === taskDateId).task_id
 
-      // IDBを更新
-      const promiseDoneTaskOnIDB = this.$db.task_date.update(taskDateId, {
-        'is_done': true,
-        'feedback': taskFeedback,
+      this.$store.dispatch('completeTask', {
+        taskDateId: taskDateId,
+        taskId: taskId,
+        feedback: taskFeedback,
       })
-      .then(() => {
-        console.log('タスク完了(IDB) >> 成功')
-      })
-
-      if (this.$store.getters.isOnline) {
-        // オンラインの場合
-        // API処理
-        const promiseCompleteTask = this.$axios.put('/api/task-completed-task/'+String(taskId)+'/', {'feedback': taskFeedback})
-        const promiseAddHistory = this.$axios.post('/api/task-completed-history/', {'task_id': taskId, 'feedback': taskFeedback})
-
-        // サーバーに送信し、IDBにも保存
-        Promise.all([promiseCompleteTask, promiseAddHistory, promiseDoneTaskOnIDB])
-        .then(() => {
-          console.log('タスク完了(Online) >> 成功')
-          // タスクデータの再取得・読み込み
-          this.fetchTasks()
-        })
-        .catch((e) => {
-          console.log('タスク完了(Online) >> 失敗')
-          console.error(e.message)
-        })
-
-      } else {
-        // オフラインの場合
-        promiseDoneTaskOnIDB
-        .then(() => {
-          // offline_taskに登録
-          return this.$db.offline_task.add({
-            'task_id': taskId,
-            'type': 'done',
-            'data': {
-              'task_id': taskId,
-              'feedback': taskFeedback,
-            }
-          })
-        })
-        .then(() => {
-          console.log('タスク完了(Offline) >> 成功')
-          this.errorMessage = 'タスク完了の同期に失敗しました。オンラインに復帰後同期します。'
-
-          // タスクデータの再読み込み
-          this.getTasksFromDB()
-        })
-        .catch((e) => {
-          console.log('タスク完了(Offline) >> 失敗')
-          console.error(e.message)
-        })
-      }
-      
+      .then(() => this.$store.dispatch('replaceAllTaskStateWithTasksFromIDB'))
     },
     fetchCategoryData() {
       console.log('fetchCategoryData()')
