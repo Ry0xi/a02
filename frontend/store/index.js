@@ -35,7 +35,15 @@ export const mutations = {
     state.taskData = newData
   },
   replaceCategoryData(state, categoryData) {
-    state.categoryData = categoryData
+    // データを整形して保持
+    let newData = {}
+    categoryData.forEach((category) => {
+      newData[category.id] = {
+        'name': category.name,
+        'color': category.color
+      }
+    })
+    state.categoryData = newData
   },
 }
 
@@ -58,77 +66,76 @@ export const getters = {
   taskData(state) {
     return state.taskData
   },
+  categoryData(state) {
+    return state.categoryData
+  }
 }
 
 export const actions = {
   // API経由でTaskとHistoryの情報を取得
   // それらをIDBに保存し、保存したデータをVuexのStateに適用
-  fetchAndApplyTasks({dispatch, commit, state, getters}) {
+  fetchAndApplyTasks({state, dispatch}) {
     console.log('fetchAndApplyTasks()')
-    const promiseGetTasks = dispatch('getTasksFromServer')
-    const promiseGetHistory = dispatch('getHistoryFromServer')
-
-    promiseGetTasks
-    .then(tasks => {
-      // test
-      console.log('promiseGetTasks: tasks')
-      console.log(tasks)
-      return tasks
-    })
-    .then(tasks => dispatch('replaceIDBTaskWithNewTasks', tasks))
-
-    Promise.all([
-      promiseGetTasks,
-      promiseGetHistory
-    ])
-    .then(data => {
-      // test
-      console.log('promiseAll: data')
-      console.log(data)
-      return data
-    })
-    .then(data => {
-      const tasks = data[0]
-      const history = data[1]
-      // データを整形
-      let formattedTasks = []
-      tasks.forEach(task => {
-        const taskData = {
-          'task_id': task.id,
-          'date': task.next_display_date,
-          'is_done': false,
-        }
-        formattedTasks.push(taskData)
+    if (state.online) {
+      // オンラインの場合
+      const promiseGetTasks = dispatch('getTasksFromServer')
+      const promiseGetHistory = dispatch('getHistoryFromServer')
+  
+      promiseGetTasks
+      .then(tasks => {
+        // test
+        console.log('promiseGetTasks: tasks')
+        console.log(tasks)
+        return tasks
       })
-      history.forEach((task) => {
-        const taskData = {
-          'date': task.completed_date,
-          'is_done': true,
-          'feedback': task.feedback,
-          'task_id': task.task_id,
-        }
-        formattedTasks.push(taskData)
+      .then(tasks => dispatch('replaceIDBTaskWithNewTasks', tasks))
+  
+      Promise.all([
+        promiseGetTasks,
+        promiseGetHistory
+      ])
+      .then(data => {
+        // test
+        console.log('promiseAll: data')
+        console.log(data)
+        return data
       })
-      return formattedTasks
-    })
-    .then(tasks => {
-      // test
-      console.log('tasks')
-      console.log(tasks)
-      return tasks
-    })
-    .then(tasks => dispatch('replaceIDBTaskDateWithNewTasks', tasks))
-    .then(() => dispatch('replaceAllTaskStateWithTasksFromIDB'))
-    .then(() => {
-      // test
-      console.log('state.tasks:', state.tasks)
-      console.log('state.taskData:', state.taskData)
-      console.log('getters.tasks:', getters.tasks)
-      console.log('getters.taskData:', getters.taskData)
-    })
-    .catch(e => {
-      console.error('fetchAndApplyTasks Error:', e.message)
-    })
+      .then(data => {
+        const tasks = data[0]
+        const history = data[1]
+        // データを整形
+        let formattedTasks = []
+        tasks.forEach(task => {
+          const taskData = {
+            'task_id': task.id,
+            'date': task.next_display_date,
+            'is_done': false,
+          }
+          formattedTasks.push(taskData)
+        })
+        history.forEach((task) => {
+          const taskData = {
+            'date': task.completed_date,
+            'is_done': true,
+            'feedback': task.feedback,
+            'task_id': task.task_id,
+          }
+          formattedTasks.push(taskData)
+        })
+        return formattedTasks
+      })
+      .then(tasks => {
+        // test
+        console.log('tasks')
+        console.log(tasks)
+        return tasks
+      })
+      .then(tasks => dispatch('replaceIDBTaskDateWithNewTasks', tasks))
+      .then(() => dispatch('replaceAllTaskStateWithTasksFromIDB'))
+      .catch(e => {
+        console.error('fetchAndApplyTasks Error:', e.message)
+      })
+    } // if (state.online)
   },
   // IDBから取得したタスク関連の情報をVuexのStateに適用する
   replaceAllTaskStateWithTasksFromIDB({commit, dispatch}) {
@@ -316,7 +323,35 @@ export const actions = {
       return 1
     }
   },
+  // サーバーからカテゴリを取得しIDBに登録、VuexStateに反映
+  fetchAndApplyCategoryData({state, commit, dispatch}) {
+    if (state.online) {
+      // オンラインの場合
+      dispatch('getCategoryDataFromServer')
+      .then(categoryData => {
+        // データ形式を変換
+        let dataForIDBCategory = []
+        categoryData.forEach((category) => {
+          const categoryToSave = {
+            'id': category.id,
+            'name': category.category_name,
+            'color': category.color_code,
+          }
+          dataForIDBCategory.push(categoryToSave)
+        })
+        return dataForIDBCategory
+      })
+      .then(categoryData => {
+        return dispatch('replaceIDBCategoryWithNewCategoryData', categoryData)
+        .then(() => commit('replaceCategoryData', categoryData))
+      })
+      .catch(e => console.error('fetchAndApplyCategoryData Error:', e.message))
+    } else {
+      // オフラインの場合何もしない
+    }
+  },
   // 単一の処理
+  // タスク関連の処理
   getTasksFromServer({state}) {
     if (state.online) {
       return this.$axios.get('/api/task/')
@@ -403,5 +438,19 @@ export const actions = {
   replaceIDBTaskDateWithNewTasks({}, tasks) {
     return this.$db.task_date.clear()
     .then(() => this.$db.task_date.bulkAdd(tasks))
+  },
+  // カテゴリ関連の処理
+  getCategoryDataFromServer({state}) {
+    if (state.online) {
+      return this.$axios.get('/api/category/')
+      .then(response => response.data)
+    }
+  },
+  replaceIDBCategoryWithNewCategoryData({}, categoryData) {
+    return this.$db.category.clear()
+    .then(() => this.$db.category.bulkAdd(categoryData))
+  },
+  addCategoryDataToIDBCategory({}, categoryData) {
+    return this.$db.category.add(categoryData)
   }
 }
