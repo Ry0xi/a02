@@ -302,6 +302,9 @@ export const actions = {
     }
   },
   // 仮の新規IDを生成(Vuex Stateに存在しているIDの最大値＋1)
+  // let tmpId = null
+  // return dispatch('makeTmpId', 'category')
+  // .then(newId => tmpId = newId)
   makeTmpId({state}, type) {
     let existIds = []
     if (type == 'category') {
@@ -374,7 +377,7 @@ export const actions = {
           data: data,
         })
       ])
-      .catch(e => console.error('updateCategory Error:', e.message))
+      .catch(e => console.error('updateCategoryData Error:', e.message))
     } else {
       // オフラインの場合
       return dispatch('updateCategoryDataOnIDBCategory', {
@@ -386,7 +389,44 @@ export const actions = {
         type: 'update',
         data: sendData,
       }))
-      .catch(e => console.error('updateCategory Error:', e.message))
+      .catch(e => console.error('updateCategoryData Error:', e.message))
+    }
+  },
+  // サーバーとIDBでカテゴリを追加する
+  // オフラインの場合は仮のIDで追加し、Offline_categoryへ登録する
+  addCategoryData({state, dispatch}, data) {
+    // サーバーに送信するデータ
+    const sendData = {
+      'category_name': data.name,
+      'color_code': data.color,
+    }
+    if (state.online) {
+      // オンラインの場合
+      return dispatch('addCategoryDataToServer', sendData)
+      .then(categoryData => dispatch('addCategoryDataToIDBCategory', {
+        'id': categoryData.id,
+        ...data
+      }))
+      .catch(e => console.error('addCategoryData Error:', e.message))
+
+    } else {
+      // オフラインの場合
+      let tmpId = null
+      return dispatch('makeTmpId', 'category').then(newId => tmpId = newId)
+      .then(() => {
+        return Promise.all([
+          dispatch('addCategoryDataToIDBCategory', {
+            'id': tmpId,
+            ...data
+          }),
+          dispatch('addCategoryToIDBOfflineCategory', {
+            categoryId: tmpId,
+            type: 'create',
+            data: sendData,
+          })
+        ])
+      })
+      .catch(e => console.error('addCategoryData Error:', e.message))
     }
   },
   // 単一の処理
@@ -500,9 +540,6 @@ export const actions = {
       'data': data,
     })
   },
-  addCategoryDataToIDBCategory({}, categoryData) {
-    return this.$db.category.add(categoryData)
-  },
   updateCategoryOnServer({state}, {categoryId, data}) {
     if (state.online) {
       this.$axios.put('/api/category/'+categoryId+'/', data)
@@ -510,5 +547,14 @@ export const actions = {
   },
   updateCategoryDataOnIDBCategory({}, {categoryId, data}) {
     return this.$db.category.update(categoryId, data)
+  },
+  addCategoryDataToServer({state}, data) {
+    if (state.online) {
+      return this.$axios.post('/api/category/', data)
+      .then(response => response.data)
+    }
+  },
+  addCategoryDataToIDBCategory({}, categoryData) {
+    return this.$db.category.add(categoryData)
   },
 }
