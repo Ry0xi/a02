@@ -104,64 +104,11 @@ export default {
   },
   mounted() {
     this.updateHeader()
-    // this.fetchTasks()
+    // taskItemsを生成
     this.$store.dispatch('getTaskDataFromIDB')
     .then(taskData => this.taskItems = this.dedupe(taskData))
-    this.fetchCategoryData()
   },
   methods: {
-    getTasksFromDB() {
-      console.log('getTasksFromDB()')
-      this.loadingTask = true
-
-      // IDBからタスクを取得
-      const promiseTaskData = this.$db.task.toArray()
-      .then((tasks) => {
-        console.log('Got tasks from table: task')
-
-        // データを整形して保持
-        let newData = {}
-        tasks.forEach((task) => {
-          const taskId = task.id
-          delete task.id
-          newData[taskId] = task
-        })
-        // タスクデータの適用
-        this.taskData = newData
-        this.taskItems = this.dedupe(tasks)
-      })
-      // タスクリストを取得
-      const promiseTaskDate = this.$db.task_date.toArray()
-      .then(tasks => {
-        console.log('Got tasks from table: task_date.')
-        this.tasks = tasks
-      })
-
-      Promise.all([promiseTaskData, promiseTaskDate])
-      .then(() => {
-        this.loadingTask = false
-      })
-    },
-    getCategoryDataFromDB() {
-      console.log('getCategoryDataFromDB()')
-
-      // IDBからカテゴリを取得
-      this.$db.category.toArray()
-      .then((categoryData) => {
-        
-        // データを整形して保持
-        let newData = {}
-        categoryData.forEach((category) => {
-          newData[category.id] = {'name': category.name, 'color': category.color}
-        })
-        this.categoryData = newData
-        console.log('categoryData >> 取得成功')
-      })
-      .catch((e) => {
-        console.log('categoryData >> 取得失敗')
-        console.error(e.message)
-      })
-    },
     updateHeader() {
       // タイトルとして使いたい情報を渡す
       this.$nuxt.$emit('updateHeader', this.header.title)
@@ -172,98 +119,6 @@ export default {
         (element, index, self) =>
           self.findIndex((e) => e.title === element.title) === index
       )
-    },
-    fetchTasks() {
-      console.log('fetchTasks()')
-      if (this.$store.getters.isOnline) {
-        // オンラインの場合
-        // サーバーから未完了のタスクデータを取得し、保存する
-        const promiseTask = this.$axios.get('/api/task/').then(response => response.data)
-        .then(tasks => {
-          console.log('promiseTask１')
-          console.log('タスク取得(API) >> 成功')
-          // IDBからタスクを削除
-          return this.$db.task.clear()
-          .then(() => {
-            console.log('promiseTask２')
-            // タスクデータをIDBに保存
-            return this.$db.task.bulkAdd(tasks).then(() => {
-              console.log('promiseTask３')
-              console.log('タスク保存(IDB) >> 成功')
-              return tasks
-            }).catch((e) => {
-              console.log('タスク保存(IDB) >> 失敗')
-              console.error(e.message)
-            })
-          })
-          .catch((e) => {
-            console.log('タスク(IDB)削除 >> 失敗')
-          })
-        })
-
-        // サーバーから完了済のタスクデータを取得する
-        const promiseHistory = this.$axios.get('/api/history/')
-        .then(response => response.data)
-        .then(history => {
-          console.log('promiseHistory１')
-          console.log('ヒストリー取得(API) >> 成功')
-          return history
-        })
-
-        // task_dateを削除する
-        const promiseClearTaskDate = this.$db.task_date.clear()
-
-        // task_dateにタスクリストを追加する
-        const promiseAddTaskDate = (tasks, history) => {
-          console.log('promiseAddTaskDate１')
-          // データを整形
-          let newTaskData = []
-          tasks.forEach(task => {
-            const taskData = {
-              'task_id': task.id,
-              'date': task.next_display_date,
-              'is_done': false,
-            }
-            newTaskData.push(taskData)
-          })
-          history.forEach((task) => {
-            const taskData = {
-              'date': task.completed_date,
-              'is_done': true,
-              'feedback': task.feedback,
-              'task_id': task.task_id,
-            }
-            newTaskData.push(taskData)
-          })
-          // IDBに保存
-          return this.$db.task_date.bulkAdd(newTaskData).then(() => {
-            console.log('タスクリスト保存(IDB) >> 成功')
-          }).catch(e => {
-            console.log('タスクリスト保存(IDB) >> 失敗')
-            console.error(e.message)
-          })
-        }
-
-        // オンラインならサーバーからデータを取得・適用
-        Promise.all([promiseTask, promiseHistory])
-        .then(arrays => {
-          return promiseClearTaskDate
-          .then(() => {
-            console.log('promiseClearTaskDate１')
-            return arrays
-          })
-        })
-        .then(arrays => promiseAddTaskDate(arrays[0], arrays[1]))
-        .then(() => this.getTasksFromDB())
-        .catch(e => {
-          console.error('fetchTaskData Error: '+e.message)
-        })
-
-      } else {
-        // オフラインの場合
-        this.errorMessage = 'データの取得に失敗しました。ローカルデータを表示します。'
-        this.getTasksFromDB()
-      }
     },
     addTaskData(newTaskData) {
       this.$store.dispatch('addTask', newTaskData)
