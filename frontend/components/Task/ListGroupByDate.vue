@@ -14,7 +14,7 @@
 <template>
   <div class="task-list-group-by-date">
     <div class="tasks-on-the-date" v-for="date in datesInTasks" :key="date">
-      <h3 class="tasks-date">{{ formatDate(date) }}</h3>
+      <h3 v-if="isShowDate(date)" class="tasks-date">{{ formatDate(date) }}</h3>
       <ul class="task-list">
         <li
           class="task-list-item"
@@ -82,6 +82,12 @@ export default {
       const month = dt.getMonth() + 1
       const day = dt.getDate()
       return `${year}年${month}月${day}日`
+    },
+    isShowDate(date) {
+      const value = this.shownTasks === 1 ? false : true
+      return this.tasksGroupByDate[date].some(
+        item => item.is_done === value
+      )
     },
     isShownTask: function (task) {
       // すべて表示する
