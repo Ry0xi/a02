@@ -9,8 +9,8 @@
     />
     
     <Tab
-      leftName="未完了"
-      rightName="完了"
+      leftName="復習中"
+      rightName="復習完了"
       v-model="activeTab"
       class="mb-8"
     />
@@ -72,15 +72,7 @@ export default {
       .then((tasks) => {
         console.log('Got tasks from table: task')
 
-        // データを整形して保持
-        let newData = {}
-        tasks.forEach((task) => {
-          const taskId = task.id
-          delete task.id
-          newData[taskId] = task
-        })
-        // タスクデータの適用
-        this.taskData = newData
+        this.taskData = tasks
       })
       // タスクリストを取得
       const promiseTaskDate = this.$db.task_date.toArray()
@@ -375,11 +367,11 @@ export default {
       }
     },
     doneTask(data) {
-      const taskDateId = data.taskDateId
+      const taskId = data.taskDateId
       const taskFeedback = data.feedback
-
-      const taskId = this.tasks.find(task => task.id === taskDateId).task_id
-
+      
+      const taskDateId = this.tasks.find(task => task.task_id === taskId).id
+      
       // IDBを更新
       const promiseDoneTaskOnIDB = this.$db.task_date.update(taskDateId, {
         'is_done': true,
