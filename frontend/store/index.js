@@ -350,6 +350,45 @@ export const actions = {
       // オフラインの場合何もしない
     }
   },
+  replaceCategoryStateWithCategoryOnIDBCategory({commit, dispatch}) {
+    return dispatch('getCategoryDataFromIDBCategory')
+    .then(categoryData => commit('replaceCategoryData', categoryData))
+  },
+  // カテゴリの情報をサーバーとIDBで更新
+  // オフラインの場合は、IDBで更新し、Offline_categoryへ登録する
+  updateCategoryData({state, dispatch}, {categoryId, data}) {
+    // サーバーで更新するデータ
+    const sendData = {
+      'category_name': data.name,
+      'color_code': data.color,
+    }
+    if (state.online) {
+      // オンラインの場合
+      return Promise.all([
+        dispatch('updateCategoryOnServer', {
+          categoryId: categoryId,
+          data: sendData,
+        }),
+        dispatch('updateCategoryDataOnIDBCategory', {
+          categoryId: categoryId,
+          data: data,
+        })
+      ])
+      .catch(e => console.error('updateCategory Error:', e.message))
+    } else {
+      // オフラインの場合
+      return dispatch('updateCategoryDataOnIDBCategory', {
+        categoryId: categoryId,
+        data: data,
+      })
+      .then(() => dispatch('addCategoryToIDBOfflineCategory', {
+        categoryId: categoryId,
+        type: 'update',
+        data: sendData,
+      }))
+      .catch(e => console.error('updateCategory Error:', e.message))
+    }
+  },
   // 単一の処理
   // タスク関連の処理
   getTasksFromServer({state}) {
@@ -446,11 +485,30 @@ export const actions = {
       .then(response => response.data)
     }
   },
+  getCategoryDataFromIDBCategory({}) {
+    return this.$db.category.toArray()
+  },
   replaceIDBCategoryWithNewCategoryData({}, categoryData) {
     return this.$db.category.clear()
     .then(() => this.$db.category.bulkAdd(categoryData))
   },
+  addCategoryToIDBOfflineCategory({}, {categoryId, type, data}) {
+    // offline_categoryに登録
+    return this.$db.offline_category.add({
+      'category_id': categoryId,
+      'type': type,
+      'data': data,
+    })
+  },
   addCategoryDataToIDBCategory({}, categoryData) {
     return this.$db.category.add(categoryData)
-  }
+  },
+  updateCategoryOnServer({state}, {categoryId, data}) {
+    if (state.online) {
+      this.$axios.put('/api/category/'+categoryId+'/', data)
+    }
+  },
+  updateCategoryDataOnIDBCategory({}, {categoryId, data}) {
+    return this.$db.category.update(categoryId, data)
+  },
 }
