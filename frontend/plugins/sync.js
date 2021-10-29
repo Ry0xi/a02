@@ -1,4 +1,4 @@
-export default ({ $db, $axios }, inject) => {
+export default ({ $db, $axios, store }, inject) => {
   //   CRUD
   const create = async (value, uri) => {
     return await $axios
@@ -146,7 +146,7 @@ export default ({ $db, $axios }, inject) => {
   //   オフラインタスクのカテゴリーを更新
   const categoryChange = (before_id, after_id) => {
     $db.offline_task.toArray().then((response) => {
-      const tasks = response.data
+      const tasks = response
 
       tasks.forEach((task) => {
         if (task.category !== undefined) {
@@ -163,7 +163,7 @@ export default ({ $db, $axios }, inject) => {
   //   オフラインタスクの"done"のtask_idを更新
   const taskChange = (before_id, after_id) => {
     $db.offline_task.toArray().then((response) => {
-      const tasks = response.data
+      const tasks = response
 
       tasks.forEach((task, index) => {
         if (task.task_id === before_id) {
@@ -173,8 +173,16 @@ export default ({ $db, $axios }, inject) => {
     })
   }
 
-  inject('sync', {
-    task: task,
-    category: category,
-  })
+  const sync = async () => {
+    const responseCategory = await $db.offline_category.toArray()
+    await category(responseCategory)
+
+    const responseTask = await $db.offline_task.toArray()
+    await task(responseTask)
+
+    store.dispatch('replaceAllTaskStateWithTasksFromIDB')
+    store.dispatch('replaceCategoryStateWithCategoryOnIDBCategory')
+  }
+  
+  inject('sync', sync)
 }
