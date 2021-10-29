@@ -110,7 +110,7 @@ export default {
       return values
     },
     taskDateId(key) {
-      return this.tasks.find(v => v.task_id == key).id
+      return this.tasks.find(v => v.task_id == key && v.is_done === false).id
     },
     deleteTask: function (taskId) {
       this.$emit('task:deleted', taskId)
