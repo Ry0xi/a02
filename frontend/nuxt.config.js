@@ -28,6 +28,7 @@ export default {
   plugins: [
     '~/plugins/dexie.js',
     '~/plugins/network.js',
+    '~/plugins/sync.js',
     '~/plugins/common.js',
   ],
 
