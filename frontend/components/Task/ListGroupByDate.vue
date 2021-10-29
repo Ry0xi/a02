@@ -41,7 +41,7 @@
             :taskDate="task.next_display_date"
             :taskDetail="task.detail"
             :categories="task.category"
-            :isDone="task.is_done"
+            :isDone="task.is_update"
             :categoryData="categoryData"
             @task:deleted="deleteTask($event)"
             @task:updated="updateTask($event)"

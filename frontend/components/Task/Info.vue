@@ -59,9 +59,9 @@ categoryData:      カテゴリの情報をもつ配列
         </v-card-title>
 
         <!-- scrollableプロパティに対応するためv-card-textを使う -->
-        <v-card-text class="px-2">
+        <v-card-text class="pt-4 px-2">
           <v-list three-line subheader>
-            <v-subheader>基本情報</v-subheader>
+            <!-- <v-subheader>基本情報</v-subheader> -->
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>タイトル</v-list-item-title>
@@ -123,9 +123,9 @@ categoryData:      カテゴリの情報をもつ配列
                   :categoryData="categoryData"
                   class="mt-2"
                 />
-                <v-list-item-subtitle v-else
-                  >カテゴリが設定されていません</v-list-item-subtitle
-                >
+                <v-list-item-subtitle v-else class="px-1">
+                  カテゴリが設定されていません
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
 
@@ -134,9 +134,10 @@ categoryData:      カテゴリの情報をもつ配列
                 <v-list-item-title>内容</v-list-item-title>
                 <!-- ここのpタグ内を改行すると表示にも反映されてしまう -->
                 <div v-if="!editable">
-                  <p v-if="taskDetail" class="task-info-data task-info-detail"
-                  >{{ taskDetail }}</p>
-                  <p v-else class="grey--text">タスクの詳細は未入力です。</p>
+                  <p v-if="taskDetail" class="task-info-data task-info-detail">{{ taskDetail }}</p>
+                  <v-list-item-subtitle v-else class="px-1">
+                    タスクの詳細は未入力です。
+                  </v-list-item-subtitle>
                 </div>
                 <v-textarea
                   v-else
@@ -153,24 +154,25 @@ categoryData:      カテゴリの情報をもつ配列
                 </v-textarea>
               </v-list-item-content>
             </v-list-item>
+          </v-list>
+          <v-list v-if="!editable">
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>ステータス</v-list-item-title>
+                <p v-if="!isDone" class="task-info-data">復習完了</p>
+                <p v-else class="task-info-data">復習中</p>
+              </v-list-item-content>
+            </v-list-item>
 
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>完了</v-list-item-title>
-                <v-checkbox
-                  v-if="!editable"
-                  v-model="isDone"
-                  :label="isDone ? '完了しています' : '完了していません'"
-                  disabled
-                ></v-checkbox>
-                <!-- 編集時 -->
-                <!-- バックエンドの対応待ち -->
-                <v-checkbox
-                  v-else
-                  v-model="editableIsDone"
-                  :label="editableIsDone ? '完了しています' : '完了していません'"
-                  disabled
-                ></v-checkbox>
+                <v-list-item-title>完了履歴</v-list-item-title>
+                <div class="history">
+                  <div v-for="task in taskHistory" :key="task.id" class="history-list">
+                    <div class="history-date">{{ $formatDate(task.date) }}</div>
+                    <div class="history-vallue">{{ feedbackFormat(task.feedback) }}</div>
+                  </div>
+                </div>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -297,6 +299,7 @@ export default {
       editableIsDone: Boolean,
       editableTaskDate: String,
       editableTaskDetail: String,
+      taskHistory: []
     }
   },
   computed: {
@@ -338,8 +341,23 @@ export default {
   },
   mounted: function () {
     this.resetDataForEdit()
+    this.getTaskHistory()
   },
   methods: {
+    getTaskHistory() {
+      this.$db.task_date.where('task_id').equals(this.taskId).reverse().sortBy('date').then((response) => {
+        this.taskHistory = response.filter((task) => task.is_done === true)
+      })
+    },
+    feedbackFormat(value) {
+      if(value === 1) {
+        return '普通'
+      } else if(value === 2) {
+        return '満足'
+      } else if(value === 0) {
+        return '全然'
+      }
+    },
     resetDataForEdit() {
       // 編集用のデータを設定値にする
       this.editableTaskTitle = this.taskTitle
@@ -409,14 +427,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.v-list-item__title {
+  padding-bottom: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #606060;
+}
+
 .task-info {
   &-data {
-    font-size: 1.125rem;
+    padding: 0 5px;
+    font-size: 16px;
   }
-
   &-detail {
+    font-size: 16px;
     white-space: pre-wrap;
     line-height: 1.5;
   }
+}
+
+.history {
+  font-size: 16px;
+  &-list {
+    display: flex;
+    padding: 10px 5px;
+    border-bottom: solid 1px #ddd;
+  }
+  &-date {
+    margin-right: auto;
+  }
+  &-value {}
 }
 </style>
