@@ -76,13 +76,6 @@ export default {
     },
   },
   methods: {
-    formatDate(date) {
-      const dt = new Date(date)
-      const year = dt.getFullYear()
-      const month = dt.getMonth() + 1
-      const day = dt.getDate()
-      return `${year}年${month}月${day}日`
-    },
     isShowTask(is_update) {
       const value = this.shownTasks === 1 ? false : true
       return is_update === value ? false : true
