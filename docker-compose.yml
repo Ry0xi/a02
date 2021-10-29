@@ -32,6 +32,9 @@ services:
     ports:
       - "3000:3000"
     tty: true
+    # 開発
     command: npm run dev
+    # 本番
+    # command: bash -c "npm run build && npm run start"
 volumes:
   postgres_data:
