@@ -454,15 +454,41 @@ export const actions = {
       // 追加操作が未同期の場合、追加した履歴ごと削除する
       return this.$db.offline_task.where({'task_id': taskId}).toArray()
       .then(tasks => {
-        const index = tasks.findIndex(task => task.type == 'create')
-        if (index !== -1) {
-          return this.$db.offline_task.delete(tasks[index].id)
-        } else {
-          return this.$db.offline_task.add({
-            'task_id': taskId,
-            'type': type,
-            'data': data,
+        // 
+        const deleteTaskUpdateOrDoneIfExist = () => {
+          const getOfflineTasksUpdateOrDone = this.$db.offline_task
+          .where('task_id').equals(taskId).toArray()
+          .then(tasks => tasks.length ? tasks.filter(task => task.type == 'update' || task.type == 'done') : [])
+
+          return getOfflineTasksUpdateOrDone
+          .then(tasks => {
+            if (tasks.length) {
+              console.log('type:update||done exist')
+              // 'update'や'done'があった場合はすべて削除する
+              return this.$db.offline_task.where('id').anyOf(tasks.map(task => task.id)).delete().then(count => console.log('deleted', count, 'items(update or done)'))
+            } else {
+              console.log('type:update||done NOT exist')
+            }
           })
+        }
+
+        const indexCreate = tasks.findIndex(task => task.type == 'create')
+        if (indexCreate !== -1) {
+          console.log('type:create exist')
+          return Promise.all([
+            this.$db.offline_task.delete(tasks[indexCreate].id),
+            deleteTaskUpdateOrDoneIfExist()
+          ])
+        } else {
+          console.log('type:create NOT exist')
+          return Promise.all([
+            this.$db.offline_task.add({
+              'task_id': taskId,
+              'type': type,
+              'data': data,
+            }),
+            deleteTaskUpdateOrDoneIfExist()
+          ])
         }
       })
 
