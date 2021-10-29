@@ -167,12 +167,15 @@ categoryData:      カテゴリの情報をもつ配列
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>完了履歴</v-list-item-title>
-                <div class="history">
+                <div class="history" v-if="Object.keys(taskHistory).length">
                   <div v-for="task in taskHistory" :key="task.id" class="history-list">
                     <div class="history-date">{{ $formatDate(task.date) }}</div>
                     <div class="history-vallue">{{ feedbackFormat(task.feedback) }}</div>
                   </div>
                 </div>
+                <v-list-item-subtitle v-else class="px-1">
+                  履歴がありません
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
