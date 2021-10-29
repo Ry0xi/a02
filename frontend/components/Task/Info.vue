@@ -136,7 +136,7 @@ categoryData:      カテゴリの情報をもつ配列
                 <div v-if="!editable">
                   <p v-if="taskDetail" class="task-info-data task-info-detail">{{ taskDetail }}</p>
                   <v-list-item-subtitle v-else class="px-1">
-                    タスクの詳細は未入力です。
+                    タスクの詳細は未入力です
                   </v-list-item-subtitle>
                 </div>
                 <v-textarea
@@ -148,7 +148,7 @@ categoryData:      カテゴリの情報をもつ配列
                   no-resize
                   hint="教材のページやURLなどを記入すると便利です"
                   persistent-hint
-                  placeholder="タスク内容をここに入力できます。"
+                  placeholder="タスク内容をここに入力できます"
                   class="mt-1"
                 >
                 </v-textarea>
