@@ -19,14 +19,14 @@ categoryData:     全てのカテゴリのデータの配列
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title class="category-selector-header-title">
-          カテゴリを選択
+          カテゴリの選択
         </v-toolbar-title>
       </v-toolbar>
     </v-card-title>
 
     <!-- 親コンポーネントのv-dialogにおけるscrollableプロパティに対応するためv-card-textを使う -->
     <v-card-text class="px-2 pb-0">
-      <v-list>
+      <v-list v-if="Object.keys(categoryData).length">
         <v-list-item-group v-model="newCategories" multiple>
           <v-list-item
             v-for="(category, categoryId) in categoryData"
@@ -61,6 +61,7 @@ categoryData:     全てのカテゴリのデータの配列
           </v-list-item>
         </v-list-item-group>
       </v-list>
+      <div v-else class="py-4 text-center">カテゴリがありません</div>
     </v-card-text>
 
     <v-card-actions>
@@ -70,7 +71,7 @@ categoryData:     全てのカテゴリのデータの配列
         class="mx-auto"
         @click="$emit('createNewCategory')"
       >
-        カテゴリを新規作成
+        新規作成
         <v-icon class="ml-2">mdi-plus-circle</v-icon>
       </v-btn>
     </v-card-actions>
