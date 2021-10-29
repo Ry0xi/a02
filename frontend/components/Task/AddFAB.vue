@@ -36,7 +36,6 @@ export default {
   props: {
     categoryData: {
       type: Object,
-      required: true,
     },
   },
   data() {

@@ -1,7 +1,6 @@
 <template>
   <div class="page-home">
     <TaskAddFAB
-      v-if="categoryData"
       :categoryData="categoryData"
       @task:created="addTaskData($event)"
       @category:updated="updateCategoryData($event)"
