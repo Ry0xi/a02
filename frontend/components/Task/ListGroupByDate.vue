@@ -1,5 +1,5 @@
 <!--
-  shownTasks: 0 -> 全て、1 -> 未完了のタスクのみ、2 -> 完了のみ
+  shownTasks: 0 -> 全て、1 -> 復習中のタスク、2 -> 復習完了のタスク
   tasks:              {id, task_id, date, is_done}
   taskData:           タスクオブジェクトの配列
   categoryData: 各カテゴリのデータ。[categoryId(String)]: {'name': String, 'color': String}
@@ -12,36 +12,36 @@
                      新しいカテゴリデータを返す。※TaskCategoryEditorを参照
 -->
 <template>
-  <div class="task-list-group-by-date">
-    <div class="tasks-on-the-date" v-for="date in datesInTasks" :key="date">
-      <h3 v-if="isShowDate(date)" class="tasks-date">{{ formatDate(date) }}</h3>
-      <ul class="task-list">
+  <div>
+    <div v-for="date in dateList" :key="date" class="task">
+      <h3 v-if="isShowDate(date)" class="task-date">{{ $formatDate(date) }}</h3>
+      <ul class="task-items">
         <li
-          class="task-list-item"
-          v-for="task in tasksGroupByDate[date]"
-          :key="task.id"
+          v-for="(key, index) in TaskGroupByDate[date]"
+          v-if="isShowTask(taskData[key].is_update)"
+          :key="index"
+          class="task-item"
         >
           <TaskItem
-            :id="'activator' + task.id"
-            v-show="shownTasks == 0 || isShownTask(task)"
-            :taskDateId="task.id"
-            :taskTitle="taskData[task.task_id].title"
-            :taskDate="task.date"
-            :taskDetail="taskData[task.task_id].detail"
-            :categories="taskData[task.task_id].category"
-            :isDone="task.is_done"
+            :id="'activator' + key"
+            :taskDateId="taskDateId(key)"
+            :taskTitle="taskData[key].title"
+            :taskDate="taskData[key].next_display_date"
+            :taskDetail="taskData[key].detail"
+            :categories="taskData[key].category"
+            :isDone="!taskData[key].is_update"
             :categoryData="categoryData"
             :hideDoneBtn="hideDoneBtn"
             @task:done="doneTask"
           />
           <TaskInfo
-            :activator="'#activator' + task.id"
-            :taskId="task.task_id"
-            :taskTitle="taskData[task.task_id].title"
-            :taskDate="task.date"
-            :taskDetail="taskData[task.task_id].detail"
-            :categories="taskData[task.task_id].category"
-            :isDone="task.is_done"
+            :activator="'#activator' + key"
+            :taskId="Number(key)"
+            :taskTitle="taskData[key].title"
+            :taskDate="taskData[key].next_display_date"
+            :taskDetail="taskData[key].detail"
+            :categories="taskData[key].category"
+            :isDone="taskData[key].is_update"
             :categoryData="categoryData"
             @task:deleted="deleteTask($event)"
             @task:updated="updateTask($event)"
@@ -76,17 +76,14 @@ export default {
     },
   },
   methods: {
-    formatDate(date) {
-      const dt = new Date(date)
-      const year = dt.getFullYear()
-      const month = dt.getMonth() + 1
-      const day = dt.getDate()
-      return `${year}年${month}月${day}日`
+    isShowTask(is_update) {
+      const value = this.shownTasks === 1 ? false : true
+      return is_update === value ? false : true
     },
     isShowDate(date) {
-      const value = this.shownTasks === 1 ? false : true
-      return this.tasksGroupByDate[date].some(
-        item => item.is_done === value
+      const value = this.shownTasks === 1 ? true : false
+      return this.taskSearch(date).some(
+        item => item.is_update === value
       )
     },
     isShownTask: function (task) {
@@ -101,6 +98,19 @@ export default {
       } else {
         return false
       }
+    },
+    // 取り出すタスクの日付、is_updateの真偽値
+    taskSearch(date, value) {
+      let values = []
+      Object.keys(this.taskData).forEach((key) => {
+        if (this.taskData[key].next_display_date === date) {
+          values.push(this.taskData[key])
+        }
+      })
+      return values
+    },
+    taskDateId(key) {
+      return this.tasks.find(v => v.task_id == key && v.is_done === false).id
     },
     deleteTask: function (taskId) {
       this.$emit('task:deleted', taskId)
@@ -120,17 +130,31 @@ export default {
     },
   },
   computed: {
-    datesInTasks: function () {
-      // 昇順にソートされ、重複のない日付の配列
-      return [...new Set(this.tasks.map((task) => task.date))].sort()
+    dateList() {
+      return [
+        ...new Set(
+          Object.keys(this.taskData).map(
+            (key) => this.taskData[key].next_display_date
+          )
+        ),
+      ].sort()
     },
-    tasksGroupByDate: function () {
-      let groupedTasks = {}
-      this.datesInTasks.forEach((date) => {
-        groupedTasks[date] = this.tasks.filter((task) => task['date'] === date)
+    TaskGroupByDate() {
+      let data = {}
+      let values = []
+        this.dateList.forEach((date) => {
+          Object.keys(this.taskData).forEach((key) => {
+            console.log(key)
+            console.log(this.taskData[key].next_display_date === date)
+            if (this.taskData[key].next_display_date === date) {
+              values.push(key)
+            }
+          })
+        data[date] = values
+        values = []
       })
-      return groupedTasks
-    },
+      return data
+    }
   },
 }
 </script>
@@ -141,19 +165,19 @@ export default {
     margin-top: 20px;
   }
 }
-
-.tasks-date {
-  margin-left: 5px;
-  font-size: 16px;
-  color: #747474;
-}
-
-.task-list {
-  list-style: none;
-  padding: 0;
-
-  &-item + &-item {
-    margin-top: 16px;
+.task {
+  margin-bottom: 20px;
+  &-date {
+    padding: 0 10px 10px;
+    font-size: 16px;
+    color: #747474;
+  }
+  &-items {
+    list-style: none;
+    padding: 0;
+  }
+  &-item {
+    margin-bottom: 10px;
   }
 }
 </style>

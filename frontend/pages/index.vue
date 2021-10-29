@@ -40,7 +40,7 @@
 
 <script>
 export default {
-  middleware: 'update',
+  middleware: 'preload',
   data() {
     return {
       header: {

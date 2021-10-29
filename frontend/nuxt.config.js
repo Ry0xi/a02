@@ -28,8 +28,8 @@ export default {
   plugins: [
     '~/plugins/dexie.js',
     '~/plugins/network.js',
-    '~/plugins/setup.js',
     '~/plugins/sync.js',
+    '~/plugins/common.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

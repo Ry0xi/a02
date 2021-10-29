@@ -66,7 +66,7 @@
 import draggable from 'vuedraggable'
 
 export default {
-  middleware: 'update',
+  middleware: 'preload',
   components: {
     draggable,
   },

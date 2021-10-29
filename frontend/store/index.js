@@ -4,6 +4,8 @@
 // - オフラインでタスクを完了した場合の次回表示日をどうするか
 export const state = () => ({
   online: window.navigator.onLine,
+  // 初回アクセス時(ログイン後)に全タスクとカテゴリデータをサーバーから取得したかどうか
+  completePreload: false,
   tasks: null,
   taskData: null,
   categoryData: null,
@@ -18,6 +20,14 @@ export const mutations = {
   changeStatusToOffline(state) {
     state.online = false
     console.log('offline now')
+  },
+  completePreload(state) {
+    state.completePreload = true
+    console.log('completePreload()')
+  },
+  revertCompletePreload(state) {
+    state.completePreload = false
+    console.log('revertCompletePreload()')
   },
   replaceTasks(state, tasks) {
     state.tasks = tasks
@@ -266,10 +276,17 @@ export const actions = {
         })
         .then(response => response.data)
         .then(taskData => {
-          return dispatch('updateTaskOnIDBTask', {
-            taskId: taskId,
-            data: taskData,
-          })
+          return Promise.all([
+            dispatch('updateTaskOnIDBTask', {
+              taskId: taskId,
+              data: taskData,
+            }),
+            dispatch('addTaskToIDBTaskDate', {
+              'task_id': taskId,
+              'date': taskData.next_display_date,
+              'is_done': false,
+            })
+          ])
         }),
         dispatch('addTaskOnServerHistory', {
           taskId: taskId,
