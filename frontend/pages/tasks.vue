@@ -104,9 +104,9 @@ export default {
       })
     },
     doneTask(data) {
-      const taskId = data.taskDateId
+      const taskDateId = data.taskDateId
       const taskFeedback = data.feedback
-      const taskDateId = this.tasks.find(task => task.task_id === taskId).id
+      const taskId = this.tasks.find(task => task.id === taskDateId).task_id
 
       this.$store.dispatch('completeTask', {
         taskDateId: taskDateId,

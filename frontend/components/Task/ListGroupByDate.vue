@@ -17,31 +17,31 @@
       <h3 v-if="isShowDate(date)" class="task-date">{{ $formatDate(date) }}</h3>
       <ul class="task-items">
         <li
-          v-for="task in taskSearch(date)"
-          v-if="isShowTask(task.is_update)"
-          :key="task.id"
+          v-for="(key, index) in TaskGroupByDate[date]"
+          v-if="isShowTask(taskData[key].is_update)"
+          :key="index"
           class="task-item"
         >
           <TaskItem
-            :id="'activator' + task.id"
-            :taskDateId="task.id"
-            :taskTitle="task.title"
-            :taskDate="task.next_display_date"
-            :taskDetail="task.detail"
-            :categories="task.category"
-            :isDone="!task.is_update"
+            :id="'activator' + key"
+            :taskDateId="taskDateId(key)"
+            :taskTitle="taskData[key].title"
+            :taskDate="taskData[key].next_display_date"
+            :taskDetail="taskData[key].detail"
+            :categories="taskData[key].category"
+            :isDone="!taskData[key].is_update"
             :categoryData="categoryData"
             :hideDoneBtn="hideDoneBtn"
             @task:done="doneTask"
           />
           <TaskInfo
-            :activator="'#activator' + task.id"
-            :taskId="task.id"
-            :taskTitle="task.title"
-            :taskDate="task.next_display_date"
-            :taskDetail="task.detail"
-            :categories="task.category"
-            :isDone="task.is_update"
+            :activator="'#activator' + key"
+            :taskId="Number(key)"
+            :taskTitle="taskData[key].title"
+            :taskDate="taskData[key].next_display_date"
+            :taskDetail="taskData[key].detail"
+            :categories="taskData[key].category"
+            :isDone="taskData[key].is_update"
             :categoryData="categoryData"
             @task:deleted="deleteTask($event)"
             @task:updated="updateTask($event)"
@@ -65,7 +65,7 @@ export default {
       type: Array,
     },
     taskData: {
-      type: Array,
+      type: Object,
     },
     categoryData: {
       type: Object,
@@ -96,6 +96,9 @@ export default {
       })
       return values
     },
+    taskDateId(key) {
+      return this.tasks.find(v => v.task_id == key).id
+    },
     deleteTask: function (taskId) {
       this.$emit('task:deleted', taskId)
     },
@@ -123,6 +126,22 @@ export default {
         ),
       ].sort()
     },
+    TaskGroupByDate() {
+      let data = {}
+      let values = []
+        this.dateList.forEach((date) => {
+          Object.keys(this.taskData).forEach((key) => {
+            console.log(key)
+            console.log(this.taskData[key].next_display_date === date)
+            if (this.taskData[key].next_display_date === date) {
+              values.push(key)
+            }
+          })
+        data[date] = values
+        values = []
+      })
+      return data
+    }
   },
 }
 </script>
