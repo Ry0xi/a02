@@ -1,5 +1,6 @@
 <template>
   <div>
+    <OfflineMessage message="オフラインではログインできません" />
     <Loading :loading="loading" />
     <v-card class="px-6 py-12 short-card" outlined>
       <!-- タブボタン -->

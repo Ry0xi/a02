@@ -86,6 +86,19 @@ export default {
         item => item.is_update === value
       )
     },
+    isShownTask: function (task) {
+      // すべて表示する
+      if (this.shownTasks === 0) {
+        return true
+      }
+
+      const taskType = task.is_done ? 2 : 1
+      if (this.shownTasks === taskType) {
+        return true
+      } else {
+        return false
+      }
+    },
     // 取り出すタスクの日付、is_updateの真偽値
     taskSearch(date, value) {
       let values = []

@@ -1,7 +1,6 @@
 <template>
   <div class="page-home">
     <TaskAddFAB
-      v-if="categoryData"
       :categoryData="categoryData"
       @task:created="addTaskData($event)"
       @category:updated="updateCategoryData($event)"
@@ -26,6 +25,7 @@
       @task:done="doneTask"
       @category:updated="updateCategoryData($event)"
       @category:created="addCategoryData($event)"
+      class="task-list-margin-bottom"
     />
     
     <!-- タスク削除時に表示されるお知らせ -->
