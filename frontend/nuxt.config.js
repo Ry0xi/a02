@@ -25,7 +25,11 @@ export default {
   css: ['@/assets/css/style.scss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['~/plugins/dexie.js', '~/plugins/network.js'],
+  plugins: [
+    '~/plugins/dexie.js',
+    '~/plugins/network.js',
+    '~/plugins/setup.js',
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
