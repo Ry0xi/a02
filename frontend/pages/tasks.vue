@@ -44,6 +44,7 @@
 
 <script>
 export default {
+  middleware: 'preload',
   data() {
     return {
       header: {
