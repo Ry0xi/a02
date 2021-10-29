@@ -6,8 +6,8 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - project',
-    title: 'project',
+    titleTemplate: '%s',
+    title: '復習プランナー+',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -45,7 +45,15 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa',
+    [
+      '@nuxtjs/pwa',
+      {
+        icon: false,
+        manifest: {
+          publicPath: '/_nuxt/',
+        },
+      },
+    ],
     '@nuxtjs/auth',
   ],
 
@@ -81,7 +89,14 @@ export default {
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
-      lang: 'en',
+      name: '復習プランナー+',
+      short_name: '復プラ',
+      theme_color: '#f8c852',
+      lang: 'ja',
+    },
+    workbox: {
+      enabled: true, // 開発環境でWorkboxをテスト
+      offlineAssets: ['img/bg-sp.png', 'favicon.ico'],
     },
   },
 
@@ -117,4 +132,7 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+  generate: {
+    fallback: true,
+  },
 }
