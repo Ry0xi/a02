@@ -42,9 +42,9 @@ tasks:             全てのタスクのデータ
           </v-toolbar>
         </v-card-title>
         <!-- scrollableプロパティに対応するためv-card-textを使う -->
-        <v-card-text class="px-2">
+        <v-card-text class="pa-4 px-2">
           <v-list three-line subheader>
-            <v-subheader>基本情報</v-subheader>
+            <!-- <v-subheader>基本情報</v-subheader> -->
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>タイトル</v-list-item-title>
@@ -97,7 +97,7 @@ tasks:             全てのタスクのデータ
                   :categoryData="categoryData"
                   class="mt-2"
                 />
-                <v-list-item-subtitle v-else>
+                <v-list-item-subtitle v-else class="px-1">
                   カテゴリが設定されていません
                 </v-list-item-subtitle>
               </v-list-item-content>
@@ -322,12 +322,20 @@ export default {
 <style lang="scss" scoped>
 .task-create {
   &-data {
-    font-size: 1.125rem;
+    padding: 0 5px;
+    font-size: 16px;
   }
-
   &-detail {
+    font-size: 16px;
     white-space: pre-wrap;
     line-height: 1.5;
   }
+}
+
+.v-list-item__title {
+  padding-bottom: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #606060;
 }
 </style>

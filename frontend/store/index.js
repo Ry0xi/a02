@@ -276,10 +276,17 @@ export const actions = {
         })
         .then(response => response.data)
         .then(taskData => {
-          return dispatch('updateTaskOnIDBTask', {
-            taskId: taskId,
-            data: taskData,
-          })
+          return Promise.all([
+            dispatch('updateTaskOnIDBTask', {
+              taskId: taskId,
+              data: taskData,
+            }),
+            dispatch('addTaskToIDBTaskDate', {
+              'task_id': taskId,
+              'date': taskData.next_display_date,
+              'is_done': false,
+            })
+          ])
         }),
         dispatch('addTaskOnServerHistory', {
           taskId: taskId,

@@ -9,8 +9,8 @@
     />
     
     <Tab
-      leftName="未完了"
-      rightName="完了"
+      leftName="復習中"
+      rightName="復習完了"
       v-model="activeTab"
       class="mb-8"
     />
@@ -108,7 +108,6 @@ export default {
     doneTask(data) {
       const taskDateId = data.taskDateId
       const taskFeedback = data.feedback
-
       const taskId = this.tasks.find(task => task.id === taskDateId).task_id
 
       this.$store.dispatch('completeTask', {
