@@ -33,7 +33,7 @@ export default {
   props: {
     date: {
       type: String,
-      default: new Date().toISOString().substr(0, 7),
+      default: new Date().toLocaleDateString().substr(0, 7).replace('/', '-'),
     },
   },
   data() {

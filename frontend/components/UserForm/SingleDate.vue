@@ -21,18 +21,21 @@ placeholder:  入力フォームに表示するプレイスホルダー
           class="mt-1"
         ></v-text-field>
       </template>
-      <v-date-picker
-        v-model="editDate"
-        scrollable
-        locale="jp-ja"
-        :min="new Date().toISOString().substr(0, 10)"
-        :day-format="(date) => new Date(date).getDate()"
-        color="primary"
-      >
-        <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="close"> キャンセル </v-btn>
-        <v-btn depressed color="primary" @click="save"> OK </v-btn>
-      </v-date-picker>
+      <v-card>
+        <v-date-picker
+          v-model="editDate"
+          full-width
+          scrollable
+          locale="jp-ja"
+          :min="new Date().toLocaleDateString().replaceAll('/', '-')"
+          :day-format="(date) => new Date(date).getDate()"
+          color="primary"
+        >
+          <v-spacer></v-spacer>
+          <v-btn text color="primary" @click="close"> キャンセル </v-btn>
+          <v-btn depressed color="primary" @click="save"> OK </v-btn>
+        </v-date-picker>
+      </v-card>
     </v-dialog>
   </div>
 </template>

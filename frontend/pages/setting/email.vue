@@ -20,6 +20,7 @@
 
 <script>
 export default {
+  middleware: 'offlineRedirect',
   layout: 'setting',
   data() {
     return {

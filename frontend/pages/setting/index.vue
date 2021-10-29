@@ -1,5 +1,6 @@
 <template>
   <div>
+    <OfflineMessage message="オフラインでは設定を変更できません" />
     <!-- 一般設定 -->
     <v-card outlined class="mb-4 pa-2">
       <v-list two-line subheader>
@@ -172,6 +173,9 @@ export default {
         .put('/api/setting/limit', { limit: this.limit })
         .then(console.log('更新'))
         .catch((error) => {})
+    },
+    toHome() {
+      this.$router.push('/')
     },
     logout() {
       this.$router.push('/logout')

@@ -366,7 +366,8 @@ export default {
         'title': this.editableTaskTitle,
         'category': this.editableCategories,
         'next_display_date': this.editableTaskDate,
-        'detail': this.editableTaskDetail
+        'detail': this.editableTaskDetail,
+        'url': null,
       }
       this.$emit('task:updated', updatedTaskData)
       this.editable = false

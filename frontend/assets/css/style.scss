@@ -5,3 +5,13 @@
   background-position: top center !important;
   background-attachment: fixed !important;
 }
+
+.short-card {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+// タスク一覧でボタンとの重なりを回避するための余白
+.task-list-margin-bottom {
+  margin-bottom: 66px;
+}

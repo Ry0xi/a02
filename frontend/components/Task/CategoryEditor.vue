@@ -18,8 +18,8 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
         <v-toolbar-title class="category-editor-header-title">
-          <span v-if="categoryId">カテゴリを編集</span>
-          <span v-else>カテゴリを追加</span>
+          <span v-if="categoryId">カテゴリの編集</span>
+          <span v-else>カテゴリの追加</span>
         </v-toolbar-title>
       </v-toolbar>
     </v-card-title>
@@ -29,7 +29,7 @@ color:  カテゴリの色(既存のものを編集する場合のみ指定)
       <v-list>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title>カテゴリ名</v-list-item-title>
+            <v-list-item-title class="pb-2">カテゴリ名</v-list-item-title>
             <v-text-field
               v-model="newCategoryName"
               outlined
